@@ -115,11 +115,21 @@ export class Dashboard extends HTMLElementComponent {
 	}
 
 	async initialize(): Promise<void> {
-		await this.loadHabits();
+		// Load settings from file first, before loading habits
 		await this.loadUserSettings();
+		await this.loadHabits();
 		await this.loadHabitValues();
+		
+		// Re-render the entire dashboard with loaded settings
 		if (this.container) {
-			this.renderHabits(this.container);
+			const dashboard = this.container.parentElement;
+			if (dashboard) {
+				dashboard.empty();
+				const newDashboard = this.render();
+				dashboard.appendChild(newDashboard);
+				this.container = newDashboard.querySelector('.habits-container') as HTMLElement;
+				this.renderHabits(this.container);
+			}
 		}
 	}
 
@@ -127,22 +137,8 @@ export class Dashboard extends HTMLElementComponent {
 		try {
 			const data = await this.dataManager.readTrackerData();
 			if (data.settings) {
-				this.currentFilter = data.settings.dateRangeFilter || this.currentFilter;
-				this.currentViewMode = data.settings.viewMode || this.currentViewMode;
-				
-				// Update the filter and view mode components if they exist
-				if (this.dateRangeFilter) {
-					this.dateRangeFilter = new DateRangeFilter({
-						currentFilter: this.currentFilter,
-						onFilterChange: (filter) => this.handleFilterChange(filter)
-					});
-				}
-				if (this.viewModeSwitcher) {
-					this.viewModeSwitcher = new ViewModeSwitcher({
-						currentMode: this.currentViewMode,
-						onModeChange: (mode) => this.handleViewModeChange(mode)
-					});
-				}
+				this.currentFilter = data.settings.dateRangeFilter || DateRangeFilterEnum.TODAY;
+				this.currentViewMode = data.settings.viewMode || ViewMode.GRID;
 			}
 		} catch (error) {
 			console.error("Error loading user settings:", error);
@@ -361,17 +357,8 @@ export class Dashboard extends HTMLElementComponent {
 		await this.loadHabits();
 		await this.loadUserSettings();
 		await this.loadHabitValues();
-		
-		// Re-render controls with updated settings
 		if (this.container) {
-			const dashboard = this.container.parentElement;
-			if (dashboard) {
-				dashboard.empty();
-				const newDashboard = this.render();
-				dashboard.appendChild(newDashboard);
-				this.container = newDashboard.querySelector('.habits-container') as HTMLElement;
-				this.renderHabits(this.container);
-			}
+			this.renderHabits(this.container);
 		}
 	}
 }
