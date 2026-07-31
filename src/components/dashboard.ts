@@ -234,7 +234,8 @@ export class Dashboard extends HTMLElementComponent {
 				type: formData.type,
 				frontmatterField: formData.frontmatterField,
 				unit: formData.unit,
-				target: formData.target
+				target: formData.target,
+				visualization: formData.visualization
 			});
 
 			this.habits.push(newHabit);
@@ -263,7 +264,8 @@ export class Dashboard extends HTMLElementComponent {
 				type: habit.type,
 				frontmatterField: habit.frontmatterField,
 				unit: habit.unit,
-				target: habit.target
+				target: habit.target,
+				visualization: habit.visualization
 			}
 		);
 		modal.open();
@@ -277,7 +279,8 @@ export class Dashboard extends HTMLElementComponent {
 				type: formData.type,
 				frontmatterField: formData.frontmatterField,
 				unit: formData.unit,
-				target: formData.target
+				target: formData.target,
+				visualization: formData.visualization
 			});
 
 			await this.loadHabits();
@@ -302,7 +305,8 @@ export class Dashboard extends HTMLElementComponent {
 				type: habit.type,
 				frontmatterField: `${habit.frontmatterField}_copy`,
 				unit: habit.unit,
-				target: habit.target
+				target: habit.target,
+				visualization: habit.visualization
 			});
 
 			this.habits.push(newHabit);

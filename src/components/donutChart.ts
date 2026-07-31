@@ -20,7 +20,7 @@ export class DonutChart {
 	/**
 	 * Renders the donut chart with the given progress (0-1)
 	 */
-	render(progress: number): HTMLElement {
+	render(progress: number, isExceeded: boolean = false): HTMLElement {
 		this.container.empty();
 
 		const normalizedProgress = Math.min(Math.max(progress, 0), 1);
@@ -55,9 +55,19 @@ export class DonutChart {
 		progressCircle.setAttribute("stroke-linecap", "round");
 		progressCircle.setAttribute("stroke-dasharray", circumference.toString());
 		progressCircle.setAttribute("stroke-dashoffset", strokeDashoffset.toString());
-		progressCircle.style.cssText = `
-			transition: stroke-dashoffset 0.3s ease;
-		`;
+		
+		// Use thin ring style when exceeded
+		if (isExceeded) {
+			progressCircle.setAttribute("stroke-width", "2");
+			progressCircle.style.cssText = `
+				transition: stroke-dashoffset 0.3s ease;
+				opacity: 0.7;
+			`;
+		} else {
+			progressCircle.style.cssText = `
+				transition: stroke-dashoffset 0.3s ease;
+			`;
+		}
 
 		svg.appendChild(backgroundCircle);
 		svg.appendChild(progressCircle);

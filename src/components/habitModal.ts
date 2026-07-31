@@ -1,5 +1,5 @@
 import { App, Modal, Setting } from "obsidian";
-import { HabitType } from "../types/habitTypes";
+import { HabitType, Visualization } from "../types/habitTypes";
 import { HabitDataManager } from "../handlers/habitDataManager";
 
 export interface HabitFormData {
@@ -9,6 +9,7 @@ export interface HabitFormData {
 	frontmatterField: string;
 	unit?: string;
 	target?: number;
+	visualization?: Visualization;
 }
 
 /**
@@ -19,6 +20,7 @@ export class HabitModal extends Modal {
 	private onSubmit: (data: HabitFormData) => void;
 	private validationErrors: string[] = [];
 	private numericFieldsContainer?: HTMLElement;
+	private visualizationContainer?: HTMLElement;
 
 	constructor(
 		app: App,
@@ -33,7 +35,8 @@ export class HabitModal extends Modal {
 			type: initialData?.type || HabitType.BOOLEAN,
 			frontmatterField: initialData?.frontmatterField || "",
 			unit: initialData?.unit || "",
-			target: initialData?.target
+			target: initialData?.target,
+			visualization: initialData?.visualization || Visualization.DONUT
 		};
 	}
 
@@ -122,6 +125,74 @@ export class HabitModal extends Modal {
 					})
 					.setValue(this.formData.target ? this.formData.target.toString() : "")
 			);
+
+		// Visualization radio buttons
+		this.visualizationContainer = this.numericFieldsContainer.createDiv({
+			cls: "visualization-container"
+		});
+		this.visualizationContainer.style.cssText = `
+			margin-top: 16px;
+			padding-top: 12px;
+			border-top: 1px solid var(--background-modifier-border);
+		`;
+
+		const visualizationLabel = this.visualizationContainer.createEl("div", {
+			text: "Visualization"
+		});
+		visualizationLabel.style.cssText = `
+			font-weight: 500;
+			margin-bottom: 8px;
+			color: var(--text-normal);
+		`;
+
+		const visualizationDesc = this.visualizationContainer.createEl("div", {
+			text: "Choose how to display progress for this habit"
+		});
+		visualizationDesc.style.cssText = `
+			font-size: 12px;
+			color: var(--text-muted);
+			margin-bottom: 12px;
+		`;
+
+		const radioContainer = this.visualizationContainer.createDiv();
+		radioContainer.style.cssText = `
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		`;
+
+		const visualizationOptions = [
+			{ value: Visualization.DONUT, label: "Donut" },
+			{ value: Visualization.PROGRESS_BAR, label: "Progress Bar" },
+			{ value: Visualization.NONE, label: "None" }
+		];
+
+		visualizationOptions.forEach(option => {
+			const radioRow = radioContainer.createDiv();
+			radioRow.style.cssText = `
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			`;
+
+			const radio = document.createElement("input");
+			radio.type = "radio";
+			radio.name = "visualization";
+			radio.value = option.value;
+			radio.checked = this.formData.visualization === option.value;
+			radio.addEventListener("change", () => {
+				this.formData.visualization = option.value as Visualization;
+			});
+			radioRow.appendChild(radio);
+
+			const label = radioRow.createEl("label", {
+				text: option.label
+			});
+			label.style.cssText = `
+				cursor: pointer;
+				color: var(--text-normal);
+			`;
+		});
 
 		// Frontmatter Field
 		new Setting(contentEl)

@@ -21,6 +21,15 @@ export enum DateRangeFilter {
 }
 
 /**
+ * Visualization options for numeric habits
+ */
+export enum Visualization {
+	DONUT = "donut",
+	PROGRESS_BAR = "progress_bar",
+	NONE = "none"
+}
+
+/**
  * View mode options
  */
 export enum ViewMode {
@@ -40,6 +49,7 @@ export interface Habit {
 	createdAt: string;
 	unit?: string; // For numeric habits (e.g., "minutes", "pages")
 	target?: number; // For numeric habits (e.g., 10)
+	visualization?: Visualization; // For numeric habits visualization
 }
 
 /**

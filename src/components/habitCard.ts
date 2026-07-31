@@ -1,7 +1,8 @@
 import { HTMLElementComponent } from "./htmlElementComponent";
-import { Habit, ViewMode } from "../types/habitTypes";
+import { Habit, ViewMode, Visualization } from "../types/habitTypes";
 import { HabitMenu } from "./habitMenu";
 import { DonutChart } from "./donutChart";
+import { ProgressBar } from "./progressBar";
 
 export interface HabitCardProps {
 	habit: Habit;
@@ -198,8 +199,9 @@ export class HabitCard extends HTMLElementComponent {
 			const value = this.props.currentValue as number;
 			const target = this.props.habit.target;
 			const unit = this.props.habit.unit || "";
+			const visualization = this.props.habit.visualization || Visualization.DONUT;
 			
-			// Create display based on whether target is set
+			// Create display based on visualization setting
 			const progressText = document.createElement("div");
 			progressText.style.cssText = `
 				margin-left: 8px;
@@ -209,24 +211,45 @@ export class HabitCard extends HTMLElementComponent {
 			`;
 			
 			if (target) {
-				// Target is set - show progress with donut chart
-				const progress = Math.min(value / target, 1);
-				const donutChart = new DonutChart(32, 3);
-				const chartElement = donutChart.render(progress);
+				// Target is set
+				const extra = value > target ? value - target : 0;
+				const displayValue = extra > 0 ? target : value;
+				const progress = Math.min(displayValue / target, 1);
+				const isExceeded = extra > 0;
 				
-				progressText.textContent = `${value}/${target} ${unit}`;
+				// Add visualization based on setting
+				if (visualization === Visualization.DONUT) {
+					const donutChart = new DonutChart(32, 3);
+					const chartElement = donutChart.render(progress, isExceeded);
+					statusContainer.appendChild(chartElement);
+				} else if (visualization === Visualization.PROGRESS_BAR) {
+					const progressBar = new ProgressBar(80, 4);
+					const barElement = progressBar.render(progress);
+					statusContainer.appendChild(barElement);
+				}
+				
+				// Display text with extra amount if exceeded
+				if (extra > 0) {
+					progressText.textContent = `${target}/${target} ${unit} +${extra}`;
+				} else {
+					progressText.textContent = `${value}/${target} ${unit}`;
+				}
 				
 				statusContainer.style.cssText = `
 					display: flex;
 					align-items: center;
 				`;
-				
-				statusContainer.appendChild(chartElement);
-				statusContainer.appendChild(progressText);
 			} else {
-				// No target - show just value and unit with full donut
-				const donutChart = new DonutChart(32, 3);
-				const chartElement = donutChart.render(1); // Always 100% complete
+				// No target - show just value and unit
+				if (visualization === Visualization.DONUT) {
+					const donutChart = new DonutChart(32, 3);
+					const chartElement = donutChart.render(1); // Always 100% complete
+					statusContainer.appendChild(chartElement);
+				} else if (visualization === Visualization.PROGRESS_BAR) {
+					const progressBar = new ProgressBar(80, 4);
+					const barElement = progressBar.render(1); // Always 100% complete
+					statusContainer.appendChild(barElement);
+				}
 				
 				progressText.textContent = `${value} ${unit}`;
 				
@@ -234,10 +257,9 @@ export class HabitCard extends HTMLElementComponent {
 					display: flex;
 					align-items: center;
 				`;
-				
-				statusContainer.appendChild(chartElement);
-				statusContainer.appendChild(progressText);
 			}
+			
+			statusContainer.appendChild(progressText);
 		}
 
 		return statusContainer;
