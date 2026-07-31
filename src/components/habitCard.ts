@@ -83,7 +83,7 @@ export class HabitCard extends HTMLElementComponent {
 			color: var(--text-muted);
 			font-size: 20px;
 			cursor: pointer;
-			padding: 4px 8px;
+			padding: 4px 8px 4px 12px;
 			border-radius: 4px;
 			transition: color 0.2s, background-color 0.2s;
 			z-index: 10;

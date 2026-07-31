@@ -17,20 +17,20 @@ export class DateNavigator {
 		navigator.style.cssText = `
 			display: flex;
 			align-items: center;
-			gap: 12px;
+			gap: 8px;
 			padding: 0;
 		`;
 
 		// Left arrow button
 		const leftButton = document.createElement("button");
-		leftButton.innerHTML = "←";
+		leftButton.innerHTML = "<";
 		leftButton.style.cssText = `
 			background: none;
 			border: none;
 			color: var(--text-muted);
 			font-size: 16px;
 			cursor: pointer;
-			padding: 4px 8px;
+			padding: 4px 6px;
 			transition: color 0.2s;
 			line-height: 1;
 		`;
@@ -72,14 +72,14 @@ export class DateNavigator {
 
 		// Right arrow button
 		const rightButton = document.createElement("button");
-		rightButton.innerHTML = "→";
+		rightButton.innerHTML = ">";
 		rightButton.style.cssText = `
 			background: none;
 			border: none;
 			color: var(--text-muted);
 			font-size: 16px;
 			cursor: pointer;
-			padding: 4px 8px;
+			padding: 4px 6px;
 			transition: color 0.2s;
 			line-height: 1;
 		`;
@@ -142,21 +142,25 @@ export class DateNavigator {
 	}
 
 	private openDatePicker(event: MouseEvent, button: HTMLElement): void {
-		// Create a simple date picker using HTML5 input type="date"
+		// Create a visible date input positioned below the button
 		const dateInput = document.createElement("input");
 		dateInput.type = "date";
 		dateInput.style.cssText = `
 			position: absolute;
-			opacity: 0;
-			pointer-events: none;
-			width: 1px;
-			height: 1px;
+			opacity: 0.01;
+			pointer-events: auto;
+			width: 200px;
+			height: 32px;
+			z-index: 1000;
 		`;
 		
-		// Position the input near the button for better picker positioning
+		// Position the input directly below the button
 		const rect = button.getBoundingClientRect();
-		dateInput.style.left = `${rect.left}px`;
-		dateInput.style.top = `${rect.bottom + 2}px`;
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+		
+		dateInput.style.left = `${rect.left + scrollLeft}px`;
+		dateInput.style.top = `${rect.bottom + scrollTop + 2}px`;
 		
 		// Format date for input (YYYY-MM-DD)
 		const year = this.currentDate.getFullYear();
@@ -165,6 +169,10 @@ export class DateNavigator {
 		dateInput.value = `${year}-${month}-${day}`;
 		
 		document.body.appendChild(dateInput);
+		
+		// Focus and show picker immediately
+		dateInput.focus();
+		dateInput.showPicker();
 		
 		dateInput.addEventListener("change", (e) => {
 			const target = e.target as HTMLInputElement;
@@ -175,12 +183,18 @@ export class DateNavigator {
 			document.body.removeChild(dateInput);
 		});
 		
+		dateInput.addEventListener("blur", () => {
+			// Remove input when focus is lost (after a small delay to allow selection)
+			setTimeout(() => {
+				if (document.body.contains(dateInput)) {
+					document.body.removeChild(dateInput);
+				}
+			}, 200);
+		});
+		
 		dateInput.addEventListener("cancel", () => {
 			document.body.removeChild(dateInput);
 		});
-		
-		// Trigger the date picker
-		dateInput.showPicker();
 	}
 
 	/**

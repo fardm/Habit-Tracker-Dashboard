@@ -51,29 +51,51 @@ export class Dashboard extends HTMLElementComponent {
 		controlsRow.style.cssText = `
 			display: flex;
 			align-items: center;
+			justify-content: space-between;
 			margin-bottom: 20px;
-			flex-wrap: wrap;
-			gap: 12px;
+			gap: 16px;
 		`;
 
-		// Add Habit button
+		// Left side: Add Habit button
+		const leftControls = document.createElement("div");
+		leftControls.style.cssText = `
+			display: flex;
+			align-items: center;
+		`;
+		
 		const addHabitButton = new AddHabitButton(() => {
 			this.showAddHabitModal();
 		});
-		controlsRow.appendChild(addHabitButton.render());
+		leftControls.appendChild(addHabitButton.render());
 
-		// Date navigator
+		// Center: Date navigator
+		const centerControls = document.createElement("div");
+		centerControls.style.cssText = `
+			display: flex;
+			align-items: center;
+		`;
+		
 		this.dateNavigator = new DateNavigator(this.currentDate, (date) => {
 			this.handleDateChange(date);
 		});
-		controlsRow.appendChild(this.dateNavigator.render());
+		centerControls.appendChild(this.dateNavigator.render());
 
-		// View mode switcher
+		// Right side: View mode switcher
+		const rightControls = document.createElement("div");
+		rightControls.style.cssText = `
+			display: flex;
+			align-items: center;
+		`;
+		
 		this.viewModeSwitcher = new ViewModeSwitcher({
 			currentMode: this.currentViewMode,
 			onModeChange: (mode) => this.handleViewModeChange(mode)
 		});
-		controlsRow.appendChild(this.viewModeSwitcher.render());
+		rightControls.appendChild(this.viewModeSwitcher.render());
+
+		controlsRow.appendChild(leftControls);
+		controlsRow.appendChild(centerControls);
+		controlsRow.appendChild(rightControls);
 
 		dashboard.appendChild(controlsRow);
 
