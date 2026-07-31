@@ -138,7 +138,9 @@ export class HabitCard extends HTMLElementComponent {
 		});
 
 		menuButton.addEventListener("click", (e) => {
+			e.preventDefault();
 			e.stopPropagation();
+			e.stopImmediatePropagation();
 			this.showMenu(e, card);
 		});
 
@@ -179,11 +181,17 @@ export class HabitCard extends HTMLElementComponent {
 			`;
 		} else if (this.props.habit.type === "boolean") {
 			const completed = this.props.currentValue as boolean;
-			statusContainer.textContent = completed ? "✓ Completed" : "✗ Not completed";
+			// Use SVG icons for better appearance
+			const checkIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>`;
+			const dashedIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
+			
+			statusContainer.innerHTML = completed ? checkIcon : dashedIcon;
 			statusContainer.style.cssText = `
 				font-size: 12px;
-				color: ${completed ? 'var(--text-success)' : 'var(--text-muted)'};
+				color: var(--text-normal);
 				font-weight: 500;
+				display: flex;
+				align-items: center;
 			`;
 		} else {
 			const value = this.props.currentValue as number;

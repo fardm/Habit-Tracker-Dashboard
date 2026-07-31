@@ -116,12 +116,23 @@ export class HabitMenu extends HTMLElementComponent {
 			if (!menu.contains(e.target as Node)) {
 				menu.remove();
 				document.removeEventListener("click", closeMenu);
+				this.props.onClose();
 			}
 		};
 
-		// Delay adding the click listener to avoid immediate closing
+		// Close menu on Escape key
+		const closeOnEscape = (e: KeyboardEvent) => {
+			if (e.key === "Escape") {
+				menu.remove();
+				document.removeEventListener("keydown", closeOnEscape);
+				this.props.onClose();
+			}
+		};
+
+		// Add event listeners
 		setTimeout(() => {
 			document.addEventListener("click", closeMenu);
-		}, 0);
+			document.addEventListener("keydown", closeOnEscape);
+		}, 10);
 	}
 }

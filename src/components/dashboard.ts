@@ -43,25 +43,6 @@ export class Dashboard extends HTMLElementComponent {
 			margin: 0 auto;
 		`;
 
-		// Header
-		const header = document.createElement("div");
-		header.className = "dashboard-header";
-		header.style.cssText = `
-			margin-bottom: 24px;
-		`;
-
-		const title = document.createElement("h2");
-		title.textContent = "Habit Dashboard";
-		title.style.cssText = `
-			margin: 0;
-			font-size: 24px;
-			font-weight: 600;
-			color: var(--text-normal);
-		`;
-
-		header.appendChild(title);
-		dashboard.appendChild(header);
-
 		// Controls row
 		const controlsRow = document.createElement("div");
 		controlsRow.className = "dashboard-controls";
