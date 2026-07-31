@@ -43,6 +43,7 @@ export class HabitCard extends HTMLElementComponent {
 				gap: 12px;
 				transition: border-color 0.2s, box-shadow 0.2s;
 				min-height: 120px;
+				position: relative;
 			`;
 		} else {
 			card.style.cssText = `
@@ -55,6 +56,7 @@ export class HabitCard extends HTMLElementComponent {
 				align-items: center;
 				justify-content: space-between;
 				transition: border-color 0.2s, box-shadow 0.2s;
+				position: relative;
 			`;
 		}
 
@@ -67,6 +69,44 @@ export class HabitCard extends HTMLElementComponent {
 			card.style.borderColor = "var(--background-modifier-border)";
 			card.style.boxShadow = "none";
 		});
+
+		// Menu button - positioned at top-right
+		const menuButton = document.createElement("button");
+		menuButton.className = "habit-menu-btn";
+		menuButton.innerHTML = "⋮";
+		menuButton.style.cssText = `
+			position: absolute;
+			top: 8px;
+			right: 8px;
+			background: none;
+			border: none;
+			color: var(--text-muted);
+			font-size: 20px;
+			cursor: pointer;
+			padding: 4px 8px;
+			border-radius: 4px;
+			transition: color 0.2s, background-color 0.2s;
+			z-index: 10;
+		`;
+
+		menuButton.addEventListener("mouseenter", () => {
+			menuButton.style.color = "var(--text-normal)";
+			menuButton.style.backgroundColor = "var(--background-modifier-hover)";
+		});
+
+		menuButton.addEventListener("mouseleave", () => {
+			menuButton.style.color = "var(--text-muted)";
+			menuButton.style.backgroundColor = "transparent";
+		});
+
+		menuButton.addEventListener("click", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			this.showMenu(e, card);
+		});
+
+		card.appendChild(menuButton);
 
 		// Left side: Emoji and name
 		const leftSide = document.createElement("div");
@@ -102,51 +142,8 @@ export class HabitCard extends HTMLElementComponent {
 		leftSide.appendChild(emoji);
 		leftSide.appendChild(habitInfo);
 
-		// Right side: Status display
-		const rightSide = document.createElement("div");
-		rightSide.style.cssText = `
-			display: flex;
-			align-items: center;
-			gap: 12px;
-		`;
-
-		// Status display with real data
+		// Status display
 		const statusDisplay = this.renderStatusDisplay();
-		rightSide.appendChild(statusDisplay);
-
-		// Menu button
-		const menuButton = document.createElement("button");
-		menuButton.className = "habit-menu-btn";
-		menuButton.innerHTML = "⋮";
-		menuButton.style.cssText = `
-			background: none;
-			border: none;
-			color: var(--text-muted);
-			font-size: 20px;
-			cursor: pointer;
-			padding: 4px 8px;
-			border-radius: 4px;
-			transition: color 0.2s, background-color 0.2s;
-		`;
-
-		menuButton.addEventListener("mouseenter", () => {
-			menuButton.style.color = "var(--text-normal)";
-			menuButton.style.backgroundColor = "var(--background-modifier-hover)";
-		});
-
-		menuButton.addEventListener("mouseleave", () => {
-			menuButton.style.color = "var(--text-muted)";
-			menuButton.style.backgroundColor = "transparent";
-		});
-
-		menuButton.addEventListener("click", (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-			e.stopImmediatePropagation();
-			this.showMenu(e, card);
-		});
-
-		rightSide.appendChild(menuButton);
 
 		if (this.props.viewMode === ViewMode.GRID) {
 			// Grid layout: stack elements vertically
@@ -159,12 +156,12 @@ export class HabitCard extends HTMLElementComponent {
 			`;
 			
 			contentContainer.appendChild(leftSide);
-			contentContainer.appendChild(rightSide);
+			contentContainer.appendChild(statusDisplay);
 			card.appendChild(contentContainer);
 		} else {
 			// List layout: horizontal arrangement
 			card.appendChild(leftSide);
-			card.appendChild(rightSide);
+			card.appendChild(statusDisplay);
 		}
 
 		return card;

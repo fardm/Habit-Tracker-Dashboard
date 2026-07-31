@@ -21,51 +21,59 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 		const container = document.createElement("div");
 		container.className = "view-mode-switcher";
 		container.style.cssText = `
-			display: inline-block;
+			display: flex;
+			align-items: center;
+			gap: 4px;
 		`;
 
-		const label = document.createElement("label");
-		label.textContent = "View:";
-		label.style.cssText = `
-			font-size: 12px;
-			color: var(--text-muted);
-			margin-right: 8px;
-		`;
-
-		const select = document.createElement("select");
-		select.className = "view-mode-select";
-		select.style.cssText = `
-			padding: 6px 12px;
-			border-radius: 4px;
-			border: 1px solid var(--background-modifier-border);
-			background-color: var(--background-secondary);
-			color: var(--text-normal);
-			font-size: 13px;
+		// Grid button
+		const gridButton = document.createElement("button");
+		gridButton.innerHTML = "⊞";
+		gridButton.style.cssText = `
+			background: none;
+			border: none;
+			color: ${this.props.currentMode === ViewMode.GRID ? 'var(--interactive-accent)' : 'var(--text-muted)'};
+			font-size: 16px;
 			cursor: pointer;
+			padding: 4px 8px;
+			transition: color 0.2s;
+			line-height: 1;
 		`;
-
-		const options = [
-			{ value: ViewMode.GRID, label: "Grid" },
-			{ value: ViewMode.LIST, label: "List" }
-		];
-
-		options.forEach(option => {
-			const optionElement = document.createElement("option");
-			optionElement.value = option.value;
-			optionElement.textContent = option.label;
-			if (option.value === this.props.currentMode) {
-				optionElement.selected = true;
-			}
-			select.appendChild(optionElement);
+		gridButton.addEventListener("mouseenter", () => {
+			gridButton.style.color = "var(--text-normal)";
+		});
+		gridButton.addEventListener("mouseleave", () => {
+			gridButton.style.color = this.props.currentMode === ViewMode.GRID ? 'var(--interactive-accent)' : 'var(--text-muted)';
+		});
+		gridButton.addEventListener("click", () => {
+			this.props.onModeChange(ViewMode.GRID);
 		});
 
-		select.addEventListener("change", (e) => {
-			const target = e.target as HTMLSelectElement;
-			this.props.onModeChange(target.value as ViewMode);
+		// List button
+		const listButton = document.createElement("button");
+		listButton.innerHTML = "≣";
+		listButton.style.cssText = `
+			background: none;
+			border: none;
+			color: ${this.props.currentMode === ViewMode.LIST ? 'var(--interactive-accent)' : 'var(--text-muted)'};
+			font-size: 16px;
+			cursor: pointer;
+			padding: 4px 8px;
+			transition: color 0.2s;
+			line-height: 1;
+		`;
+		listButton.addEventListener("mouseenter", () => {
+			listButton.style.color = "var(--text-normal)";
+		});
+		listButton.addEventListener("mouseleave", () => {
+			listButton.style.color = this.props.currentMode === ViewMode.LIST ? 'var(--interactive-accent)' : 'var(--text-muted)';
+		});
+		listButton.addEventListener("click", () => {
+			this.props.onModeChange(ViewMode.LIST);
 		});
 
-		container.appendChild(label);
-		container.appendChild(select);
+		container.appendChild(gridButton);
+		container.appendChild(listButton);
 
 		return container;
 	}

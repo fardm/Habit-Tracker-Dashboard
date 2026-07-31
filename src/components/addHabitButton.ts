@@ -18,20 +18,18 @@ export class AddHabitButton extends HTMLElementComponent {
 		button.innerHTML = "+ Add Habit";
 		button.type = "button";
 
-		// Add basic styling
+		// Minimal modern styling
 		button.style.cssText = `
 			background-color: var(--interactive-accent);
-			color: var(--interactive-accent-text);
+			color: var(--text-on-accent);
 			border: none;
-			padding: 8px 16px;
+			padding: 6px 12px;
 			border-radius: 4px;
 			cursor: pointer;
-			font-size: 14px;
+			font-size: 13px;
 			font-weight: 500;
-			margin-bottom: 20px;
 			transition: background-color 0.2s;
-			position: relative;
-			z-index: 1;
+			line-height: 1;
 		`;
 
 		button.addEventListener("mouseenter", () => {

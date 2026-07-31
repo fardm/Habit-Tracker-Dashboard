@@ -17,30 +17,28 @@ export class DateNavigator {
 		navigator.style.cssText = `
 			display: flex;
 			align-items: center;
-			gap: 8px;
-			padding: 6px 12px;
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 6px;
+			gap: 12px;
+			padding: 0;
 		`;
 
 		// Left arrow button
 		const leftButton = document.createElement("button");
-		leftButton.innerHTML = "‹";
+		leftButton.innerHTML = "←";
 		leftButton.style.cssText = `
 			background: none;
 			border: none;
-			color: var(--text-normal);
-			font-size: 18px;
+			color: var(--text-muted);
+			font-size: 16px;
 			cursor: pointer;
-			padding: 0 4px;
+			padding: 4px 8px;
 			transition: color 0.2s;
+			line-height: 1;
 		`;
 		leftButton.addEventListener("mouseenter", () => {
-			leftButton.style.color = "var(--interactive-accent)";
+			leftButton.style.color = "var(--text-normal)";
 		});
 		leftButton.addEventListener("mouseleave", () => {
-			leftButton.style.color = "var(--text-normal)";
+			leftButton.style.color = "var(--text-muted)";
 		});
 		leftButton.addEventListener("click", () => {
 			this.previousDay();
@@ -56,10 +54,11 @@ export class DateNavigator {
 			font-size: 13px;
 			font-weight: 500;
 			cursor: pointer;
-			padding: 0 8px;
+			padding: 4px 8px;
 			transition: color 0.2s;
 			min-width: 80px;
 			text-align: center;
+			line-height: 1;
 		`;
 		dateDisplay.addEventListener("mouseenter", () => {
 			dateDisplay.style.color = "var(--interactive-accent)";
@@ -67,27 +66,28 @@ export class DateNavigator {
 		dateDisplay.addEventListener("mouseleave", () => {
 			dateDisplay.style.color = "var(--text-normal)";
 		});
-		dateDisplay.addEventListener("click", () => {
-			this.openDatePicker(dateDisplay);
+		dateDisplay.addEventListener("click", (e) => {
+			this.openDatePicker(e, dateDisplay);
 		});
 
 		// Right arrow button
 		const rightButton = document.createElement("button");
-		rightButton.innerHTML = "›";
+		rightButton.innerHTML = "→";
 		rightButton.style.cssText = `
 			background: none;
 			border: none;
-			color: var(--text-normal);
-			font-size: 18px;
+			color: var(--text-muted);
+			font-size: 16px;
 			cursor: pointer;
-			padding: 0 4px;
+			padding: 4px 8px;
 			transition: color 0.2s;
+			line-height: 1;
 		`;
 		rightButton.addEventListener("mouseenter", () => {
-			rightButton.style.color = "var(--interactive-accent)";
+			rightButton.style.color = "var(--text-normal)";
 		});
 		rightButton.addEventListener("mouseleave", () => {
-			rightButton.style.color = "var(--text-normal)";
+			rightButton.style.color = "var(--text-muted)";
 		});
 		rightButton.addEventListener("click", () => {
 			this.nextDay();
@@ -141,7 +141,7 @@ export class DateNavigator {
 		}
 	}
 
-	private openDatePicker(button: HTMLElement): void {
+	private openDatePicker(event: MouseEvent, button: HTMLElement): void {
 		// Create a simple date picker using HTML5 input type="date"
 		const dateInput = document.createElement("input");
 		dateInput.type = "date";
@@ -149,7 +149,14 @@ export class DateNavigator {
 			position: absolute;
 			opacity: 0;
 			pointer-events: none;
+			width: 1px;
+			height: 1px;
 		`;
+		
+		// Position the input near the button for better picker positioning
+		const rect = button.getBoundingClientRect();
+		dateInput.style.left = `${rect.left}px`;
+		dateInput.style.top = `${rect.bottom + 2}px`;
 		
 		// Format date for input (YYYY-MM-DD)
 		const year = this.currentDate.getFullYear();
