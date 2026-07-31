@@ -21,8 +21,10 @@ export class Dashboard extends HTMLElementComponent {
 	private habits: Habit[] = [];
 	private habitValues: Map<string, boolean | number> = new Map();
 	private container?: HTMLElement;
-	private currentFilter: DateRangeFilterEnum = DateRangeFilterEnum.YESTERDAY;
+	private currentFilter: DateRangeFilterEnum = DateRangeFilterEnum.TODAY;
 	private currentViewMode: ViewMode = ViewMode.GRID;
+	private dateRangeFilter?: DateRangeFilter;
+	private viewModeSwitcher?: ViewModeSwitcher;
 
 	constructor(app: App, file: TFile) {
 		super();
@@ -61,18 +63,18 @@ export class Dashboard extends HTMLElementComponent {
 		controlsRow.appendChild(addHabitButton.render());
 
 		// Date range filter
-		const dateRangeFilter = new DateRangeFilter({
+		this.dateRangeFilter = new DateRangeFilter({
 			currentFilter: this.currentFilter,
 			onFilterChange: (filter) => this.handleFilterChange(filter)
 		});
-		controlsRow.appendChild(dateRangeFilter.render());
+		controlsRow.appendChild(this.dateRangeFilter.render());
 
 		// View mode switcher
-		const viewModeSwitcher = new ViewModeSwitcher({
+		this.viewModeSwitcher = new ViewModeSwitcher({
 			currentMode: this.currentViewMode,
 			onModeChange: (mode) => this.handleViewModeChange(mode)
 		});
-		controlsRow.appendChild(viewModeSwitcher.render());
+		controlsRow.appendChild(this.viewModeSwitcher.render());
 
 		dashboard.appendChild(controlsRow);
 
@@ -127,6 +129,20 @@ export class Dashboard extends HTMLElementComponent {
 			if (data.settings) {
 				this.currentFilter = data.settings.dateRangeFilter || this.currentFilter;
 				this.currentViewMode = data.settings.viewMode || this.currentViewMode;
+				
+				// Update the filter and view mode components if they exist
+				if (this.dateRangeFilter) {
+					this.dateRangeFilter = new DateRangeFilter({
+						currentFilter: this.currentFilter,
+						onFilterChange: (filter) => this.handleFilterChange(filter)
+					});
+				}
+				if (this.viewModeSwitcher) {
+					this.viewModeSwitcher = new ViewModeSwitcher({
+						currentMode: this.currentViewMode,
+						onModeChange: (mode) => this.handleViewModeChange(mode)
+					});
+				}
 			}
 		} catch (error) {
 			console.error("Error loading user settings:", error);
@@ -343,9 +359,19 @@ export class Dashboard extends HTMLElementComponent {
 	 */
 	async refresh(): Promise<void> {
 		await this.loadHabits();
+		await this.loadUserSettings();
 		await this.loadHabitValues();
+		
+		// Re-render controls with updated settings
 		if (this.container) {
-			this.renderHabits(this.container);
+			const dashboard = this.container.parentElement;
+			if (dashboard) {
+				dashboard.empty();
+				const newDashboard = this.render();
+				dashboard.appendChild(newDashboard);
+				this.container = newDashboard.querySelector('.habits-container') as HTMLElement;
+				this.renderHabits(this.container);
+			}
 		}
 	}
 }

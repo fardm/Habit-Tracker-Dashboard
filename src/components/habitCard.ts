@@ -196,15 +196,10 @@ export class HabitCard extends HTMLElementComponent {
 			`;
 		} else {
 			const value = this.props.currentValue as number;
-			const target = this.props.habit.target || 1;
+			const target = this.props.habit.target;
 			const unit = this.props.habit.unit || "";
-			const progress = Math.min(value / target, 1);
 			
-			// Create donut chart
-			const donutChart = new DonutChart(32, 3);
-			const chartElement = donutChart.render(progress);
-			
-			// Create progress text
+			// Create display based on whether target is set
 			const progressText = document.createElement("div");
 			progressText.style.cssText = `
 				margin-left: 8px;
@@ -212,15 +207,37 @@ export class HabitCard extends HTMLElementComponent {
 				color: var(--text-normal);
 				font-weight: 500;
 			`;
-			progressText.textContent = `${value}/${target} ${unit}`;
 			
-			statusContainer.style.cssText = `
-				display: flex;
-				align-items: center;
-			`;
-			
-			statusContainer.appendChild(chartElement);
-			statusContainer.appendChild(progressText);
+			if (target) {
+				// Target is set - show progress with donut chart
+				const progress = Math.min(value / target, 1);
+				const donutChart = new DonutChart(32, 3);
+				const chartElement = donutChart.render(progress);
+				
+				progressText.textContent = `${value}/${target} ${unit}`;
+				
+				statusContainer.style.cssText = `
+					display: flex;
+					align-items: center;
+				`;
+				
+				statusContainer.appendChild(chartElement);
+				statusContainer.appendChild(progressText);
+			} else {
+				// No target - show just value and unit with full donut
+				const donutChart = new DonutChart(32, 3);
+				const chartElement = donutChart.render(1); // Always 100% complete
+				
+				progressText.textContent = `${value} ${unit}`;
+				
+				statusContainer.style.cssText = `
+					display: flex;
+					align-items: center;
+				`;
+				
+				statusContainer.appendChild(chartElement);
+				statusContainer.appendChild(progressText);
+			}
 		}
 
 		return statusContainer;
