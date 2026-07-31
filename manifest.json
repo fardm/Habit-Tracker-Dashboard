@@ -1,0 +1,10 @@
+{
+  "id": "habit-tracker",
+  "name": "Habit Tracker",
+  "version": "0.0.1",
+  "minAppVersion": "0.15.0",
+  "description": "Interactive Habit Tracker plugin for Obsidian",
+  "author": "",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}
