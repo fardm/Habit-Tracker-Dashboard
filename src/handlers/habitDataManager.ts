@@ -23,7 +23,7 @@ export class HabitDataManager {
 			
 			if (!content || content.trim() === "") {
 				// Return empty data structure for new files
-				return { habits: [] };
+				return { habits: [], settings: {} };
 			}
 
 			// Parse the file content
@@ -36,10 +36,15 @@ export class HabitDataManager {
 				data.habits = [];
 			}
 
+			// Ensure settings object exists
+			if (!data.settings) {
+				data.settings = {};
+			}
+
 			return data;
 		} catch (error) {
 			console.error("Error reading tracker data:", error);
-			return { habits: [] };
+			return { habits: [], settings: {} };
 		}
 	}
 
@@ -136,6 +141,13 @@ export class HabitDataManager {
 
 		if (!habit.frontmatterField || habit.frontmatterField.trim() === "") {
 			errors.push("Frontmatter field is required");
+		}
+
+		// Validate numeric habit specific fields
+		if (habit.type === HabitType.NUMERIC) {
+			if (habit.target !== undefined && habit.target <= 0) {
+				errors.push("Target must be greater than 0 for numeric habits");
+			}
 		}
 
 		return {

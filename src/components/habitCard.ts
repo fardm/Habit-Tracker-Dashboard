@@ -1,6 +1,7 @@
 import { HTMLElementComponent } from "./htmlElementComponent";
 import { Habit, ViewMode } from "../types/habitTypes";
 import { HabitMenu } from "./habitMenu";
+import { DonutChart } from "./donutChart";
 
 export interface HabitCardProps {
 	habit: Habit;
@@ -195,12 +196,31 @@ export class HabitCard extends HTMLElementComponent {
 			`;
 		} else {
 			const value = this.props.currentValue as number;
-			statusContainer.textContent = `Value: ${value}`;
-			statusContainer.style.cssText = `
+			const target = this.props.habit.target || 1;
+			const unit = this.props.habit.unit || "";
+			const progress = Math.min(value / target, 1);
+			
+			// Create donut chart
+			const donutChart = new DonutChart(32, 3);
+			const chartElement = donutChart.render(progress);
+			
+			// Create progress text
+			const progressText = document.createElement("div");
+			progressText.style.cssText = `
+				margin-left: 8px;
 				font-size: 12px;
 				color: var(--text-normal);
 				font-weight: 500;
 			`;
+			progressText.textContent = `${value}/${target} ${unit}`;
+			
+			statusContainer.style.cssText = `
+				display: flex;
+				align-items: center;
+			`;
+			
+			statusContainer.appendChild(chartElement);
+			statusContainer.appendChild(progressText);
 		}
 
 		return statusContainer;

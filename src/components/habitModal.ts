@@ -7,6 +7,8 @@ export interface HabitFormData {
 	emoji: string;
 	type: HabitType;
 	frontmatterField: string;
+	unit?: string;
+	target?: number;
 }
 
 /**
@@ -16,6 +18,7 @@ export class HabitModal extends Modal {
 	private formData: HabitFormData;
 	private onSubmit: (data: HabitFormData) => void;
 	private validationErrors: string[] = [];
+	private numericFieldsContainer?: HTMLElement;
 
 	constructor(
 		app: App,
@@ -28,7 +31,9 @@ export class HabitModal extends Modal {
 			name: initialData?.name || "",
 			emoji: initialData?.emoji || "",
 			type: initialData?.type || HabitType.BOOLEAN,
-			frontmatterField: initialData?.frontmatterField || ""
+			frontmatterField: initialData?.frontmatterField || "",
+			unit: initialData?.unit || "",
+			target: initialData?.target
 		};
 	}
 
@@ -76,7 +81,46 @@ export class HabitModal extends Modal {
 					.setValue(this.formData.type)
 					.onChange((value) => {
 						this.formData.type = value as HabitType;
+						this.updateNumericFieldsVisibility();
 					})
+			);
+
+		// Numeric fields container (shown only for numeric habits)
+		this.numericFieldsContainer = contentEl.createDiv({
+			cls: "numeric-fields-container"
+		});
+		this.numericFieldsContainer.style.cssText = `
+			margin-top: 16px;
+			padding: 12px;
+			background-color: var(--background-secondary);
+			border-radius: 4px;
+			border: 1px solid var(--background-modifier-border);
+		`;
+
+		// Unit field
+		new Setting(this.numericFieldsContainer)
+			.setName("Unit")
+			.setDesc("The unit for tracking (e.g., minutes, pages, pomodoro)")
+			.addText((text) =>
+				text
+					.setPlaceholder("minutes")
+					.onChange((value) => {
+						this.formData.unit = value;
+					})
+					.setValue(this.formData.unit || "")
+			);
+
+		// Target field
+		new Setting(this.numericFieldsContainer)
+			.setName("Target")
+			.setDesc("The target value to achieve (e.g., 10)")
+			.addText((text) =>
+				text
+					.setPlaceholder("10")
+					.onChange((value) => {
+						this.formData.target = value ? parseFloat(value) : undefined;
+					})
+					.setValue(this.formData.target ? this.formData.target.toString() : "")
 			);
 
 		// Frontmatter Field
@@ -125,6 +169,19 @@ export class HabitModal extends Modal {
 						}
 					})
 			);
+
+		// Initial visibility update
+		this.updateNumericFieldsVisibility();
+	}
+
+	private updateNumericFieldsVisibility(): void {
+		if (this.numericFieldsContainer) {
+			if (this.formData.type === HabitType.NUMERIC) {
+				this.numericFieldsContainer.style.display = "block";
+			} else {
+				this.numericFieldsContainer.style.display = "none";
+			}
+		}
 	}
 
 	private updateFrontmatterField(): void {

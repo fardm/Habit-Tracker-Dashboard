@@ -114,9 +114,35 @@ export class Dashboard extends HTMLElementComponent {
 
 	async initialize(): Promise<void> {
 		await this.loadHabits();
+		await this.loadUserSettings();
 		await this.loadHabitValues();
 		if (this.container) {
 			this.renderHabits(this.container);
+		}
+	}
+
+	private async loadUserSettings(): Promise<void> {
+		try {
+			const data = await this.dataManager.readTrackerData();
+			if (data.settings) {
+				this.currentFilter = data.settings.dateRangeFilter || this.currentFilter;
+				this.currentViewMode = data.settings.viewMode || this.currentViewMode;
+			}
+		} catch (error) {
+			console.error("Error loading user settings:", error);
+		}
+	}
+
+	private async saveUserSettings(): Promise<void> {
+		try {
+			const data = await this.dataManager.readTrackerData();
+			data.settings = {
+				dateRangeFilter: this.currentFilter,
+				viewMode: this.currentViewMode
+			};
+			await this.dataManager.writeTrackerData(data);
+		} catch (error) {
+			console.error("Error saving user settings:", error);
 		}
 	}
 
@@ -194,7 +220,9 @@ export class Dashboard extends HTMLElementComponent {
 				name: formData.name,
 				emoji: formData.emoji,
 				type: formData.type,
-				frontmatterField: formData.frontmatterField
+				frontmatterField: formData.frontmatterField,
+				unit: formData.unit,
+				target: formData.target
 			});
 
 			this.habits.push(newHabit);
@@ -221,7 +249,9 @@ export class Dashboard extends HTMLElementComponent {
 				name: habit.name,
 				emoji: habit.emoji,
 				type: habit.type,
-				frontmatterField: habit.frontmatterField
+				frontmatterField: habit.frontmatterField,
+				unit: habit.unit,
+				target: habit.target
 			}
 		);
 		modal.open();
@@ -233,7 +263,9 @@ export class Dashboard extends HTMLElementComponent {
 				name: formData.name,
 				emoji: formData.emoji,
 				type: formData.type,
-				frontmatterField: formData.frontmatterField
+				frontmatterField: formData.frontmatterField,
+				unit: formData.unit,
+				target: formData.target
 			});
 
 			await this.loadHabits();
@@ -256,7 +288,9 @@ export class Dashboard extends HTMLElementComponent {
 				name: `${habit.name} (copy)`,
 				emoji: habit.emoji,
 				type: habit.type,
-				frontmatterField: `${habit.frontmatterField}_copy`
+				frontmatterField: `${habit.frontmatterField}_copy`,
+				unit: habit.unit,
+				target: habit.target
 			});
 
 			this.habits.push(newHabit);
@@ -286,6 +320,7 @@ export class Dashboard extends HTMLElementComponent {
 
 	private async handleFilterChange(filter: DateRangeFilterEnum): Promise<void> {
 		this.currentFilter = filter;
+		await this.saveUserSettings();
 		await this.loadHabitValues();
 		
 		if (this.container) {
@@ -293,8 +328,9 @@ export class Dashboard extends HTMLElementComponent {
 		}
 	}
 
-	private handleViewModeChange(mode: ViewMode): void {
+	private async handleViewModeChange(mode: ViewMode): Promise<void> {
 		this.currentViewMode = mode;
+		await this.saveUserSettings();
 		
 		if (this.container) {
 			this.updateContainerLayout(this.container);

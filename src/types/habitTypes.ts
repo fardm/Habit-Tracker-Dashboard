@@ -38,6 +38,8 @@ export interface Habit {
 	type: HabitType;
 	frontmatterField: string;
 	createdAt: string;
+	unit?: string; // For numeric habits (e.g., "minutes", "pages")
+	target?: number; // For numeric habits (e.g., 10)
 }
 
 /**

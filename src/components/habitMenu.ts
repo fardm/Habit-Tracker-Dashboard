@@ -1,4 +1,5 @@
 import { HTMLElementComponent } from "./htmlElementComponent";
+import { MenuManager } from "./menuManager";
 
 export interface HabitMenuProps {
 	onEdit: () => void;
@@ -76,7 +77,11 @@ export class HabitMenu extends HTMLElementComponent {
 	 * Shows the menu at a specific position
 	 */
 	show(buttonRect: DOMRect, container: HTMLElement): void {
-		const menu = this.render();
+		// Close any existing menu first
+		const menuManager = MenuManager.getInstance();
+		menuManager.setActiveMenu(this.render());
+		
+		const menu = this.menuElement || this.render();
 		
 		// Calculate position to appear to the left of the button
 		const menuWidth = 150; // min-width from CSS
@@ -116,6 +121,7 @@ export class HabitMenu extends HTMLElementComponent {
 			if (!menu.contains(e.target as Node)) {
 				menu.remove();
 				document.removeEventListener("click", closeMenu);
+				menuManager.clearActiveMenu();
 				this.props.onClose();
 			}
 		};
@@ -125,6 +131,7 @@ export class HabitMenu extends HTMLElementComponent {
 			if (e.key === "Escape") {
 				menu.remove();
 				document.removeEventListener("keydown", closeOnEscape);
+				menuManager.clearActiveMenu();
 				this.props.onClose();
 			}
 		};
