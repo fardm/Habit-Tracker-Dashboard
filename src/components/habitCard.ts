@@ -201,13 +201,30 @@ export class HabitCard extends HTMLElementComponent {
 			const unit = this.props.habit.unit || "";
 			const visualization = this.props.habit.visualization || Visualization.DONUT;
 			
-			// Create display based on visualization setting
+			// Create vertical layout container
+			const verticalContainer = document.createElement("div");
+			verticalContainer.style.cssText = `
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 8px;
+			`;
+			
+			// Visualization container
+			const visualizationContainer = document.createElement("div");
+			visualizationContainer.style.cssText = `
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			`;
+			
+			// Progress text
 			const progressText = document.createElement("div");
 			progressText.style.cssText = `
-				margin-left: 8px;
 				font-size: 12px;
 				color: var(--text-normal);
 				font-weight: 500;
+				text-align: center;
 			`;
 			
 			if (target) {
@@ -220,46 +237,74 @@ export class HabitCard extends HTMLElementComponent {
 				// Add visualization based on setting
 				if (visualization === Visualization.DONUT) {
 					const donutChart = new DonutChart(32, 3);
-					const chartElement = donutChart.render(progress, isExceeded);
-					statusContainer.appendChild(chartElement);
+					const chartElement = donutChart.render(progress);
+					visualizationContainer.appendChild(chartElement);
+					
+					// Add thin ring for exceeded targets
+					if (isExceeded) {
+						const thinRing = document.createElement("div");
+						thinRing.style.cssText = `
+							position: absolute;
+							width: 36px;
+							height: 36px;
+							border: 1px solid var(--interactive-accent);
+							border-radius: 50%;
+							opacity: 0.3;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+						`;
+						visualizationContainer.style.position = "relative";
+						visualizationContainer.appendChild(thinRing);
+					}
 				} else if (visualization === Visualization.PROGRESS_BAR) {
 					const progressBar = new ProgressBar(80, 4);
 					const barElement = progressBar.render(progress);
-					statusContainer.appendChild(barElement);
+					visualizationContainer.appendChild(barElement);
+					
+					// Add thin ring for exceeded targets (around the bar)
+					if (isExceeded) {
+						const thinRing = document.createElement("div");
+						thinRing.style.cssText = `
+							position: absolute;
+							width: 84px;
+							height: 8px;
+							border: 1px solid var(--interactive-accent);
+							border-radius: 4px;
+							opacity: 0.3;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+						`;
+						visualizationContainer.style.position = "relative";
+						visualizationContainer.appendChild(thinRing);
+					}
 				}
 				
 				// Display text with extra amount if exceeded
 				if (extra > 0) {
-					progressText.textContent = `${target}/${target} ${unit} +${extra}`;
+					progressText.textContent = `${target}/${target} ${unit} (+${extra})`;
 				} else {
 					progressText.textContent = `${value}/${target} ${unit}`;
 				}
-				
-				statusContainer.style.cssText = `
-					display: flex;
-					align-items: center;
-				`;
 			} else {
 				// No target - show just value and unit
 				if (visualization === Visualization.DONUT) {
 					const donutChart = new DonutChart(32, 3);
 					const chartElement = donutChart.render(1); // Always 100% complete
-					statusContainer.appendChild(chartElement);
+					visualizationContainer.appendChild(chartElement);
 				} else if (visualization === Visualization.PROGRESS_BAR) {
 					const progressBar = new ProgressBar(80, 4);
 					const barElement = progressBar.render(1); // Always 100% complete
-					statusContainer.appendChild(barElement);
+					visualizationContainer.appendChild(barElement);
 				}
 				
 				progressText.textContent = `${value} ${unit}`;
-				
-				statusContainer.style.cssText = `
-					display: flex;
-					align-items: center;
-				`;
 			}
 			
-			statusContainer.appendChild(progressText);
+			verticalContainer.appendChild(visualizationContainer);
+			verticalContainer.appendChild(progressText);
+			statusContainer.appendChild(verticalContainer);
 		}
 
 		return statusContainer;

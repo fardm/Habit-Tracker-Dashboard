@@ -5,10 +5,9 @@ import { HabitCard, HabitCardProps } from "./habitCard";
 import { HabitModal, HabitFormData } from "./habitModal";
 import { HabitDataManager } from "../handlers/habitDataManager";
 import { FrontmatterDataReader } from "../handlers/frontmatterDataReader";
-import { DateRangeFilter } from "./dateRangeFilter";
+import { DateNavigator } from "./dateNavigator";
 import { ViewModeSwitcher } from "./viewModeSwitcher";
-import { Habit, HabitType, DateRangeFilter as DateRangeFilterEnum, ViewMode } from "../types/habitTypes";
-import { getDateRange } from "../utils/dateUtils";
+import { Habit, HabitType, ViewMode } from "../types/habitTypes";
 
 /**
  * Main Dashboard component that displays the habit tracker interface
@@ -21,9 +20,9 @@ export class Dashboard extends HTMLElementComponent {
 	private habits: Habit[] = [];
 	private habitValues: Map<string, boolean | number> = new Map();
 	private container?: HTMLElement;
-	private currentFilter: DateRangeFilterEnum = DateRangeFilterEnum.TODAY;
+	private currentDate: Date;
 	private currentViewMode: ViewMode = ViewMode.GRID;
-	private dateRangeFilter?: DateRangeFilter;
+	private dateNavigator?: DateNavigator;
 	private viewModeSwitcher?: ViewModeSwitcher;
 
 	constructor(app: App, file: TFile) {
@@ -32,6 +31,7 @@ export class Dashboard extends HTMLElementComponent {
 		this.file = file;
 		this.dataManager = new HabitDataManager(app.vault, file);
 		this.frontmatterReader = new FrontmatterDataReader(app);
+		this.currentDate = new Date(); // Default to today
 	}
 
 	render(): HTMLElement {
@@ -62,12 +62,11 @@ export class Dashboard extends HTMLElementComponent {
 		});
 		controlsRow.appendChild(addHabitButton.render());
 
-		// Date range filter
-		this.dateRangeFilter = new DateRangeFilter({
-			currentFilter: this.currentFilter,
-			onFilterChange: (filter) => this.handleFilterChange(filter)
+		// Date navigator
+		this.dateNavigator = new DateNavigator(this.currentDate, (date) => {
+			this.handleDateChange(date);
 		});
-		controlsRow.appendChild(this.dateRangeFilter.render());
+		controlsRow.appendChild(this.dateNavigator.render());
 
 		// View mode switcher
 		this.viewModeSwitcher = new ViewModeSwitcher({
@@ -137,8 +136,12 @@ export class Dashboard extends HTMLElementComponent {
 		try {
 			const data = await this.dataManager.readTrackerData();
 			if (data.settings) {
-				this.currentFilter = data.settings.dateRangeFilter || DateRangeFilterEnum.TODAY;
 				this.currentViewMode = data.settings.viewMode || ViewMode.GRID;
+				
+				// Load selected date if saved
+				if (data.settings.selectedDate) {
+					this.currentDate = new Date(data.settings.selectedDate);
+				}
 			}
 		} catch (error) {
 			console.error("Error loading user settings:", error);
@@ -149,8 +152,8 @@ export class Dashboard extends HTMLElementComponent {
 		try {
 			const data = await this.dataManager.readTrackerData();
 			data.settings = {
-				dateRangeFilter: this.currentFilter,
-				viewMode: this.currentViewMode
+				viewMode: this.currentViewMode,
+				selectedDate: this.currentDate.toISOString().split('T')[0] // Store as YYYY-MM-DD
 			};
 			await this.dataManager.writeTrackerData(data);
 		} catch (error) {
@@ -169,13 +172,18 @@ export class Dashboard extends HTMLElementComponent {
 
 	private async loadHabitValues(): Promise<void> {
 		try {
-			const dateRange = getDateRange(this.currentFilter);
+			// Calculate start and end of the selected day
+			const startOfDay = new Date(this.currentDate);
+			startOfDay.setHours(0, 0, 0, 0);
+			
+			const endOfDay = new Date(this.currentDate);
+			endOfDay.setHours(23, 59, 59, 999);
 			
 			for (const habit of this.habits) {
 				const latestValue = await this.frontmatterReader.getLatestHabitValue(
 					habit,
-					dateRange.start,
-					dateRange.end
+					startOfDay,
+					endOfDay
 				);
 				if (latestValue && latestValue.value !== undefined) {
 					this.habitValues.set(habit.id, latestValue.value);
@@ -334,8 +342,8 @@ export class Dashboard extends HTMLElementComponent {
 		}
 	}
 
-	private async handleFilterChange(filter: DateRangeFilterEnum): Promise<void> {
-		this.currentFilter = filter;
+	private async handleDateChange(date: Date): Promise<void> {
+		this.currentDate = date;
 		await this.saveUserSettings();
 		await this.loadHabitValues();
 		

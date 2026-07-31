@@ -30,6 +30,14 @@ export enum Visualization {
 }
 
 /**
+ * User settings stored in tracker file
+ */
+export interface TrackerSettings {
+	viewMode?: ViewMode;
+	selectedDate?: string; // ISO date string (YYYY-MM-DD)
+}
+
+/**
  * View mode options
  */
 export enum ViewMode {
@@ -57,10 +65,5 @@ export interface Habit {
  */
 export interface TrackerData {
 	habits: Habit[];
-	settings?: {
-		dateRangeFilter?: DateRangeFilter;
-		viewMode?: ViewMode;
-		customStartDate?: string;
-		customEndDate?: string;
-	};
+	settings?: TrackerSettings;
 }
