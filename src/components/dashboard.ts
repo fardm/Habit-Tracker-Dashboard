@@ -36,7 +36,7 @@ export class Dashboard extends HTMLElementComponent {
 		this.app = app;
 		this.file = file;
 		this.dataManager = new HabitDataManager(app.vault, file);
-		this.frontmatterReader = new FrontmatterDataReader(app);
+		this.frontmatterReader = new FrontmatterDataReader(app, this.currentSettings);
 		this.currentDate = new Date(); // Default to today
 	}
 
@@ -236,9 +236,18 @@ export class Dashboard extends HTMLElementComponent {
 				dateFrontmatterProperty: formData.dateFrontmatterProperty
 			};
 			
+			// Update frontmatter reader with new settings
+			this.frontmatterReader.updateSettings(this.currentSettings);
+			
 			const data = await this.dataManager.readTrackerData();
 			data.settings = this.currentSettings;
 			await this.dataManager.writeTrackerData(data);
+			
+			// Reload habit values with new settings
+			await this.loadHabitValues();
+			if (this.container) {
+				this.renderHabits(this.container);
+			}
 		} catch (error) {
 			console.error("Error saving settings:", error);
 		}

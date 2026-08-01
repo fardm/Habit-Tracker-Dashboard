@@ -1,5 +1,5 @@
 import { App, TFile } from "obsidian";
-import { Habit, HabitType } from "../types/habitTypes";
+import { Habit, HabitType, TrackerSettings, DataSourceType, DateExtractionMethod } from "../types/habitTypes";
 
 /**
  * Interface for habit value data
@@ -15,13 +15,22 @@ export interface HabitValue {
  */
 export class FrontmatterDataReader {
 	private app: App;
+	private settings: TrackerSettings;
 
-	constructor(app: App) {
+	constructor(app: App, settings: TrackerSettings = {}) {
 		this.app = app;
+		this.settings = settings;
 	}
 
 	/**
-	 * Reads habit values from all markdown files in the vault
+	 * Updates the settings for data extraction
+	 */
+	updateSettings(settings: TrackerSettings): void {
+		this.settings = settings;
+	}
+
+	/**
+	 * Reads habit values from markdown files based on data source settings
 	 * @param habit - The habit to search for
 	 * @param startDate - Optional start date for filtering
 	 * @param endDate - Optional end date for filtering
@@ -33,19 +42,47 @@ export class FrontmatterDataReader {
 	): Promise<HabitValue[]> {
 		const values: HabitValue[] = [];
 		
-		// Get all markdown files
-		const markdownFiles = this.app.vault.getMarkdownFiles();
+		// Get files based on data source settings
+		let markdownFiles: TFile[];
+		
+		if (this.settings.dataSourceType === DataSourceType.FOLDER && this.settings.dataSourceValue) {
+			// Folder mode: search only in specified folder
+			const folderPath = this.settings.dataSourceValue;
+			const folder = this.app.vault.getAbstractFileByPath(folderPath);
+			
+			if (!folder || !(folder as any).children) {
+				// Folder doesn't exist or is invalid, return empty results
+				return [];
+			}
+			
+			// Get all markdown files in the folder
+			markdownFiles = this.app.vault.getMarkdownFiles().filter(file => 
+				file.path.startsWith(folderPath + '/') || file.path === folderPath
+			);
+		} else if (this.settings.dataSourceType === DataSourceType.TAG && this.settings.dataSourceValue) {
+			// Tag mode: search all files but filter by tag
+			markdownFiles = this.app.vault.getMarkdownFiles();
+		} else {
+			// No valid settings configured, return empty results
+			return [];
+		}
 		
 		for (const file of markdownFiles) {
 			try {
-				const fileDate = this.extractDateFromPath(file.path);
+				// Read file content
+				const content = await this.app.vault.read(file);
+				
+				// Tag filtering: skip files that don't have the required tag
+				if (this.settings.dataSourceType === DataSourceType.TAG && this.settings.dataSourceValue) {
+					const hasTag = this.fileHasTag(content, this.settings.dataSourceValue);
+					if (!hasTag) continue;
+				}
+				
+				const fileDate = this.extractDateFromPath(file.path, content);
 				
 				// Filter by date range if specified
 				if (startDate && fileDate < startDate) continue;
 				if (endDate && fileDate > endDate) continue;
-				
-				// Read file content
-				const content = await this.app.vault.read(file);
 				
 				// Parse frontmatter
 				const frontmatter = this.parseFrontmatter(content);
@@ -83,12 +120,53 @@ export class FrontmatterDataReader {
 	}
 
 	/**
-	 * Extracts date from file path (assumes daily note format)
-	 * @param filePath - The file path
+	 * Checks if a file has a specific tag
+	 * @param content - The file content
+	 * @param tag - The tag to search for (with or without #)
 	 */
-	private extractDateFromPath(filePath: string): Date {
-		// Try to extract date from filename
-		// Common patterns: YYYY-MM-DD.md, YYYYMMDD.md, etc.
+	private fileHasTag(content: string, tag: string): boolean {
+		// Normalize tag (remove # if present)
+		const normalizedTag = tag.startsWith('#') ? tag.substring(1) : tag;
+		
+		// Check frontmatter tags
+		const frontmatter = this.parseFrontmatter(content);
+		if (frontmatter && frontmatter.tags) {
+			const tags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [frontmatter.tags];
+			if (tags.some((t: string) => {
+				const normalizedT = t.startsWith('#') ? t.substring(1) : t;
+				return normalizedT === normalizedTag;
+			})) {
+				return true;
+			}
+		}
+		
+		// Check inline tags in content
+		const tagPattern = new RegExp(`#${normalizedTag}\\b`, 'i');
+		return tagPattern.test(content);
+	}
+
+	/**
+	 * Extracts date from file path or frontmatter based on settings
+	 * @param filePath - The file path
+	 * @param content - The file content (for frontmatter extraction)
+	 */
+	private extractDateFromPath(filePath: string, content?: string): Date {
+		// If frontmatter date extraction is configured and content is provided
+		if (this.settings.dateExtractionMethod === DateExtractionMethod.FRONTMATTER && 
+			this.settings.dateFrontmatterProperty && 
+			content) {
+			
+			const frontmatter = this.parseFrontmatter(content);
+			if (frontmatter && frontmatter[this.settings.dateFrontmatterProperty]) {
+				const dateStr = frontmatter[this.settings.dateFrontmatterProperty];
+				const date = new Date(dateStr);
+				if (!isNaN(date.getTime())) {
+					return date;
+				}
+			}
+		}
+		
+		// Default: extract date from filename
 		const filename = filePath.split('/').pop() || '';
 		const datePatterns = [
 			/(\d{4}-\d{2}-\d{2})/, // YYYY-MM-DD
