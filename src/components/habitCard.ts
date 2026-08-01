@@ -11,6 +11,7 @@ export interface HabitCardProps {
 	onEdit: (habitId: string) => void;
 	onDuplicate: (habitId: string) => void;
 	onDelete: (habitId: string) => void;
+	onClick?: (habitId: string) => void;
 	onDragStart?: (habitId: string, event: DragEvent) => void;
 	onDragOver?: (event: DragEvent) => void;
 	onDrop?: (habitId: string, event: DragEvent) => void;
@@ -174,6 +175,18 @@ export class HabitCard extends HTMLElementComponent {
 			e.preventDefault();
 			if (this.props.onDrop) {
 				this.props.onDrop(this.props.habit.id, e);
+			}
+		});
+
+		// Card click handler (for opening details modal)
+		card.addEventListener("click", (e) => {
+			// Don't trigger if clicking on menu button or drag handle
+			if ((e.target as HTMLElement).closest('.habit-menu-btn') || 
+				(e.target as HTMLElement).closest('.habit-drag-handle')) {
+				return;
+			}
+			if (this.props.onClick) {
+				this.props.onClick(this.props.habit.id);
 			}
 		});
 

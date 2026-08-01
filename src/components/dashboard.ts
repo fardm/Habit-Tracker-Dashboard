@@ -9,6 +9,7 @@ import { FrontmatterDataReader } from "../handlers/frontmatterDataReader";
 import { DateNavigator } from "./dateNavigator";
 import { ViewModeSwitcher } from "./viewModeSwitcher";
 import { Habit, HabitType, ViewMode } from "../types/habitTypes";
+import { HabitDetailsModal } from "./habitDetails/habitDetailsModal";
 
 /**
  * Main Dashboard component that displays the habit tracker interface
@@ -270,6 +271,7 @@ export class Dashboard extends HTMLElementComponent {
 				onEdit: (habitId) => this.handleEditHabit(habitId),
 				onDuplicate: (habitId) => this.handleDuplicateHabit(habitId),
 				onDelete: (habitId) => this.handleDeleteHabit(habitId),
+				onClick: (habitId) => this.handleHabitClick(habitId),
 				onDragStart: (habitId, event) => this.handleDragStart(habitId, event),
 				onDragOver: (event) => this.handleDragOver(event),
 				onDrop: (habitId, event) => this.handleDrop(habitId, event),
@@ -405,6 +407,24 @@ export class Dashboard extends HTMLElementComponent {
 		if (this.container) {
 			this.renderHabits(this.container);
 		}
+	}
+
+	private handleHabitClick(habitId: string): void {
+		const habit = this.habits.find(h => h.id === habitId);
+		if (!habit) return;
+
+		const modal = new HabitDetailsModal(this.app, {
+			habitId: habit.id,
+			habitName: habit.name,
+			habitEmoji: habit.emoji,
+			habitType: habit.type,
+			unit: habit.unit,
+			target: habit.target,
+			onClose: () => {
+				modal.close();
+			}
+		});
+		modal.open();
 	}
 
 	private async handleViewModeChange(mode: ViewMode): Promise<void> {
