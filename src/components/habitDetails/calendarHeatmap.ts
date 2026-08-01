@@ -33,7 +33,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		`;
 		container.appendChild(title);
 
-		// Heatmap container (placeholder for actual heatmap implementation)
+		// Heatmap container
 		const heatmapContainer = document.createElement("div");
 		heatmapContainer.className = "heatmap-container";
 		heatmapContainer.style.cssText = `
@@ -42,7 +42,20 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			gap: 4px;
 		`;
 
-		// Create placeholder grid structure
+		// Create grid with real data
+		const grid = this.createHeatmapGrid();
+		heatmapContainer.appendChild(grid);
+
+		// Legend
+		const legend = this.createLegend();
+		heatmapContainer.appendChild(legend);
+
+		container.appendChild(heatmapContainer);
+
+		return container;
+	}
+
+	private createHeatmapGrid(): HTMLElement {
 		const grid = document.createElement("div");
 		grid.style.cssText = `
 			display: grid;
@@ -52,25 +65,69 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			padding-bottom: 8px;
 		`;
 
-		// Generate placeholder cells (approximate GitHub-style grid)
+		// Create value map from props
+		const valueMap = new Map<string, number>();
+		this.props.values.forEach(entry => {
+			const dateKey = entry.date.toISOString().split('T')[0];
+			if (this.props.habitType === "boolean") {
+				valueMap.set(dateKey, entry.value === true ? 1 : 0);
+			} else {
+				const numValue = entry.value as number;
+				if (this.props.target !== undefined && this.props.target > 0) {
+					valueMap.set(dateKey, Math.min(numValue / this.props.target, 1));
+				} else {
+					// Normalize numeric values for display
+					const maxVal = Math.max(...this.props.values.map(v => typeof v.value === 'number' ? v.value : 0), 1);
+					valueMap.set(dateKey, numValue / maxVal);
+				}
+			}
+		});
+
+		// Generate 53 weeks of data
+		const today = new Date();
 		for (let week = 0; week < 53; week++) {
 			for (let day = 0; day < 7; day++) {
+				const date = new Date(today);
+				date.setDate(date.getDate() - ((53 - week - 1) * 7 + (6 - day)));
+				const dateKey = date.toISOString().split('T')[0];
+				
 				const cell = document.createElement("div");
+				const value = valueMap.get(dateKey) || 0;
+				
+				let bgColor = "var(--background-modifier-border)";
+				if (value > 0) {
+					if (value <= 0.25) {
+						bgColor = "var(--interactive-accent-hover)";
+					} else if (value <= 0.5) {
+						bgColor = "var(--interactive-accent)";
+					} else if (value <= 0.75) {
+						bgColor = "var(--text-accent)";
+					} else {
+						bgColor = "var(--text-success)";
+					}
+				}
+				
 				cell.style.cssText = `
 					width: 12px;
 					height: 12px;
 					border-radius: 2px;
-					background-color: var(--background-modifier-border);
+					background-color: ${bgColor};
 					transition: background-color 0.2s;
 				`;
-				cell.title = "No data";
+				
+				const displayValue = this.props.habitType === "boolean" 
+					? (value > 0 ? "Completed" : "Not completed")
+					: `${this.props.values.find(v => v.date.toISOString().split('T')[0] === dateKey)?.value || 0}`;
+				
+				cell.title = `${dateKey}: ${displayValue}`;
 				grid.appendChild(cell);
 			}
 		}
 
-		heatmapContainer.appendChild(grid);
+		return grid;
+	}
 
-		// Legend
+	private createLegend(): HTMLElement {
 		const legend = document.createElement("div");
 		legend.style.cssText = `
 			display: flex;
@@ -87,20 +144,22 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		legend.appendChild(legendLabel);
 
 		const legendColors = [
-			"var(--background-modifier-border)",
-			"var(--interactive-accent-hover)",
-			"var(--interactive-accent)",
-			"var(--interactive-accent)"
+			{ color: "var(--background-modifier-border)", label: "0" },
+			{ color: "var(--interactive-accent-hover)", label: "1-25%" },
+			{ color: "var(--interactive-accent)", label: "26-50%" },
+			{ color: "var(--text-accent)", label: "51-75%" },
+			{ color: "var(--text-success)", label: "76-100%" }
 		];
 
-		legendColors.forEach(color => {
+		legendColors.forEach(item => {
 			const legendItem = document.createElement("div");
 			legendItem.style.cssText = `
 				width: 12px;
 				height: 12px;
 				border-radius: 2px;
-				background-color: ${color};
+				background-color: ${item.color};
 			`;
+			legendItem.title = item.label;
 			legend.appendChild(legendItem);
 		});
 
@@ -108,9 +167,6 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		moreLabel.textContent = "More";
 		legend.appendChild(moreLabel);
 
-		heatmapContainer.appendChild(legend);
-		container.appendChild(heatmapContainer);
-
-		return container;
+		return legend;
 	}
 }

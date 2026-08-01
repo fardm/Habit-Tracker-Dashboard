@@ -7,21 +7,28 @@ import { StatisticsDashboard } from "./statisticsDashboard";
 import { StreakSection } from "./streakSection";
 import { CalendarHeatmap } from "./calendarHeatmap";
 import { SettingsPanel } from "./settingsPanel";
+import { HabitDetailsDataService } from "../../handlers/habitDetailsDataService";
+import { Habit } from "../../types/habitTypes";
 
 /**
  * HabitDetailsModal - Main modal for displaying detailed habit information
  */
 export class HabitDetailsModal extends Modal {
 	private props: HabitDetailsModalProps;
+	private habit: Habit;
 	private timeRange: TimeRange = TimeRange.LAST_30_DAYS;
 	private chartType: ChartType = ChartType.LINE;
 	private settings: HabitDetailsSettings;
 	private contentContainer?: HTMLElement;
+	private dataService: HabitDetailsDataService;
+	private habitValues: HabitValueEntry[] = [];
 
-	constructor(app: App, props: HabitDetailsModalProps) {
+	constructor(app: App, props: HabitDetailsModalProps, habit: Habit) {
 		super(app);
 		this.props = props;
+		this.habit = habit;
 		this.settings = this.getDefaultSettings();
+		this.dataService = new HabitDetailsDataService(app);
 	}
 
 	onOpen() {
@@ -136,7 +143,7 @@ export class HabitDetailsModal extends Modal {
 				cls: "content-section"
 			});
 			const heatmap = new CalendarHeatmap({
-				values: [],
+				values: this.habitValues,
 				habitType: this.props.habitType,
 				target: this.props.target
 			});
@@ -154,7 +161,7 @@ export class HabitDetailsModal extends Modal {
 					this.chartType = newType;
 					this.renderContentSections();
 				},
-				data: [],
+				data: this.habitValues,
 				habitType: this.props.habitType,
 				unit: this.props.unit,
 				target: this.props.target
@@ -167,8 +174,12 @@ export class HabitDetailsModal extends Modal {
 			const statsSection = this.contentContainer.createDiv({
 				cls: "content-section"
 			});
+			const statistics = this.dataService.calculateStatistics(
+				this.habitValues,
+				this.props.habitType
+			);
 			const stats = new StatisticsDashboard({
-				statistics: this.getPlaceholderStatistics(),
+				statistics: statistics,
 				habitType: this.props.habitType,
 				unit: this.props.unit
 			});
@@ -180,10 +191,15 @@ export class HabitDetailsModal extends Modal {
 			const streakSection = this.contentContainer.createDiv({
 				cls: "content-section"
 			});
-			const streaks = new StreakSection({
-				streaks: this.getPlaceholderStreaks()
+			const streaks = this.dataService.calculateStreaks(
+				this.habitValues,
+				this.props.habitType,
+				this.props.target
+			);
+			const streakComponent = new StreakSection({
+				streaks: streaks
 			});
-			streakSection.appendChild(streaks.render());
+			streakSection.appendChild(streakComponent.render());
 		}
 	}
 
@@ -206,30 +222,17 @@ export class HabitDetailsModal extends Modal {
 		};
 	}
 
-	private getPlaceholderStatistics(): HabitStatistics {
-		return {
-			total: 0,
-			average: 0,
-			highest: 0,
-			lowest: 0,
-			completionRate: 0
-		};
-	}
-
-	private getPlaceholderStreaks(): HabitStreaks {
-		return {
-			currentStreak: 0,
-			longestStreak: 0,
-			streakHistory: []
-		};
-	}
-
 	private async loadHabitData(): Promise<void> {
-		// Placeholder for data loading logic
-		// This will be implemented in a later phase
-		// For now, we just re-render with placeholder data
-		if (this.contentContainer) {
-			this.renderContentSections();
+		try {
+			this.habitValues = await this.dataService.loadHabitValues(
+				this.habit,
+				this.timeRange
+			);
+			if (this.contentContainer) {
+				this.renderContentSections();
+			}
+		} catch (error) {
+			console.error("Error loading habit data:", error);
 		}
 	}
 

@@ -423,7 +423,7 @@ export class Dashboard extends HTMLElementComponent {
 			onClose: () => {
 				modal.close();
 			}
-		});
+		}, habit);
 		modal.open();
 	}
 

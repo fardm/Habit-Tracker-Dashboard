@@ -54,19 +54,20 @@ export class StatisticsDashboard extends HTMLElementComponent {
 
 	private getStatItems(): Array<{ label: string; value: string; icon: string }> {
 		const unit = this.props.unit ? ` ${this.props.unit}` : "";
+		const stats = this.props.statistics;
 		
 		if (this.props.habitType === "boolean") {
 			return [
-				{ label: "Total", value: "0", icon: "📊" },
-				{ label: "Completion Rate", value: "0%", icon: "✅" },
-				{ label: "Best Day", value: "0", icon: "🏆" }
+				{ label: "Total", value: stats.total.toString(), icon: "📊" },
+				{ label: "Completion Rate", value: `${Math.round(stats.completionRate)}%`, icon: "✅" },
+				{ label: "Best Day", value: `${Math.round(stats.highest)}%`, icon: "🏆" }
 			];
 		} else {
 			return [
-				{ label: "Total", value: `0${unit}`, icon: "📊" },
-				{ label: "Average", value: `0${unit}`, icon: "📈" },
-				{ label: "Highest", value: `0${unit}`, icon: "🔝" },
-				{ label: "Lowest", value: `0${unit}`, icon: "📉" }
+				{ label: "Total", value: `${Math.round(stats.total)}${unit}`, icon: "📊" },
+				{ label: "Average", value: `${Math.round(stats.average)}${unit}`, icon: "📈" },
+				{ label: "Highest", value: `${Math.round(stats.highest)}${unit}`, icon: "🔝" },
+				{ label: "Lowest", value: `${Math.round(stats.lowest)}${unit}`, icon: "📉" }
 			];
 		}
 	}
