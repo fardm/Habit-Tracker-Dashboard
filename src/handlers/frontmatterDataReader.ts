@@ -80,6 +80,9 @@ export class FrontmatterDataReader {
 				
 				const fileDate = this.extractDateFromPath(file.path, content);
 				
+				// Skip file if date extraction failed (e.g., frontmatter property not found)
+				if (!fileDate) continue;
+				
 				// Filter by date range if specified
 				if (startDate && fileDate < startDate) continue;
 				if (endDate && fileDate > endDate) continue;
@@ -183,7 +186,7 @@ export class FrontmatterDataReader {
 	 * @param filePath - The file path
 	 * @param content - The file content (for frontmatter extraction)
 	 */
-	private extractDateFromPath(filePath: string, content?: string): Date {
+	private extractDateFromPath(filePath: string, content?: string): Date | null {
 		// If frontmatter date extraction is configured and content is provided
 		if (this.settings.dateExtractionMethod === DateExtractionMethod.FRONTMATTER && 
 			this.settings.dateFrontmatterProperty && 
@@ -197,6 +200,8 @@ export class FrontmatterDataReader {
 					return date;
 				}
 			}
+			// Property doesn't exist or has invalid date - return null to filter out this note
+			return null;
 		}
 		
 		// Default: extract date from filename
