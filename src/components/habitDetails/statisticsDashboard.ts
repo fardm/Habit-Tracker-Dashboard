@@ -78,7 +78,6 @@ export class StatisticsDashboard extends HTMLElementComponent {
 
 	private createStatItem(stat: { label: string; value: string; icon: string }): HTMLElement {
 		const item = document.createElement("div");
-		const themeColor = this.getThemeColor();
 		item.style.cssText = `
 			background-color: var(--background-primary);
 			border: 1px solid var(--background-modifier-border);
@@ -100,7 +99,7 @@ export class StatisticsDashboard extends HTMLElementComponent {
 		value.style.cssText = `
 			font-size: 20px;
 			font-weight: 600;
-			color: ${themeColor};
+			color: var(--text-normal);
 			margin-bottom: 4px;
 		`;
 		item.appendChild(value);

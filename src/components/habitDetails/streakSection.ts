@@ -150,7 +150,6 @@ export class StreakSection extends HTMLElementComponent {
 
 	private createStreakCard(icon: string, label: string, value: string, unit: string): HTMLElement {
 		const card = document.createElement("div");
-		const themeColor = this.getThemeColor();
 		card.style.cssText = `
 			background-color: var(--background-primary);
 			border: 1px solid var(--background-modifier-border);
@@ -172,7 +171,7 @@ export class StreakSection extends HTMLElementComponent {
 		valueEl.style.cssText = `
 			font-size: 24px;
 			font-weight: 700;
-			color: ${themeColor};
+			color: var(--text-normal);
 			margin-bottom: 4px;
 		`;
 		card.appendChild(valueEl);
