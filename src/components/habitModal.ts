@@ -11,6 +11,7 @@ export interface HabitFormData {
 	target?: number;
 	visualization?: Visualization;
 	themeColor?: string;
+	graceDays?: number;
 }
 
 /**
@@ -40,7 +41,8 @@ export class HabitModal extends Modal {
 			unit: initialData?.unit || "",
 			target: initialData?.target,
 			visualization: initialData?.visualization || Visualization.DONUT,
-			themeColor: initialData?.themeColor || ""
+			themeColor: initialData?.themeColor || "",
+			graceDays: initialData?.graceDays ?? 0
 		};
 	}
 
@@ -233,6 +235,20 @@ export class HabitModal extends Modal {
 						this.formData.themeColor = value;
 					})
 					.setValue(this.formData.themeColor || "")
+			);
+
+		// Grace Days
+		new Setting(contentEl)
+			.setName("Grace days")
+			.setDesc("Number of missed days allowed before streak breaks (default: 0)")
+			.addText((text) =>
+				text
+					.setPlaceholder("0")
+					.setValue(this.formData.graceDays?.toString() || "0")
+					.onChange((value) => {
+						const num = parseInt(value);
+						this.formData.graceDays = isNaN(num) || num < 0 ? 0 : num;
+					})
 			);
 
 		// Validation errors display

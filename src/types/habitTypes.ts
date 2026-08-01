@@ -81,6 +81,7 @@ export interface Habit {
 	target?: number; // For numeric habits (e.g., 10)
 	visualization?: Visualization; // For numeric habits visualization
 	themeColor?: string; // Custom theme color for the habit
+	graceDays?: number; // Number of missed days allowed in streak calculations
 }
 
 /**

@@ -213,7 +213,8 @@ export class HabitDetailsModal extends Modal {
 			const streaks = this.dataService.calculateStreaks(
 				this.habitValues,
 				this.props.habitType,
-				this.props.target
+				this.props.target,
+				this.habit.graceDays ?? 0
 			);
 			const streakComponent = new StreakSection({
 				streaks: streaks,

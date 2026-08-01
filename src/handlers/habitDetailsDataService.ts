@@ -148,7 +148,8 @@ export class HabitDetailsDataService {
 	calculateStreaks(
 		values: HabitValueEntry[],
 		habitType: "boolean" | "numeric",
-		target?: number
+		target?: number,
+		graceDays: number = 0
 	): HabitStreaks {
 		if (values.length === 0) {
 			return {
@@ -167,6 +168,7 @@ export class HabitDetailsDataService {
 		let currentStreakStart: Date | null = null;
 		let tempStreakStart: Date | null = null;
 		let tempStreakLength = 0;
+		let consecutiveMissedDays = 0;
 
 		const isCompleted = (value: boolean | number): boolean => {
 			if (habitType === "boolean") {
@@ -185,6 +187,8 @@ export class HabitDetailsDataService {
 			const completed = isCompleted(currentValue.value);
 
 			if (completed) {
+				consecutiveMissedDays = 0; // Reset missed days counter
+				
 				if (tempStreakStart === null) {
 					tempStreakStart = currentValue.date;
 					tempStreakLength = 1;
@@ -212,19 +216,52 @@ export class HabitDetailsDataService {
 					}
 				}
 			} else {
-				// Break streak
-				if (tempStreakLength > 0) {
-					streakHistory.push({
-						startDate: tempStreakStart!,
-						endDate: sortedValues[i - 1].date,
-						length: tempStreakLength
-					});
-					if (tempStreakLength > longestStreak) {
-						longestStreak = tempStreakLength;
+				// Missed day
+				if (tempStreakStart !== null) {
+					const prevDate = sortedValues[i - 1].date;
+					const dayDiff = (currentValue.date.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
+					
+					if (dayDiff <= 1.5) {
+						// Consecutive day missed
+						consecutiveMissedDays++;
+						
+						// Check if grace days exceeded
+						if (consecutiveMissedDays > graceDays) {
+							// Break streak
+							if (tempStreakLength > 0) {
+								streakHistory.push({
+									startDate: tempStreakStart!,
+									endDate: prevDate,
+									length: tempStreakLength
+								});
+								if (tempStreakLength > longestStreak) {
+									longestStreak = tempStreakLength;
+								}
+							}
+							tempStreakStart = null;
+							tempStreakLength = 0;
+							consecutiveMissedDays = 0;
+						} else {
+							// Within grace period, continue streak
+							tempStreakLength++;
+						}
+					} else {
+						// Non-consecutive day, break streak
+						if (tempStreakLength > 0) {
+							streakHistory.push({
+								startDate: tempStreakStart!,
+								endDate: prevDate,
+								length: tempStreakLength
+							});
+							if (tempStreakLength > longestStreak) {
+								longestStreak = tempStreakLength;
+							}
+						}
+						tempStreakStart = null;
+						tempStreakLength = 0;
+						consecutiveMissedDays = 0;
 					}
 				}
-				tempStreakStart = null;
-				tempStreakLength = 0;
 			}
 		}
 
@@ -249,7 +286,7 @@ export class HabitDetailsDataService {
 			const mostRecentStreak = streakHistory[streakHistory.length - 1];
 			const daysSinceEnd = (today.getTime() - mostRecentStreak.endDate.getTime()) / (1000 * 60 * 60 * 24);
 			
-			if (daysSinceEnd <= 1.5) {
+			if (daysSinceEnd <= (graceDays + 1.5)) {
 				currentStreak = mostRecentStreak.length;
 			}
 		}
