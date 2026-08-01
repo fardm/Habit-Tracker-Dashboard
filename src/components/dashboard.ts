@@ -431,6 +431,11 @@ export class Dashboard extends HTMLElementComponent {
 		this.currentViewMode = mode;
 		await this.saveUserSettings();
 		
+		// Update view mode switcher active state
+		if (this.viewModeSwitcher) {
+			this.viewModeSwitcher.updateCurrentMode(this.currentViewMode);
+		}
+		
 		if (this.container) {
 			this.updateContainerLayout(this.container);
 			this.renderHabits(this.container);

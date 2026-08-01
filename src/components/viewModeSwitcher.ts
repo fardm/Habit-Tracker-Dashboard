@@ -96,4 +96,9 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 		this.updateGridButtonStyle();
 		this.updateListButtonStyle();
 	}
+
+	public updateCurrentMode(mode: ViewMode): void {
+		this.props.currentMode = mode;
+		this.updateButtonStates();
+	}
 }
