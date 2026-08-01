@@ -74,20 +74,6 @@ export class SettingsPanel extends HTMLElementComponent {
 		const sectionToggles = this.createSectionToggles();
 		panel.appendChild(sectionToggles);
 
-		// Color theme settings
-		const themeTitle = document.createElement("h4");
-		themeTitle.textContent = "Color Theme";
-		themeTitle.style.cssText = `
-			margin: 16px 0 12px 0;
-			font-size: 14px;
-			font-weight: 600;
-			color: var(--text-normal);
-		`;
-		panel.appendChild(themeTitle);
-
-		const themeSelector = this.createThemeSelector();
-		panel.appendChild(themeSelector);
-
 		container.appendChild(panel);
 
 		// Close dropdown when clicking outside
@@ -149,70 +135,6 @@ export class SettingsPanel extends HTMLElementComponent {
 
 			toggleRow.appendChild(toggle);
 			container.appendChild(toggleRow);
-		});
-
-		return container;
-	}
-
-	private createThemeSelector(): HTMLElement {
-		const container = document.createElement("div");
-		container.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-		`;
-
-		const themes = [
-			{ name: "Default", primary: "var(--interactive-accent)" },
-			{ name: "Green", primary: "#4ade80" },
-			{ name: "Blue", primary: "#60a5fa" },
-			{ name: "Purple", primary: "#a78bfa" }
-		];
-
-		themes.forEach(theme => {
-			const themeOption = document.createElement("div");
-			themeOption.style.cssText = `
-				display: flex;
-				align-items: center;
-				gap: 8px;
-				padding: 8px;
-				border-radius: 4px;
-				cursor: pointer;
-				transition: background-color 0.2s;
-			`;
-
-			themeOption.addEventListener("mouseenter", () => {
-				themeOption.style.backgroundColor = "var(--background-modifier-hover)";
-			});
-
-			themeOption.addEventListener("mouseleave", () => {
-				themeOption.style.backgroundColor = "transparent";
-			});
-
-			const colorPreview = document.createElement("div");
-			colorPreview.style.cssText = `
-				width: 20px;
-				height: 20px;
-				border-radius: 4px;
-				background-color: ${theme.primary};
-			`;
-			themeOption.appendChild(colorPreview);
-
-			const themeName = document.createElement("span");
-			themeName.textContent = theme.name;
-			themeName.style.cssText = `
-				font-size: 13px;
-				color: var(--text-normal);
-			`;
-			themeOption.appendChild(themeName);
-
-			themeOption.addEventListener("click", () => {
-				const newSettings = { ...this.props.settings };
-				newSettings.theme.primary = theme.primary;
-				this.props.onSettingsChange(newSettings);
-			});
-
-			container.appendChild(themeOption);
 		});
 
 		return container;

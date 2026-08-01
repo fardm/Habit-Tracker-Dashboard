@@ -10,6 +10,7 @@ export interface HabitFormData {
 	unit?: string;
 	target?: number;
 	visualization?: Visualization;
+	themeColor?: string;
 }
 
 /**
@@ -38,7 +39,8 @@ export class HabitModal extends Modal {
 			frontmatterField: initialData?.frontmatterField || "",
 			unit: initialData?.unit || "",
 			target: initialData?.target,
-			visualization: initialData?.visualization || Visualization.DONUT
+			visualization: initialData?.visualization || Visualization.DONUT,
+			themeColor: initialData?.themeColor || ""
 		};
 	}
 
@@ -218,6 +220,18 @@ export class HabitModal extends Modal {
 						this.formData.frontmatterField = value;
 					})
 					.setValue(this.formData.frontmatterField)
+			);
+
+		// Color Theme
+		new Setting(contentEl)
+			.setName("Color theme")
+			.setDesc("Choose a custom color for this habit (optional)")
+			.addColorPicker((picker) =>
+				picker
+					.onChange((value) => {
+						this.formData.themeColor = value;
+					})
+					.setValue(this.formData.themeColor || "")
 			);
 
 		// Validation errors display

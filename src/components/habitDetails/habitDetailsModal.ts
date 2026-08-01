@@ -9,7 +9,6 @@ import { CalendarHeatmap } from "./calendarHeatmap";
 import { SettingsPanel } from "./settingsPanel";
 import { HabitDetailsDataService } from "../../handlers/habitDetailsDataService";
 import { Habit } from "../../types/habitTypes";
-import { HabitDataManager } from "../../handlers/habitDataManager";
 
 /**
  * HabitDetailsModal - Main modal for displaying detailed habit information
@@ -22,7 +21,6 @@ export class HabitDetailsModal extends Modal {
 	private settings: HabitDetailsSettings;
 	private contentContainer?: HTMLElement;
 	private dataService: HabitDetailsDataService;
-	private dataManager: HabitDataManager;
 	private habitValues: HabitValueEntry[] = [];
 
 	constructor(app: App, props: HabitDetailsModalProps, habit: Habit) {
@@ -31,11 +29,6 @@ export class HabitDetailsModal extends Modal {
 		this.habit = habit;
 		this.settings = this.getDefaultSettings();
 		this.dataService = new HabitDetailsDataService(app);
-		// Get the tracker file from the app's workspace
-		const trackerFile = app.vault.getMarkdownFiles().find(f => f.path.includes('.tracker'));
-		if (trackerFile) {
-			this.dataManager = new HabitDataManager(app.vault, trackerFile);
-		}
 	}
 
 	onOpen() {
@@ -117,11 +110,8 @@ export class HabitDetailsModal extends Modal {
 		// Settings panel
 		const settingsPanel = new SettingsPanel({
 			settings: this.settings,
-			onSettingsChange: async (newSettings) => {
+			onSettingsChange: (newSettings) => {
 				this.settings = newSettings;
-				// Update habit theme color and persist to storage
-				this.habit.themeColor = newSettings.theme.primary;
-				await this.saveHabitThemeColor();
 				this.renderContentSections();
 			}
 		});
@@ -247,15 +237,6 @@ export class HabitDetailsModal extends Modal {
 		}
 	}
 
-	private async saveHabitThemeColor(): Promise<void> {
-		if (!this.dataManager) return;
-		try {
-			await this.dataManager.updateHabit(this.habit.id, { themeColor: this.habit.themeColor });
-		} catch (error) {
-			console.error("Error saving habit theme color:", error);
-		}
-	}
-
 	private getDefaultSettings(): HabitDetailsSettings {
 		return {
 			theme: {
@@ -273,6 +254,10 @@ export class HabitDetailsModal extends Modal {
 			defaultTimeRange: TimeRange.LAST_30_DAYS,
 			defaultChartType: ChartType.LINE
 		};
+	}
+
+	private getThemeColor(): string {
+		return this.habit.themeColor || "var(--interactive-accent)";
 	}
 
 	onClose() {

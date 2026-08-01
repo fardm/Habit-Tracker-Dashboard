@@ -300,7 +300,8 @@ export class Dashboard extends HTMLElementComponent {
 				frontmatterField: formData.frontmatterField,
 				unit: formData.unit,
 				target: formData.target,
-				visualization: formData.visualization
+				visualization: formData.visualization,
+				themeColor: formData.themeColor
 			});
 
 			this.habits.push(newHabit);
@@ -330,7 +331,8 @@ export class Dashboard extends HTMLElementComponent {
 				frontmatterField: habit.frontmatterField,
 				unit: habit.unit,
 				target: habit.target,
-				visualization: habit.visualization
+				visualization: habit.visualization,
+				themeColor: habit.themeColor
 			}
 		);
 		modal.open();
@@ -345,7 +347,8 @@ export class Dashboard extends HTMLElementComponent {
 				frontmatterField: formData.frontmatterField,
 				unit: formData.unit,
 				target: formData.target,
-				visualization: formData.visualization
+				visualization: formData.visualization,
+				themeColor: formData.themeColor
 			});
 
 			await this.loadHabits();
