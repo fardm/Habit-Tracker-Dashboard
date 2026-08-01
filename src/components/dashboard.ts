@@ -39,6 +39,7 @@ export class Dashboard extends HTMLElementComponent {
 		this.dataManager = new HabitDataManager(app.vault, file);
 		this.frontmatterReader = new FrontmatterDataReader(app, this.currentSettings);
 		this.currentDate = new Date(); // Default to today
+		this.currentViewMode = ViewMode.GRID; // Default to grid view
 	}
 
 	render(): HTMLElement {
@@ -226,7 +227,9 @@ export class Dashboard extends HTMLElementComponent {
 				dataSourceType: formData.dataSourceType,
 				dataSourceValue: formData.dataSourceValue,
 				dateExtractionMethod: formData.dateExtractionMethod,
-				dateFrontmatterProperty: formData.dateFrontmatterProperty
+				dateFrontmatterProperty: formData.dateFrontmatterProperty,
+				defaultPeriod: formData.defaultPeriod,
+				calendarSystem: formData.calendarSystem
 			};
 			
 			// Update frontmatter reader with new settings

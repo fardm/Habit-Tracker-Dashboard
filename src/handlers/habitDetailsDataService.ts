@@ -1,8 +1,8 @@
 import { App } from "obsidian";
 import { Habit, HabitType, TrackerSettings } from "../types/habitTypes";
 import { FrontmatterDataReader, HabitValue } from "./frontmatterDataReader";
+import { DateRangeCalculator } from "./dateRangeCalculator";
 import { 
-	TimeRange, 
 	HabitStatistics, 
 	HabitStreaks, 
 	StreakEntry, 
@@ -29,60 +29,13 @@ export class HabitDetailsDataService {
 	}
 
 	/**
-	 * Get date range based on selected time range
-	 */
-	getDateRange(timeRange: TimeRange): { startDate: Date; endDate: Date } {
-		const endDate = new Date();
-		endDate.setHours(23, 59, 59, 999);
-		
-		const startDate = new Date();
-		startDate.setHours(0, 0, 0, 0);
-
-		switch (timeRange) {
-			case TimeRange.LAST_7_DAYS:
-				startDate.setDate(startDate.getDate() - 6);
-				break;
-			case TimeRange.LAST_30_DAYS:
-				startDate.setDate(startDate.getDate() - 29);
-				break;
-			case TimeRange.LAST_90_DAYS:
-				startDate.setDate(startDate.getDate() - 89);
-				break;
-			case TimeRange.LAST_YEAR:
-				startDate.setFullYear(startDate.getFullYear() - 1);
-				break;
-			case TimeRange.ALL_TIME:
-				startDate.setFullYear(2000); // Arbitrary old date
-				break;
-			case TimeRange.CUSTOM:
-				// Custom ranges should be handled separately
-				break;
-		}
-
-		return { startDate, endDate };
-	}
-
-	/**
-	 * Load habit values for a given time range
+	 * Load habit values using centralized date range from tracker settings
 	 */
 	async loadHabitValues(
 		habit: Habit,
-		timeRange: TimeRange,
-		customStart?: Date,
-		customEnd?: Date
+		startDate?: Date,
+		endDate?: Date
 	): Promise<HabitValueEntry[]> {
-		let startDate: Date | undefined;
-		let endDate: Date | undefined;
-
-		if (timeRange === TimeRange.CUSTOM && customStart && customEnd) {
-			startDate = customStart;
-			endDate = customEnd;
-		} else if (timeRange !== TimeRange.CUSTOM) {
-			const range = this.getDateRange(timeRange);
-			startDate = range.startDate;
-			endDate = range.endDate;
-		}
-
 		const values = await this.frontmatterReader.getHabitValues(habit, startDate, endDate);
 		
 		// Convert to HabitValueEntry format
@@ -347,10 +300,9 @@ export class HabitDetailsDataService {
 	 */
 	getChartData(
 		values: HabitValueEntry[],
-		timeRange: TimeRange
+		startDate: Date,
+		endDate: Date
 	): { labels: string[]; data: number[] } {
-		const { startDate, endDate } = this.getDateRange(timeRange);
-		
 		// Generate date labels
 		const labels: string[] = [];
 		const dataMap = new Map<string, number>();

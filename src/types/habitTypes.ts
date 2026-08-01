@@ -47,6 +47,22 @@ export enum DateExtractionMethod {
 }
 
 /**
+ * Default period options for tracking
+ */
+export enum DefaultPeriod {
+	CURRENT_YEAR = "current_year",
+	LAST_365_DAYS = "last_365_days"
+}
+
+/**
+ * Calendar system options
+ */
+export enum CalendarSystem {
+	GREGORIAN = "gregorian",
+	PERSIAN = "persian"
+}
+
+/**
  * User settings stored in tracker file
  */
 export interface TrackerSettings {
@@ -56,6 +72,8 @@ export interface TrackerSettings {
 	dataSourceValue?: string; // Tag or folder path based on type
 	dateExtractionMethod?: DateExtractionMethod;
 	dateFrontmatterProperty?: string; // Property key if using frontmatter
+	defaultPeriod?: DefaultPeriod;
+	calendarSystem?: CalendarSystem;
 }
 
 /**

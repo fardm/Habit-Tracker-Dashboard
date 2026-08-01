@@ -1,13 +1,13 @@
 import { App, Modal } from "obsidian";
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { HabitDetailsModalProps, TimeRange, ChartType, HabitDetailsSettings, HabitValueEntry, HabitStatistics, HabitStreaks } from "../../types/habitDetailsTypes";
-import { TimeRangeSelector } from "./timeRangeSelector";
+import { HabitDetailsModalProps, ChartType, HabitDetailsSettings, HabitValueEntry, HabitStatistics, HabitStreaks } from "../../types/habitDetailsTypes";
 import { ChartSection } from "./chartSection";
 import { StatisticsDashboard } from "./statisticsDashboard";
 import { StreakSection } from "./streakSection";
 import { CalendarHeatmap } from "./calendarHeatmap";
 import { SettingsPanel } from "./settingsPanel";
 import { HabitDetailsDataService } from "../../handlers/habitDetailsDataService";
+import { DateRangeCalculator } from "../../handlers/dateRangeCalculator";
 import { Habit } from "../../types/habitTypes";
 
 /**
@@ -16,7 +16,6 @@ import { Habit } from "../../types/habitTypes";
 export class HabitDetailsModal extends Modal {
 	private props: HabitDetailsModalProps;
 	private habit: Habit;
-	private timeRange: TimeRange = TimeRange.LAST_30_DAYS;
 	private chartType: ChartType = ChartType.LINE;
 	private settings: HabitDetailsSettings;
 	private contentContainer?: HTMLElement;
@@ -56,9 +55,6 @@ export class HabitDetailsModal extends Modal {
 
 		// Header section
 		this.renderHeader();
-
-		// Time range selector
-		this.renderTimeRangeSelector();
 
 		// Main content sections
 		this.renderContentSections();
@@ -118,33 +114,6 @@ export class HabitDetailsModal extends Modal {
 		header.appendChild(settingsPanel.render());
 	}
 
-	private renderTimeRangeSelector(): void {
-		if (!this.contentContainer) return;
-
-		// Remove existing selector if present
-		const existingSelector = this.contentContainer.querySelector('.time-range-container');
-		if (existingSelector) {
-			existingSelector.remove();
-		}
-
-		const selectorContainer = this.contentContainer.createDiv({
-			cls: "time-range-container"
-		});
-		selectorContainer.style.cssText = `
-			margin-bottom: 20px;
-		`;
-
-		const selector = new TimeRangeSelector({
-			currentRange: this.timeRange,
-			onRangeChange: (newRange) => {
-				this.timeRange = newRange;
-				this.renderTimeRangeSelector();
-				this.loadHabitData();
-			}
-		});
-		selectorContainer.appendChild(selector.render());
-	}
-
 	private renderContentSections(): void {
 		if (!this.contentContainer) return;
 
@@ -161,8 +130,7 @@ export class HabitDetailsModal extends Modal {
 				values: this.habitValues,
 				habitType: this.props.habitType,
 				target: this.props.target,
-				theme: this.settings.theme,
-				timeRange: this.timeRange
+				theme: this.settings.theme
 			});
 			heatmapSection.appendChild(heatmap.render());
 		}
@@ -226,9 +194,13 @@ export class HabitDetailsModal extends Modal {
 
 	private async loadHabitData(): Promise<void> {
 		try {
+			// Calculate date range using centralized calculator
+			const dateRange = DateRangeCalculator.calculateDateRange(this.props.trackerSettings || {});
+			
 			this.habitValues = await this.dataService.loadHabitValues(
 				this.habit,
-				this.timeRange
+				dateRange.startDate,
+				dateRange.endDate
 			);
 			if (this.contentContainer) {
 				this.renderContentSections();
@@ -252,7 +224,6 @@ export class HabitDetailsModal extends Modal {
 				showStatistics: true,
 				showStreaks: true
 			},
-			defaultTimeRange: TimeRange.LAST_30_DAYS,
 			defaultChartType: ChartType.LINE
 		};
 	}

@@ -46,7 +46,6 @@ export interface ColorTheme {
 export interface HabitDetailsSettings {
 	theme: ColorTheme;
 	sectionVisibility: SectionVisibility;
-	defaultTimeRange: TimeRange;
 	defaultChartType: ChartType;
 }
 
