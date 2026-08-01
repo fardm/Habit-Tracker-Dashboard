@@ -8,8 +8,9 @@ import { HabitDataManager } from "../handlers/habitDataManager";
 import { FrontmatterDataReader } from "../handlers/frontmatterDataReader";
 import { DateNavigator } from "./dateNavigator";
 import { ViewModeSwitcher } from "./viewModeSwitcher";
-import { Habit, HabitType, ViewMode } from "../types/habitTypes";
+import { Habit, HabitType, ViewMode, TrackerSettings } from "../types/habitTypes";
 import { HabitDetailsModal } from "./habitDetails/habitDetailsModal";
+import { SettingsModal, SettingsFormData } from "./settingsModal";
 
 /**
  * Main Dashboard component that displays the habit tracker interface
@@ -28,6 +29,7 @@ export class Dashboard extends HTMLElementComponent {
 	private viewModeSwitcher?: ViewModeSwitcher;
 	private draggedHabitId?: string;
 	private dropIndicator?: HTMLElement;
+	private currentSettings: TrackerSettings = {};
 
 	constructor(app: App, file: TFile) {
 		super();
@@ -60,13 +62,30 @@ export class Dashboard extends HTMLElementComponent {
 			gap: 16px;
 		`;
 
-		// Left side: Add Habit button and Refresh button
+		// Left side: Settings button, Add Habit button and Refresh button
 		const leftControls = document.createElement("div");
 		leftControls.style.cssText = `
 			display: flex;
 			align-items: center;
 			gap: 8px;
 		`;
+		
+		const settingsButton = document.createElement("button");
+		settingsButton.innerHTML = "⚙️";
+		settingsButton.title = "Settings";
+		settingsButton.style.cssText = `
+			padding: 8px 12px;
+			background-color: var(--background-secondary);
+			border: 1px solid var(--background-modifier-border);
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 16px;
+			transition: all 0.2s;
+		`;
+		settingsButton.addEventListener("click", () => {
+			this.showSettingsModal();
+		});
+		leftControls.appendChild(settingsButton);
 		
 		const addHabitButton = new AddHabitButton(() => {
 			this.showAddHabitModal();
@@ -178,6 +197,9 @@ export class Dashboard extends HTMLElementComponent {
 		try {
 			const data = await this.dataManager.readTrackerData();
 			if (data.settings) {
+				this.currentSettings = data.settings;
+				
+				// Load view mode if saved
 				this.currentViewMode = data.settings.viewMode || ViewMode.GRID;
 				
 				// Load selected date if saved
@@ -194,12 +216,31 @@ export class Dashboard extends HTMLElementComponent {
 		try {
 			const data = await this.dataManager.readTrackerData();
 			data.settings = {
+				...this.currentSettings,
 				viewMode: this.currentViewMode,
 				selectedDate: this.currentDate.toISOString().split('T')[0] // Store as YYYY-MM-DD
 			};
 			await this.dataManager.writeTrackerData(data);
 		} catch (error) {
 			console.error("Error saving user settings:", error);
+		}
+	}
+
+	private async handleSaveSettings(formData: SettingsFormData): Promise<void> {
+		try {
+			this.currentSettings = {
+				...this.currentSettings,
+				dataSourceType: formData.dataSourceType,
+				dataSourceValue: formData.dataSourceValue,
+				dateExtractionMethod: formData.dateExtractionMethod,
+				dateFrontmatterProperty: formData.dateFrontmatterProperty
+			};
+			
+			const data = await this.dataManager.readTrackerData();
+			data.settings = this.currentSettings;
+			await this.dataManager.writeTrackerData(data);
+		} catch (error) {
+			console.error("Error saving settings:", error);
 		}
 	}
 
@@ -287,6 +328,17 @@ export class Dashboard extends HTMLElementComponent {
 			async (formData: HabitFormData) => {
 				await this.handleAddHabit(formData);
 			}
+		);
+		modal.open();
+	}
+
+	private showSettingsModal(): void {
+		const modal = new SettingsModal(
+			this.app,
+			async (formData: SettingsFormData) => {
+				await this.handleSaveSettings(formData);
+			},
+			this.currentSettings
 		);
 		modal.open();
 	}

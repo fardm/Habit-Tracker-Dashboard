@@ -31,11 +31,31 @@ export enum Visualization {
 }
 
 /**
+ * Data source type for filtering notes
+ */
+export enum DataSourceType {
+	TAG = "tag",
+	FOLDER = "folder"
+}
+
+/**
+ * Date extraction method
+ */
+export enum DateExtractionMethod {
+	FILENAME = "filename",
+	FRONTMATTER = "frontmatter"
+}
+
+/**
  * User settings stored in tracker file
  */
 export interface TrackerSettings {
 	viewMode?: ViewMode;
 	selectedDate?: string; // ISO date string (YYYY-MM-DD)
+	dataSourceType?: DataSourceType;
+	dataSourceValue?: string; // Tag or folder path based on type
+	dateExtractionMethod?: DateExtractionMethod;
+	dateFrontmatterProperty?: string; // Property key if using frontmatter
 }
 
 /**
