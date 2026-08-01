@@ -71,7 +71,7 @@ export class FrontmatterDataReader {
 			try {
 				// Tag filtering: skip files that don't have the required tag
 				if (this.settings.dataSourceType === DataSourceType.TAG && this.settings.dataSourceValue) {
-					const hasTag = this.fileHasTag(file, this.settings.dataSourceValue);
+					const hasTag = await this.fileHasTag(file, this.settings.dataSourceValue);
 					if (!hasTag) continue;
 				}
 				
@@ -120,28 +120,59 @@ export class FrontmatterDataReader {
 	}
 
 	/**
-	 * Checks if a file has a specific tag using Obsidian's metadata cache
+	 * Checks if a file has a specific tag using multiple methods
 	 * @param file - The file to check
 	 * @param tag - The tag to search for (with or without #)
 	 */
-	private fileHasTag(file: TFile, tag: string): boolean {
-		// Normalize tag (remove # if present and convert to lowercase for comparison)
-		const normalizedTag = tag.startsWith('#') ? tag.substring(1).toLowerCase() : tag.toLowerCase();
+	private async fileHasTag(file: TFile, tag: string): Promise<boolean> {
+		// Normalize tag: remove #, trim whitespace, lowercase
+		const normalizedTag = tag.startsWith('#') ? tag.substring(1).trim().toLowerCase() : tag.trim().toLowerCase();
 		
-		// Use Obsidian's metadata cache to get file tags
+		// Method 1: Use Obsidian's metadata cache tags (includes all tags from file)
 		const fileCache = this.app.metadataCache.getFileCache(file);
-		if (!fileCache) return false;
-		
-		// Check tags from metadata cache (includes both frontmatter and inline tags)
-		const tags = fileCache.tags;
-		if (tags) {
-			for (const tagObj of Object.keys(tags)) {
-				// Tags in cache are stored with # prefix
-				const cachedTag = tagObj.startsWith('#') ? tagObj.substring(1).toLowerCase() : tagObj.toLowerCase();
+		if (fileCache && fileCache.tags) {
+			for (const tagObj of Object.keys(fileCache.tags)) {
+				const cachedTag = tagObj.startsWith('#') ? tagObj.substring(1).trim().toLowerCase() : tagObj.trim().toLowerCase();
 				if (cachedTag === normalizedTag) {
 					return true;
 				}
 			}
+		}
+		
+		// Method 2: Check frontmatter directly via metadata cache
+		if (fileCache && fileCache.frontmatter) {
+			const frontmatterTags = fileCache.frontmatter.tags;
+			if (frontmatterTags) {
+				const tags = Array.isArray(frontmatterTags) ? frontmatterTags : [frontmatterTags];
+				
+				for (const t of tags) {
+					const tagStr = String(t).trim();
+					const normalizedT = tagStr.startsWith('#') ? tagStr.substring(1).trim().toLowerCase() : tagStr.trim().toLowerCase();
+					if (normalizedT === normalizedTag) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		// Method 3: Fallback to parsing frontmatter manually if cache is incomplete
+		try {
+			const content = await this.app.vault.read(file);
+			const frontmatter = this.parseFrontmatter(content);
+			
+			if (frontmatter && frontmatter.tags) {
+				const tags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [frontmatter.tags];
+				
+				for (const t of tags) {
+					const tagStr = String(t).trim();
+					const normalizedT = tagStr.startsWith('#') ? tagStr.substring(1).trim().toLowerCase() : tagStr.trim().toLowerCase();
+					if (normalizedT === normalizedTag) {
+						return true;
+					}
+				}
+			}
+		} catch (error) {
+			// Silently ignore parsing errors
 		}
 		
 		return false;
