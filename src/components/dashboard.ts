@@ -166,6 +166,10 @@ export class Dashboard extends HTMLElementComponent {
 	async initialize(): Promise<void> {
 		// Load settings from file first, before loading habits
 		await this.loadUserSettings();
+		
+		// Update frontmatter reader with loaded settings
+		this.frontmatterReader.updateSettings(this.currentSettings);
+		
 		await this.loadHabits();
 		await this.loadHabitValues();
 		
