@@ -50,7 +50,7 @@ export class DonutChart {
 		progressCircle.setAttribute("cy", (this.size / 2).toString());
 		progressCircle.setAttribute("r", ((this.size - this.strokeWidth) / 2).toString());
 		progressCircle.setAttribute("fill", "none");
-		progressCircle.setAttribute("stroke", "var(--interactive-accent)");
+		progressCircle.setAttribute("stroke", normalizedProgress >= 1 ? "var(--text-success)" : "#90EE90");
 		progressCircle.setAttribute("stroke-width", this.strokeWidth.toString());
 		progressCircle.setAttribute("stroke-linecap", "round");
 		progressCircle.setAttribute("stroke-dasharray", circumference.toString());

@@ -50,7 +50,7 @@ export class HabitCard extends HTMLElementComponent {
 				background-color: var(--background-secondary);
 				border: 1px solid var(--background-modifier-border);
 				border-radius: 8px;
-				padding: 16px;
+				padding: 16px 40px 16px 16px;
 				margin-bottom: 12px;
 				display: flex;
 				align-items: center;
@@ -79,11 +79,12 @@ export class HabitCard extends HTMLElementComponent {
 			top: 8px;
 			right: 8px;
 			background: none;
+			box-shadow: none;
 			border: none;
 			color: var(--text-muted);
 			font-size: 20px;
 			cursor: pointer;
-			padding: 4px 8px 4px 12px;
+			padding: 4px;
 			border-radius: 4px;
 			transition: color 0.2s, background-color 0.2s;
 			z-index: 10;
@@ -181,10 +182,33 @@ export class HabitCard extends HTMLElementComponent {
 		} else if (this.props.habit.type === "boolean") {
 			const completed = this.props.currentValue as boolean;
 			// Use SVG icons for better appearance
-			const checkIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>`;
-			const dashedIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
+			const checkIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>`;
+			const dashedIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
 			
-			statusContainer.innerHTML = completed ? checkIcon : dashedIcon;
+			// Create vertical layout for icon and text
+			const booleanContainer = document.createElement("div");
+			booleanContainer.style.cssText = `
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 4px;
+			`;
+			
+			const iconContainer = document.createElement("div");
+			iconContainer.innerHTML = completed ? checkIcon : dashedIcon;
+			
+			const statusText = document.createElement("div");
+			statusText.textContent = completed ? "Done" : "Not done";
+			statusText.style.cssText = `
+				font-size: 11px;
+				color: ${completed ? 'var(--text-success)' : 'var(--text-muted)'};
+				font-weight: 500;
+			`;
+			
+			booleanContainer.appendChild(iconContainer);
+			booleanContainer.appendChild(statusText);
+			statusContainer.appendChild(booleanContainer);
+			
 			statusContainer.style.cssText = `
 				font-size: 12px;
 				color: var(--text-normal);
@@ -203,7 +227,7 @@ export class HabitCard extends HTMLElementComponent {
 			verticalContainer.style.cssText = `
 				display: flex;
 				flex-direction: column;
-				align-items: center;
+				align-items: flex-start;
 				gap: 8px;
 			`;
 			
@@ -233,7 +257,7 @@ export class HabitCard extends HTMLElementComponent {
 				
 				// Add visualization based on setting
 				if (visualization === Visualization.DONUT) {
-					const donutChart = new DonutChart(32, 3);
+					const donutChart = new DonutChart(32, 5);
 					const chartElement = donutChart.render(progress);
 					visualizationContainer.appendChild(chartElement);
 					
@@ -255,7 +279,7 @@ export class HabitCard extends HTMLElementComponent {
 						visualizationContainer.appendChild(thinRing);
 					}
 				} else if (visualization === Visualization.PROGRESS_BAR) {
-					const progressBar = new ProgressBar(80, 4);
+					const progressBar = new ProgressBar(80, 6);
 					const barElement = progressBar.render(progress);
 					visualizationContainer.appendChild(barElement);
 					
@@ -287,11 +311,11 @@ export class HabitCard extends HTMLElementComponent {
 			} else {
 				// No target - show just value and unit
 				if (visualization === Visualization.DONUT) {
-					const donutChart = new DonutChart(32, 3);
+					const donutChart = new DonutChart(32, 5);
 					const chartElement = donutChart.render(1); // Always 100% complete
 					visualizationContainer.appendChild(chartElement);
 				} else if (visualization === Visualization.PROGRESS_BAR) {
-					const progressBar = new ProgressBar(80, 4);
+					const progressBar = new ProgressBar(80, 6);
 					const barElement = progressBar.render(1); // Always 100% complete
 					visualizationContainer.appendChild(barElement);
 				}

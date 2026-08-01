@@ -39,7 +39,7 @@ export class ProgressBar {
 		barFill.style.cssText = `
 			width: ${progressPercent}%;
 			height: 100%;
-			background-color: var(--interactive-accent);
+			background-color: ${normalizedProgress >= 1 ? 'var(--text-success)' : '#90EE90'};
 			border-radius: ${this.height / 2}px;
 			transition: width 0.3s ease;
 		`;

@@ -1,6 +1,7 @@
 import { App, TFile } from "obsidian";
 import { HTMLElementComponent } from "./htmlElementComponent";
 import { AddHabitButton } from "./addHabitButton";
+import { RefreshButton } from "./refreshButton";
 import { HabitCard, HabitCardProps } from "./habitCard";
 import { HabitModal, HabitFormData } from "./habitModal";
 import { HabitDataManager } from "../handlers/habitDataManager";
@@ -56,17 +57,23 @@ export class Dashboard extends HTMLElementComponent {
 			gap: 16px;
 		`;
 
-		// Left side: Add Habit button
+		// Left side: Add Habit button and Refresh button
 		const leftControls = document.createElement("div");
 		leftControls.style.cssText = `
 			display: flex;
 			align-items: center;
+			gap: 8px;
 		`;
 		
 		const addHabitButton = new AddHabitButton(() => {
 			this.showAddHabitModal();
 		});
 		leftControls.appendChild(addHabitButton.render());
+
+		const refreshButton = new RefreshButton(() => {
+			this.refresh();
+		});
+		leftControls.appendChild(refreshButton.render());
 
 		// Center: Date navigator
 		const centerControls = document.createElement("div");

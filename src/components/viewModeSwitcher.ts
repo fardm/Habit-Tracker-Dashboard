@@ -11,6 +11,8 @@ export interface ViewModeSwitcherProps {
  */
 export class ViewModeSwitcher extends HTMLElementComponent {
 	private props: ViewModeSwitcherProps;
+	private gridButton?: HTMLButtonElement;
+	private listButton?: HTMLButtonElement;
 
 	constructor(props: ViewModeSwitcherProps) {
 		super();
@@ -27,9 +29,44 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 		`;
 
 		// Grid button
-		const gridButton = document.createElement("button");
-		gridButton.innerHTML = "⊞";
-		gridButton.style.cssText = `
+		this.gridButton = document.createElement("button");
+		this.gridButton.innerHTML = "⊞";
+		this.updateGridButtonStyle();
+		this.gridButton.addEventListener("mouseenter", () => {
+			this.gridButton!.style.color = "var(--text-normal)";
+		});
+		this.gridButton.addEventListener("mouseleave", () => {
+			this.updateGridButtonStyle();
+		});
+		this.gridButton.addEventListener("click", () => {
+			this.props.onModeChange(ViewMode.GRID);
+			this.updateButtonStates();
+		});
+
+		// List button
+		this.listButton = document.createElement("button");
+		this.listButton.innerHTML = "≣";
+		this.updateListButtonStyle();
+		this.listButton.addEventListener("mouseenter", () => {
+			this.listButton!.style.color = "var(--text-normal)";
+		});
+		this.listButton.addEventListener("mouseleave", () => {
+			this.updateListButtonStyle();
+		});
+		this.listButton.addEventListener("click", () => {
+			this.props.onModeChange(ViewMode.LIST);
+			this.updateButtonStates();
+		});
+
+		container.appendChild(this.gridButton);
+		container.appendChild(this.listButton);
+
+		return container;
+	}
+
+	private updateGridButtonStyle(): void {
+		if (!this.gridButton) return;
+		this.gridButton.style.cssText = `
 			background: none;
 			border: none;
 			color: ${this.props.currentMode === ViewMode.GRID ? 'var(--interactive-accent)' : 'var(--text-muted)'};
@@ -39,20 +76,11 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 			transition: color 0.2s;
 			line-height: 1;
 		`;
-		gridButton.addEventListener("mouseenter", () => {
-			gridButton.style.color = "var(--text-normal)";
-		});
-		gridButton.addEventListener("mouseleave", () => {
-			gridButton.style.color = this.props.currentMode === ViewMode.GRID ? 'var(--interactive-accent)' : 'var(--text-muted)';
-		});
-		gridButton.addEventListener("click", () => {
-			this.props.onModeChange(ViewMode.GRID);
-		});
+	}
 
-		// List button
-		const listButton = document.createElement("button");
-		listButton.innerHTML = "≣";
-		listButton.style.cssText = `
+	private updateListButtonStyle(): void {
+		if (!this.listButton) return;
+		this.listButton.style.cssText = `
 			background: none;
 			border: none;
 			color: ${this.props.currentMode === ViewMode.LIST ? 'var(--interactive-accent)' : 'var(--text-muted)'};
@@ -62,19 +90,10 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 			transition: color 0.2s;
 			line-height: 1;
 		`;
-		listButton.addEventListener("mouseenter", () => {
-			listButton.style.color = "var(--text-normal)";
-		});
-		listButton.addEventListener("mouseleave", () => {
-			listButton.style.color = this.props.currentMode === ViewMode.LIST ? 'var(--interactive-accent)' : 'var(--text-muted)';
-		});
-		listButton.addEventListener("click", () => {
-			this.props.onModeChange(ViewMode.LIST);
-		});
+	}
 
-		container.appendChild(gridButton);
-		container.appendChild(listButton);
-
-		return container;
+	private updateButtonStates(): void {
+		this.updateGridButtonStyle();
+		this.updateListButtonStyle();
 	}
 }
