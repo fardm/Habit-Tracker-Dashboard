@@ -501,7 +501,7 @@ export class Dashboard extends HTMLElementComponent {
 					this.renderHabits(this.container);
 				}
 			}
-		}, habit);
+		}, habit, this.dataCache);
 		modal.open();
 	}
 

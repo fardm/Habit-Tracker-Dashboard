@@ -8,6 +8,7 @@ import { CalendarHeatmap } from "./calendarHeatmap";
 import { SettingsPanel } from "./settingsPanel";
 import { HabitDetailsDataService } from "../../handlers/habitDetailsDataService";
 import { DateRangeCalculator } from "../../handlers/dateRangeCalculator";
+import { HabitDataCache } from "../../handlers/habitDataCache";
 import { Habit } from "../../types/habitTypes";
 
 /**
@@ -20,14 +21,16 @@ export class HabitDetailsModal extends Modal {
 	private settings: HabitDetailsSettings;
 	private contentContainer?: HTMLElement;
 	private dataService: HabitDetailsDataService;
+	private dataCache: HabitDataCache;
 	private habitValues: HabitValueEntry[] = [];
 
-	constructor(app: App, props: HabitDetailsModalProps, habit: Habit) {
+	constructor(app: App, props: HabitDetailsModalProps, habit: Habit, dataCache: HabitDataCache) {
 		super(app);
 		this.props = props;
 		this.habit = habit;
 		this.settings = this.getDefaultSettings();
 		this.dataService = new HabitDetailsDataService(app, props.trackerSettings || {});
+		this.dataCache = dataCache;
 	}
 
 	onOpen() {
@@ -197,11 +200,21 @@ export class HabitDetailsModal extends Modal {
 			// Calculate date range using centralized calculator
 			const dateRange = DateRangeCalculator.calculateDateRange(this.props.trackerSettings || {});
 			
-			this.habitValues = await this.dataService.loadHabitValues(
+			// Use cache for complete historical data instead of dataService
+			const cachedValues = this.dataCache.getHabitValues(
 				this.habit,
 				dateRange.startDate,
 				dateRange.endDate
 			);
+			
+			console.log(`[HabitDetailsModal] Loaded ${cachedValues.length} values from cache for ${this.habit.name}`);
+			
+			// Convert to HabitValueEntry format
+			this.habitValues = cachedValues.map(v => ({
+				date: new Date(v.date),
+				value: v.value
+			})).sort((a, b) => a.date.getTime() - b.date.getTime()); // Sort oldest first
+			
 			if (this.contentContainer) {
 				this.renderContentSections();
 			}
