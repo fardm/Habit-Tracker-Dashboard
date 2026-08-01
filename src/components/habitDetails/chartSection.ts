@@ -171,7 +171,7 @@ export class ChartSection extends HTMLElementComponent {
 
 		// Draw grid lines
 		for (let i = 0; i <= 4; i++) {
-			const y = padding + (i / 4) * (height - 2 * padding);
+			const y = height - padding - (i / 4) * (height - 2 * padding);
 			const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 			line.setAttribute("x1", padding.toString());
 			line.setAttribute("y1", y.toString());
@@ -221,7 +221,7 @@ export class ChartSection extends HTMLElementComponent {
 		// Draw axes labels
 		const yLabels = [0, 0.25, 0.5, 0.75, 1].map(p => minValue + p * range);
 		yLabels.forEach((labelValue, i) => {
-			const y = padding + (i / 4) * (height - 2 * padding);
+			const y = height - padding - (i / 4) * (height - 2 * padding);
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", (padding - 5).toString());
 			text.setAttribute("y", (y + 4).toString());
@@ -260,7 +260,7 @@ export class ChartSection extends HTMLElementComponent {
 
 		// Draw grid lines
 		for (let i = 0; i <= 4; i++) {
-			const y = padding + (i / 4) * (height - 2 * padding);
+			const y = height - padding - (i / 4) * (height - 2 * padding);
 			const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 			line.setAttribute("x1", padding.toString());
 			line.setAttribute("y1", y.toString());
@@ -297,7 +297,7 @@ export class ChartSection extends HTMLElementComponent {
 		// Draw axes labels
 		const yLabels = [0, 0.25, 0.5, 0.75, 1].map(p => minValue + p * range);
 		yLabels.forEach((labelValue, i) => {
-			const y = padding + (i / 4) * (height - 2 * padding);
+			const y = height - padding - (i / 4) * (height - 2 * padding);
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", (padding - 5).toString());
 			text.setAttribute("y", (y + 4).toString());
