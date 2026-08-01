@@ -32,18 +32,26 @@ export class HabitDetailsModal extends Modal {
 	}
 
 	onOpen() {
-		const { contentEl } = this;
+		const { contentEl, modalEl } = this;
 		contentEl.empty();
 
-		// Modal container
+		// Override modal width with higher priority CSS
+		modalEl.style.cssText = `
+			width: 850px !important;
+			max-width: 95vw !important;
+		`;
+
+		// Set modal container styles - let parent modal handle scrolling
+		contentEl.style.cssText = `
+			width: 100%;
+		`;
+
+		// Modal container - no overflow, let parent handle scrolling
 		this.contentContainer = contentEl.createDiv({
 			cls: "habit-details-modal"
 		});
 		this.contentContainer.style.cssText = `
 			padding: 24px;
-			max-width: 1200px;
-			max-height: 90vh;
-			overflow-y: auto;
 		`;
 
 		// Header section
@@ -113,6 +121,12 @@ export class HabitDetailsModal extends Modal {
 	private renderTimeRangeSelector(): void {
 		if (!this.contentContainer) return;
 
+		// Remove existing selector if present
+		const existingSelector = this.contentContainer.querySelector('.time-range-container');
+		if (existingSelector) {
+			existingSelector.remove();
+		}
+
 		const selectorContainer = this.contentContainer.createDiv({
 			cls: "time-range-container"
 		});
@@ -124,6 +138,7 @@ export class HabitDetailsModal extends Modal {
 			currentRange: this.timeRange,
 			onRangeChange: (newRange) => {
 				this.timeRange = newRange;
+				this.renderTimeRangeSelector();
 				this.loadHabitData();
 			}
 		});
@@ -146,7 +161,8 @@ export class HabitDetailsModal extends Modal {
 				values: this.habitValues,
 				habitType: this.props.habitType,
 				target: this.props.target,
-				theme: this.settings.theme
+				theme: this.settings.theme,
+				timeRange: this.timeRange
 			});
 			heatmapSection.appendChild(heatmap.render());
 		}

@@ -34,7 +34,8 @@ export class SettingsPanel extends HTMLElementComponent {
 			transition: all 0.2s;
 		`;
 
-		settingsButton.addEventListener("click", () => {
+		settingsButton.addEventListener("click", (e) => {
+			e.stopPropagation();
 			this.isOpen = !this.isOpen;
 			this.togglePanel();
 		});
@@ -88,6 +89,14 @@ export class SettingsPanel extends HTMLElementComponent {
 		panel.appendChild(themeSelector);
 
 		container.appendChild(panel);
+
+		// Close dropdown when clicking outside
+		document.addEventListener("click", (e) => {
+			if (this.isOpen && !container.contains(e.target as Node)) {
+				this.isOpen = false;
+				this.togglePanel();
+			}
+		});
 
 		return container;
 	}

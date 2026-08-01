@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { CalendarHeatmapProps, HabitValueEntry } from "../../types/habitDetailsTypes";
+import { CalendarHeatmapProps, HabitValueEntry, TimeRange } from "../../types/habitDetailsTypes";
 
 /**
  * CalendarHeatmap component for GitHub-style activity visualization
@@ -72,10 +72,11 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	}
 
 	private createHeatmapGrid(): HTMLElement {
+		const weeksCount = this.getWeeksCount();
 		const grid = document.createElement("div");
 		grid.style.cssText = `
 			display: grid;
-			grid-template-columns: repeat(53, 12px);
+			grid-template-columns: repeat(${weeksCount}, 12px);
 			gap: 3px;
 			overflow-x: auto;
 			padding-bottom: 8px;
@@ -99,14 +100,14 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			}
 		});
 
-		// Generate 53 weeks of data
+		// Generate data for the selected time range
 		const today = new Date();
 		const themeColor = this.getThemeColor();
 		
-		for (let week = 0; week < 53; week++) {
+		for (let week = 0; week < weeksCount; week++) {
 			for (let day = 0; day < 7; day++) {
 				const date = new Date(today);
-				date.setDate(date.getDate() - ((53 - week - 1) * 7 + (6 - day)));
+				date.setDate(date.getDate() - ((weeksCount - week - 1) * 7 + (6 - day)));
 				const dateKey = date.toISOString().split('T')[0];
 				
 				const cell = document.createElement("div");
@@ -145,6 +146,23 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		return grid;
 	}
 
+	private getWeeksCount(): number {
+		switch (this.props.timeRange) {
+			case TimeRange.LAST_7_DAYS:
+				return 1; // 1 week
+			case TimeRange.LAST_30_DAYS:
+				return 4; // ~4 weeks
+			case TimeRange.LAST_90_DAYS:
+				return 13; // ~13 weeks
+			case TimeRange.LAST_YEAR:
+				return 52; // 52 weeks
+			case TimeRange.ALL_TIME:
+				return 53; // Full year view
+			default:
+				return 53;
+		}
+	}
+
 	private createLegend(): HTMLElement {
 		const legend = document.createElement("div");
 		legend.style.cssText = `
@@ -161,12 +179,13 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		legendLabel.textContent = "Less";
 		legend.appendChild(legendLabel);
 
+		const themeColor = this.getThemeColor();
 		const legendColors = [
 			{ color: "var(--background-modifier-border)", label: "0" },
-			{ color: "var(--interactive-accent-hover)", label: "1-25%" },
-			{ color: "var(--interactive-accent)", label: "26-50%" },
-			{ color: "var(--text-accent)", label: "51-75%" },
-			{ color: "var(--text-success)", label: "76-100%" }
+			{ color: this.adjustColorOpacity(themeColor, 0.3), label: "1-25%" },
+			{ color: this.adjustColorOpacity(themeColor, 0.5), label: "26-50%" },
+			{ color: this.adjustColorOpacity(themeColor, 0.7), label: "51-75%" },
+			{ color: themeColor, label: "76-100%" }
 		];
 
 		legendColors.forEach(item => {

@@ -161,6 +161,7 @@ export interface CalendarHeatmapProps {
 	habitType: "boolean" | "numeric";
 	target?: number;
 	theme?: ColorTheme;
+	timeRange?: TimeRange;
 }
 
 /**
