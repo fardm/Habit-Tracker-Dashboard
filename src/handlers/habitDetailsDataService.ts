@@ -1,5 +1,5 @@
 import { App } from "obsidian";
-import { Habit, HabitType } from "../types/habitTypes";
+import { Habit, HabitType, TrackerSettings } from "../types/habitTypes";
 import { FrontmatterDataReader, HabitValue } from "./frontmatterDataReader";
 import { 
 	TimeRange, 
@@ -16,9 +16,16 @@ export class HabitDetailsDataService {
 	private app: App;
 	private frontmatterReader: FrontmatterDataReader;
 
-	constructor(app: App) {
+	constructor(app: App, settings: TrackerSettings = {}) {
 		this.app = app;
-		this.frontmatterReader = new FrontmatterDataReader(app);
+		this.frontmatterReader = new FrontmatterDataReader(app, settings);
+	}
+
+	/**
+	 * Update the settings for data extraction
+	 */
+	updateSettings(settings: TrackerSettings): void {
+		this.frontmatterReader.updateSettings(settings);
 	}
 
 	/**

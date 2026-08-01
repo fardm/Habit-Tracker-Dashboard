@@ -28,7 +28,7 @@ export class HabitDetailsModal extends Modal {
 		this.props = props;
 		this.habit = habit;
 		this.settings = this.getDefaultSettings();
-		this.dataService = new HabitDetailsDataService(app);
+		this.dataService = new HabitDetailsDataService(app, props.trackerSettings || {});
 	}
 
 	onOpen() {

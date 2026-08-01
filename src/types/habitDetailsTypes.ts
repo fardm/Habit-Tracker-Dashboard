@@ -1,3 +1,5 @@
+import { TrackerSettings } from "./habitTypes";
+
 /**
  * Time range options for habit details view
  */
@@ -111,6 +113,7 @@ export interface HabitDetailsModalProps {
 	habitType: "boolean" | "numeric";
 	unit?: string;
 	target?: number;
+	trackerSettings?: TrackerSettings;
 	onClose: () => void;
 }
 

@@ -473,6 +473,7 @@ export class Dashboard extends HTMLElementComponent {
 			habitType: habit.type,
 			unit: habit.unit,
 			target: habit.target,
+			trackerSettings: this.currentSettings,
 			onClose: async () => {
 				modal.close();
 				// Reload habits to pick up any theme color changes
