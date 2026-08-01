@@ -21,6 +21,7 @@ export class HabitModal extends Modal {
 	private validationErrors: string[] = [];
 	private numericFieldsContainer?: HTMLElement;
 	private visualizationContainer?: HTMLElement;
+	private isEditMode: boolean;
 
 	constructor(
 		app: App,
@@ -29,6 +30,7 @@ export class HabitModal extends Modal {
 	) {
 		super(app);
 		this.onSubmit = onSubmit;
+		this.isEditMode = !!initialData; // If initialData is provided, it's edit mode
 		this.formData = {
 			name: initialData?.name || "",
 			emoji: initialData?.emoji || "",
@@ -43,7 +45,7 @@ export class HabitModal extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 
-		contentEl.createEl("h2", { text: "Create New Habit" });
+		contentEl.createEl("h2", { text: this.isEditMode ? "Edit Habit" : "Create New Habit" });
 
 		// Habit Name
 		new Setting(contentEl)
@@ -233,14 +235,13 @@ export class HabitModal extends Modal {
 			.addButton((btn) =>
 				btn
 					.setButtonText("Cancel")
-					.setCta()
 					.onClick(() => {
 						this.close();
 					})
 			)
 			.addButton((btn) =>
 				btn
-					.setButtonText("Create")
+					.setButtonText(this.isEditMode ? "Update" : "Create")
 					.setCta()
 					.onClick(() => {
 						if (this.validate()) {

@@ -48,8 +48,10 @@ export class HabitCard extends HTMLElementComponent {
 				justify-content: space-between;
 				gap: 12px;
 				transition: border-color 0.2s, box-shadow 0.2s;
-				min-height: 60px;
+				min-height: 90px !important;
+				height: 90px !important;
 				position: relative;
+				
 			`;
 		} else {
 			card.style.cssText = `
