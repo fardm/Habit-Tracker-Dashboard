@@ -8,6 +8,7 @@ import { HabitModal, HabitFormData } from "./habitModal";
 import { HabitDataManager } from "../handlers/habitDataManager";
 import { FrontmatterDataReader } from "../handlers/frontmatterDataReader";
 import { DateRangeCalculator } from "../handlers/dateRangeCalculator";
+import { HabitDataCache } from "../handlers/habitDataCache";
 import { DateNavigator } from "./dateNavigator";
 import { ViewModeSwitcher } from "./viewModeSwitcher";
 import { Habit, HabitType, ViewMode, TrackerSettings } from "../types/habitTypes";
@@ -22,6 +23,7 @@ export class Dashboard extends HTMLElementComponent {
 	private file: TFile;
 	private dataManager: HabitDataManager;
 	private frontmatterReader: FrontmatterDataReader;
+	private dataCache: HabitDataCache;
 	private habits: Habit[] = [];
 	private habitValues: Map<string, boolean | number> = new Map();
 	private currentDate: Date;
@@ -38,7 +40,8 @@ export class Dashboard extends HTMLElementComponent {
 		this.app = app;
 		this.file = file;
 		this.dataManager = new HabitDataManager(app.vault, file);
-		this.frontmatterReader = new FrontmatterDataReader(app, this.currentSettings);
+		this.frontmatterReader = null as any; // Will be initialized after settings load
+		this.dataCache = null as any; // Will be initialized after settings load
 		this.currentDate = new Date(); // Default to today
 		this.currentViewMode = ViewMode.GRID; // Default to grid view
 	}
@@ -166,11 +169,16 @@ export class Dashboard extends HTMLElementComponent {
 	}
 
 	async initialize(): Promise<void> {
-		// Load settings from file first, before loading habits
+		// Load settings from file first, before creating services
 		await this.loadUserSettings();
 		
-		// Update frontmatter reader with loaded settings
-		this.frontmatterReader.updateSettings(this.currentSettings);
+		// Create services with loaded settings
+		this.frontmatterReader = new FrontmatterDataReader(this.app, this.currentSettings);
+		this.dataCache = new HabitDataCache(this.app, this.currentSettings);
+		
+		// Build the cache
+		await this.dataCache.buildCache();
+		console.log("[Dashboard] Cache stats:", this.dataCache.getStats());
 		
 		await this.loadHabits();
 		await this.loadHabitValues();
@@ -278,13 +286,13 @@ export class Dashboard extends HTMLElementComponent {
 			endOfDay.setHours(23, 59, 59, 999);
 			
 			for (const habit of this.habits) {
-				const latestValue = await this.frontmatterReader.getLatestHabitValue(
+				// Use cache for faster lookups
+				const cachedValue = this.dataCache.getHabitValueForDate(
 					habit,
-					startOfDay,
-					endOfDay
+					this.currentDate
 				);
-				if (latestValue && latestValue.value !== undefined) {
-					this.habitValues.set(habit.id, latestValue.value);
+				if (cachedValue && cachedValue.value !== undefined) {
+					this.habitValues.set(habit.id, cachedValue.value);
 				}
 			}
 		} catch (error) {
@@ -605,11 +613,17 @@ export class Dashboard extends HTMLElementComponent {
 	}
 
 	/**
-	 * Refreshes the dashboard by reloading habits from the file
+	 * Refreshes the dashboard by reloading habits and rebuilding cache
 	 */
 	async refresh(): Promise<void> {
 		await this.loadHabits();
 		await this.loadUserSettings();
+		
+		// Rebuild cache with updated settings
+		this.dataCache.updateSettings(this.currentSettings);
+		await this.dataCache.buildCache();
+		console.log("[Dashboard] Cache rebuilt after refresh:", this.dataCache.getStats());
+		
 		await this.loadHabitValues();
 		if (this.container) {
 			this.renderHabits(this.container);
