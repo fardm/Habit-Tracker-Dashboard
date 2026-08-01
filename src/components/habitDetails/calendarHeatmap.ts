@@ -12,6 +12,22 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		this.props = props;
 	}
 
+	private getThemeColor(): string {
+		return this.props.theme?.primary || "var(--interactive-accent)";
+	}
+
+	private adjustColorOpacity(color: string, opacity: number): string {
+		// Simple opacity adjustment for hex colors
+		if (color.startsWith('#')) {
+			const r = parseInt(color.slice(1, 3), 16);
+			const g = parseInt(color.slice(3, 5), 16);
+			const b = parseInt(color.slice(5, 7), 16);
+			return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+		}
+		// For CSS variables, return as-is (they handle opacity differently)
+		return color;
+	}
+
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "calendar-heatmap";
@@ -85,6 +101,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		// Generate 53 weeks of data
 		const today = new Date();
+		const themeColor = this.getThemeColor();
+		
 		for (let week = 0; week < 53; week++) {
 			for (let day = 0; day < 7; day++) {
 				const date = new Date(today);
@@ -97,13 +115,13 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				let bgColor = "var(--background-modifier-border)";
 				if (value > 0) {
 					if (value <= 0.25) {
-						bgColor = "var(--interactive-accent-hover)";
+						bgColor = this.adjustColorOpacity(themeColor, 0.3);
 					} else if (value <= 0.5) {
-						bgColor = "var(--interactive-accent)";
+						bgColor = this.adjustColorOpacity(themeColor, 0.5);
 					} else if (value <= 0.75) {
-						bgColor = "var(--text-accent)";
+						bgColor = this.adjustColorOpacity(themeColor, 0.7);
 					} else {
-						bgColor = "var(--text-success)";
+						bgColor = themeColor;
 					}
 				}
 				

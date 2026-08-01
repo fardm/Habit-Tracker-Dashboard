@@ -14,6 +14,10 @@ export class ChartSection extends HTMLElementComponent {
 		this.props = props;
 	}
 
+	private getThemeColor(): string {
+		return this.props.theme?.primary || "var(--interactive-accent)";
+	}
+
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "chart-section";
@@ -58,10 +62,11 @@ export class ChartSection extends HTMLElementComponent {
 		const lineButton = document.createElement("button");
 		lineButton.innerHTML = "📈";
 		lineButton.title = "Line Chart";
+		const themeColor = this.getThemeColor();
 		lineButton.style.cssText = `
 			padding: 6px 12px;
 			border: none;
-			background-color: ${this.props.chartType === ChartType.LINE ? 'var(--interactive-accent)' : 'transparent'};
+			background-color: ${this.props.chartType === ChartType.LINE ? themeColor : 'transparent'};
 			color: ${this.props.chartType === ChartType.LINE ? 'var(--text-on-accent)' : 'var(--text-muted)'};
 			border-radius: 4px;
 			cursor: pointer;
@@ -75,7 +80,7 @@ export class ChartSection extends HTMLElementComponent {
 		barButton.style.cssText = `
 			padding: 6px 12px;
 			border: none;
-			background-color: ${this.props.chartType === ChartType.BAR ? 'var(--interactive-accent)' : 'transparent'};
+			background-color: ${this.props.chartType === ChartType.BAR ? themeColor : 'transparent'};
 			color: ${this.props.chartType === ChartType.BAR ? 'var(--text-on-accent)' : 'var(--text-muted)'};
 			border-radius: 4px;
 			cursor: pointer;
@@ -148,6 +153,7 @@ export class ChartSection extends HTMLElementComponent {
 		const width = this.chartContainer.clientWidth || 600;
 		const height = 300;
 		const padding = 40;
+		const themeColor = this.getThemeColor();
 
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", width.toString());
@@ -187,7 +193,7 @@ export class ChartSection extends HTMLElementComponent {
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("d", pathD);
 		path.setAttribute("fill", "none");
-		path.setAttribute("stroke", "var(--interactive-accent)");
+		path.setAttribute("stroke", themeColor);
 		path.setAttribute("stroke-width", "2");
 		svg.appendChild(path);
 
@@ -199,7 +205,7 @@ export class ChartSection extends HTMLElementComponent {
 			circle.setAttribute("cx", x.toString());
 			circle.setAttribute("cy", y.toString());
 			circle.setAttribute("r", "4");
-			circle.setAttribute("fill", "var(--interactive-accent)");
+			circle.setAttribute("fill", themeColor);
 			circle.setAttribute("stroke", "var(--background-primary)");
 			circle.setAttribute("stroke-width", "2");
 			
@@ -235,6 +241,7 @@ export class ChartSection extends HTMLElementComponent {
 		const width = this.chartContainer.clientWidth || 600;
 		const height = 300;
 		const padding = 40;
+		const themeColor = this.getThemeColor();
 
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", width.toString());
@@ -275,7 +282,7 @@ export class ChartSection extends HTMLElementComponent {
 			rect.setAttribute("y", y.toString());
 			rect.setAttribute("width", Math.max(barWidth, 1).toString());
 			rect.setAttribute("height", barHeight.toString());
-			rect.setAttribute("fill", "var(--interactive-accent)");
+			rect.setAttribute("fill", themeColor);
 			rect.setAttribute("rx", "2");
 			
 			const dateStr = this.props.data[index].date.toLocaleDateString();
@@ -307,11 +314,13 @@ export class ChartSection extends HTMLElementComponent {
 	private updateToggleButtons(): void {
 		if (!this.toggleButtons) return;
 
+		const themeColor = this.getThemeColor();
+
 		if (this.props.chartType === ChartType.LINE) {
 			this.toggleButtons.line.style.cssText = `
 				padding: 6px 12px;
 				border: none;
-				background-color: var(--interactive-accent);
+				background-color: ${themeColor};
 				color: var(--text-on-accent);
 				border-radius: 4px;
 				cursor: pointer;
@@ -332,7 +341,7 @@ export class ChartSection extends HTMLElementComponent {
 			this.toggleButtons.bar.style.cssText = `
 				padding: 6px 12px;
 				border: none;
-				background-color: var(--interactive-accent);
+				background-color: ${themeColor};
 				color: var(--text-on-accent);
 				border-radius: 4px;
 				cursor: pointer;

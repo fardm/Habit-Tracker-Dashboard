@@ -12,6 +12,10 @@ export class StreakSection extends HTMLElementComponent {
 		this.props = props;
 	}
 
+	private getThemeColor(): string {
+		return this.props.theme?.primary || "var(--interactive-accent)";
+	}
+
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "streak-section";
@@ -103,6 +107,7 @@ export class StreakSection extends HTMLElementComponent {
 
 	private createStreakCard(icon: string, label: string, value: string, unit: string): HTMLElement {
 		const card = document.createElement("div");
+		const themeColor = this.getThemeColor();
 		card.style.cssText = `
 			background-color: var(--background-primary);
 			border: 1px solid var(--background-modifier-border);
@@ -124,7 +129,7 @@ export class StreakSection extends HTMLElementComponent {
 		valueEl.style.cssText = `
 			font-size: 24px;
 			font-weight: 700;
-			color: var(--text-normal);
+			color: ${themeColor};
 			margin-bottom: 4px;
 		`;
 		card.appendChild(valueEl);

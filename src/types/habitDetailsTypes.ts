@@ -132,6 +132,7 @@ export interface ChartSectionProps {
 	habitType: "boolean" | "numeric";
 	unit?: string;
 	target?: number;
+	theme?: ColorTheme;
 }
 
 /**
@@ -141,6 +142,7 @@ export interface StatisticsDashboardProps {
 	statistics: HabitStatistics;
 	habitType: "boolean" | "numeric";
 	unit?: string;
+	theme?: ColorTheme;
 }
 
 /**
@@ -148,6 +150,7 @@ export interface StatisticsDashboardProps {
  */
 export interface StreakSectionProps {
 	streaks: HabitStreaks;
+	theme?: ColorTheme;
 }
 
 /**
@@ -157,6 +160,7 @@ export interface CalendarHeatmapProps {
 	values: HabitValueEntry[];
 	habitType: "boolean" | "numeric";
 	target?: number;
+	theme?: ColorTheme;
 }
 
 /**

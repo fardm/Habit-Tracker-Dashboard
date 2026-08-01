@@ -41,8 +41,8 @@ export class HabitDetailsModal extends Modal {
 		});
 		this.contentContainer.style.cssText = `
 			padding: 24px;
-			max-width: 900px;
-			max-height: 85vh;
+			max-width: 1200px;
+			max-height: 90vh;
 			overflow-y: auto;
 		`;
 
@@ -145,7 +145,8 @@ export class HabitDetailsModal extends Modal {
 			const heatmap = new CalendarHeatmap({
 				values: this.habitValues,
 				habitType: this.props.habitType,
-				target: this.props.target
+				target: this.props.target,
+				theme: this.settings.theme
 			});
 			heatmapSection.appendChild(heatmap.render());
 		}
@@ -164,7 +165,8 @@ export class HabitDetailsModal extends Modal {
 				data: this.habitValues,
 				habitType: this.props.habitType,
 				unit: this.props.unit,
-				target: this.props.target
+				target: this.props.target,
+				theme: this.settings.theme
 			});
 			chartSection.appendChild(chart.render());
 		}
@@ -181,7 +183,8 @@ export class HabitDetailsModal extends Modal {
 			const stats = new StatisticsDashboard({
 				statistics: statistics,
 				habitType: this.props.habitType,
-				unit: this.props.unit
+				unit: this.props.unit,
+				theme: this.settings.theme
 			});
 			statsSection.appendChild(stats.render());
 		}
@@ -197,7 +200,8 @@ export class HabitDetailsModal extends Modal {
 				this.props.target
 			);
 			const streakComponent = new StreakSection({
-				streaks: streaks
+				streaks: streaks,
+				theme: this.settings.theme
 			});
 			streakSection.appendChild(streakComponent.render());
 		}

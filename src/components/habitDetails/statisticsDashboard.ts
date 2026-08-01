@@ -12,6 +12,10 @@ export class StatisticsDashboard extends HTMLElementComponent {
 		this.props = props;
 	}
 
+	private getThemeColor(): string {
+		return this.props.theme?.primary || "var(--interactive-accent)";
+	}
+
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "statistics-dashboard";
@@ -74,6 +78,7 @@ export class StatisticsDashboard extends HTMLElementComponent {
 
 	private createStatItem(stat: { label: string; value: string; icon: string }): HTMLElement {
 		const item = document.createElement("div");
+		const themeColor = this.getThemeColor();
 		item.style.cssText = `
 			background-color: var(--background-primary);
 			border: 1px solid var(--background-modifier-border);
@@ -95,7 +100,7 @@ export class StatisticsDashboard extends HTMLElementComponent {
 		value.style.cssText = `
 			font-size: 20px;
 			font-weight: 600;
-			color: var(--text-normal);
+			color: ${themeColor};
 			margin-bottom: 4px;
 		`;
 		item.appendChild(value);
