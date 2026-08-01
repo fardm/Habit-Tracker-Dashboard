@@ -26,6 +26,7 @@ export enum DateRangeFilter {
 export enum Visualization {
 	DONUT = "donut",
 	PROGRESS_BAR = "progress_bar",
+	CIRCLE_CHECK = "circle_check",
 	NONE = "none"
 }
 

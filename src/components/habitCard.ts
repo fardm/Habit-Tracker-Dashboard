@@ -378,6 +378,14 @@ export class HabitCard extends HTMLElementComponent {
 						visualizationContainer.style.position = "relative";
 						visualizationContainer.appendChild(thinRing);
 					}
+				} else if (visualization === Visualization.CIRCLE_CHECK) {
+					// Circle check visualization for numeric habits
+					const checkIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>`;
+					const dashedIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
+					
+					const iconContainer = document.createElement("div");
+					iconContainer.innerHTML = value > 0 ? checkIcon : dashedIcon;
+					visualizationContainer.appendChild(iconContainer);
 				}
 				
 				// Display text with extra amount if exceeded
@@ -396,6 +404,14 @@ export class HabitCard extends HTMLElementComponent {
 					const progressBar = new ProgressBar(80, 6);
 					const barElement = progressBar.render(1); // Always 100% complete
 					visualizationContainer.appendChild(barElement);
+				} else if (visualization === Visualization.CIRCLE_CHECK) {
+					// Circle check visualization for numeric habits without target
+					const checkIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>`;
+					const dashedIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
+					
+					const iconContainer = document.createElement("div");
+					iconContainer.innerHTML = value > 0 ? checkIcon : dashedIcon;
+					visualizationContainer.appendChild(iconContainer);
 				}
 				
 				progressText.textContent = `${value} ${unit}`;
