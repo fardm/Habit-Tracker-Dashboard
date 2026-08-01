@@ -76,10 +76,11 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const grid = document.createElement("div");
 		grid.style.cssText = `
 			display: grid;
-			grid-template-columns: repeat(${weeksCount}, 12px);
-			gap: 3px;
+			grid-template-columns: repeat(${weeksCount}, 10px);
+			gap: 2px;
 			overflow-x: auto;
 			padding-bottom: 8px;
+			justify-content: center;
 		`;
 
 		// Create value map from props
@@ -127,8 +128,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				}
 				
 				cell.style.cssText = `
-					width: 12px;
-					height: 12px;
+					width: 10px;
+					height: 10px;
 					border-radius: 2px;
 					background-color: ${bgColor};
 					transition: background-color 0.2s;
@@ -191,8 +192,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		legendColors.forEach(item => {
 			const legendItem = document.createElement("div");
 			legendItem.style.cssText = `
-				width: 12px;
-				height: 12px;
+				width: 10px;
+				height: 10px;
 				border-radius: 2px;
 				background-color: ${item.color};
 			`;
