@@ -77,9 +77,6 @@ export class SettingsModal extends Modal {
 		this.dateFrontmatterContainer = contentEl.createDiv();
 		this.updateDateFrontmatterField();
 
-		// Divider
-		contentEl.createEl("hr").style.cssText = "margin: 20px 0; border: none; border-top: 1px solid var(--background-modifier-border);";
-
 		// Report Calendar
 		new Setting(contentEl)
 			.setName("Report Calendar")

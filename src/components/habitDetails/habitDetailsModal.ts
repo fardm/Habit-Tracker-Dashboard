@@ -93,16 +93,8 @@ export class HabitDetailsModal extends Modal {
 			border-bottom: 1px solid var(--background-modifier-border);
 		`;
 
-		// Left side: Habit info and year navigation
-		const leftSection = header.createDiv();
-		leftSection.style.cssText = `
-			display: flex;
-			align-items: center;
-			gap: 24px;
-		`;
-
 		// Habit info
-		const habitInfo = leftSection.createDiv();
+		const habitInfo = header.createDiv();
 		habitInfo.style.cssText = `
 			display: flex;
 			align-items: center;
@@ -126,10 +118,6 @@ export class HabitDetailsModal extends Modal {
 			color: var(--text-normal);
 		`;
 
-		// Year navigation
-		this.yearNavigationContainer = leftSection.createDiv();
-		this.renderYearNavigation();
-
 		// Settings panel
 		const settingsPanel = new SettingsPanel({
 			settings: this.settings,
@@ -148,59 +136,81 @@ export class HabitDetailsModal extends Modal {
 
 		const navContainer = this.yearNavigationContainer.createDiv();
 		navContainer.style.cssText = `
-			display: flex;
+			display: inline-flex;
 			align-items: center;
-			gap: 8px;
+			gap: 12px;
 			background: var(--background-secondary);
 			padding: 8px 16px;
-			border-radius: 8px;
+			border-radius: 20px;
+			border: 1px solid var(--background-modifier-border);
 		`;
 
 		// Previous year button
 		const prevButton = navContainer.createEl("button", {
-			text: "◀"
+			text: "‹"
 		});
 		prevButton.style.cssText = `
 			background: transparent;
 			border: none;
-			color: var(--text-normal);
+			color: var(--text-muted);
 			cursor: pointer;
 			font-size: 16px;
 			padding: 4px 8px;
-			border-radius: 4px;
+			line-height: 1;
+			border-radius: 6px;
+			transition: all 0.15s ease;
 		`;
 		prevButton.onclick = () => this.handleYearChange(-1);
-		prevButton.onmouseover = () => prevButton.style.background = "var(--background-modifier-hover)";
-		prevButton.onmouseout = () => prevButton.style.background = "transparent";
+		prevButton.onmouseover = () => {
+			prevButton.style.color = "var(--text-normal)";
+			prevButton.style.background = "var(--background-modifier-hover)";
+		};
+		prevButton.onmouseout = () => {
+			prevButton.style.color = "var(--text-muted)";
+			prevButton.style.background = "transparent";
+		};
+		prevButton.onmousedown = () => prevButton.style.transform = "scale(0.95)";
+		prevButton.onmouseup = () => prevButton.style.transform = "scale(1)";
 
 		// Year display
 		const yearDisplay = navContainer.createEl("span", {
 			text: this.selectedYear.toString()
 		});
 		yearDisplay.style.cssText = `
-			font-size: 18px;
+			font-size: 16px;
 			font-weight: 600;
 			color: var(--text-normal);
-			min-width: 60px;
+			min-width: 50px;
 			text-align: center;
+			user-select: none;
 		`;
 
 		// Next year button
 		const nextButton = navContainer.createEl("button", {
-			text: "▶"
+			text: "›"
 		});
 		nextButton.style.cssText = `
 			background: transparent;
 			border: none;
-			color: var(--text-normal);
+			color: var(--text-muted);
 			cursor: pointer;
 			font-size: 16px;
 			padding: 4px 8px;
-			border-radius: 4px;
+			line-height: 1;
+			border-radius: 6px;
+			transition: all 0.15s ease;
 		`;
 		nextButton.onclick = () => this.handleYearChange(1);
-		nextButton.onmouseover = () => nextButton.style.background = "var(--background-modifier-hover)";
-		nextButton.onmouseout = () => nextButton.style.background = "transparent";
+		nextButton.onmouseover = () => {
+			nextButton.style.color = "var(--text-normal)";
+			nextButton.style.background = "var(--background-modifier-hover)";
+		};
+		nextButton.onmouseout = () => {
+			nextButton.style.color = "var(--text-muted)";
+			nextButton.style.background = "transparent";
+		};
+		nextButton.onmousedown = () => nextButton.style.transform = "scale(0.95)";
+		nextButton.onmouseup = () => nextButton.style.transform = "scale(1)";
 	}
 
 	private handleYearChange(delta: number): void {
@@ -215,6 +225,17 @@ export class HabitDetailsModal extends Modal {
 		// Remove existing content sections
 		const existingSections = this.contentContainer.querySelectorAll('.content-section');
 		existingSections.forEach(section => section.remove());
+
+		// Year navigation (centered above content)
+		this.yearNavigationContainer = this.contentContainer.createDiv({
+			cls: "content-section"
+		});
+		this.yearNavigationContainer.style.cssText = `
+			display: flex;
+			justify-content: center;
+			margin-bottom: 24px;
+		`;
+		this.renderYearNavigation();
 
 		// Calendar Heatmap
 		if (this.settings.sectionVisibility.showHeatmap) {
