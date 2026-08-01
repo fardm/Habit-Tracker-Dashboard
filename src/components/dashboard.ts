@@ -211,6 +211,9 @@ export class Dashboard extends HTMLElementComponent {
 
 	private async loadHabitValues(): Promise<void> {
 		try {
+			// Clear previous values to ensure we only show data for the current date
+			this.habitValues.clear();
+			
 			// Calculate start and end of the selected day
 			const startOfDay = new Date(this.currentDate);
 			startOfDay.setHours(0, 0, 0, 0);
