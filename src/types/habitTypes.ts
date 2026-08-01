@@ -59,6 +59,7 @@ export interface Habit {
 	unit?: string; // For numeric habits (e.g., "minutes", "pages")
 	target?: number; // For numeric habits (e.g., 10)
 	visualization?: Visualization; // For numeric habits visualization
+	themeColor?: string; // Custom theme color for the habit
 }
 
 /**

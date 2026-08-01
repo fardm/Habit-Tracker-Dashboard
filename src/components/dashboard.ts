@@ -420,8 +420,13 @@ export class Dashboard extends HTMLElementComponent {
 			habitType: habit.type,
 			unit: habit.unit,
 			target: habit.target,
-			onClose: () => {
+			onClose: async () => {
 				modal.close();
+				// Reload habits to pick up any theme color changes
+				await this.loadHabits();
+				if (this.container) {
+					this.renderHabits(this.container);
+				}
 			}
 		}, habit);
 		modal.open();

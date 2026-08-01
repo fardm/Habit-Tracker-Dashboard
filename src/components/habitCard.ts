@@ -203,11 +203,12 @@ export class HabitCard extends HTMLElementComponent {
 		const emoji = document.createElement("span");
 		emoji.className = "habit-emoji";
 		emoji.textContent = this.props.habit.emoji;
+		const bgColor = this.props.habit.themeColor || 'var(--interactive-accent)';
 		emoji.style.cssText = `
 			font-size: 24px;
 			border-radius: 6px;
 			padding: 10px;
-			background-color: color-mix(in srgb, var(--interactive-accent), transparent 85%);
+			background-color: color-mix(in srgb, ${bgColor}, transparent 92%);
 		`;
 
 		const habitInfo = document.createElement("div");
