@@ -11,7 +11,7 @@ export default class HabitTrackerPlugin extends Plugin {
 		registerTrackerFileType(this);
 
 		// Add ribbon icon for creating new tracker
-		this.addRibbonIcon("calendar-check", "Create New Habit Tracker", () => {
+		this.addRibbonIcon("gauge", "Create New Habit Tracker", () => {
 			this.showCreateTrackerModal();
 		});
 
