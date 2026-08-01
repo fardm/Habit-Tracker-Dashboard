@@ -6,6 +6,7 @@ import { StreakSectionProps, HabitStreaks } from "../../types/habitDetailsTypes"
  */
 export class StreakSection extends HTMLElementComponent {
 	private props: StreakSectionProps;
+	private isExpanded: boolean = false;
 
 	constructor(props: StreakSectionProps) {
 		super();
@@ -74,15 +75,48 @@ export class StreakSection extends HTMLElementComponent {
 				border-top: 1px solid var(--background-modifier-border);
 			`;
 
+			// Collapsible header
+			const historyHeader = document.createElement("div");
+			historyHeader.style.cssText = `
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				cursor: pointer;
+				padding: 8px 0;
+				user-select: none;
+			`;
+
 			const historyTitle = document.createElement("h4");
 			historyTitle.textContent = "Streak History";
 			historyTitle.style.cssText = `
-				margin: 0 0 12px 0;
+				margin: 0;
 				font-size: 14px;
 				font-weight: 500;
 				color: var(--text-normal);
 			`;
-			historySection.appendChild(historyTitle);
+			historyHeader.appendChild(historyTitle);
+
+			// Chevron icon
+			const chevron = document.createElement("div");
+			chevron.innerHTML = `
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;">
+					<polyline points="6 9 12 15 18 9"></polyline>
+				</svg>
+			`;
+			chevron.style.cssText = `
+				color: var(--text-muted);
+				transform: ${this.isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'};
+			`;
+			historyHeader.appendChild(chevron);
+
+			historySection.appendChild(historyHeader);
+
+			// Collapsible content
+			const historyContent = document.createElement("div");
+			historyContent.style.cssText = `
+				display: ${this.isExpanded ? 'block' : 'none'};
+				margin-top: 12px;
+			`;
 
 			const historyList = document.createElement("div");
 			historyList.style.cssText = `
@@ -98,7 +132,16 @@ export class StreakSection extends HTMLElementComponent {
 				historyList.appendChild(historyItem);
 			});
 
-			historySection.appendChild(historyList);
+			historyContent.appendChild(historyList);
+			historySection.appendChild(historyContent);
+
+			// Toggle functionality
+			historyHeader.addEventListener("click", () => {
+				this.isExpanded = !this.isExpanded;
+				chevron.style.transform = this.isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
+				historyContent.style.display = this.isExpanded ? 'block' : 'none';
+			});
+
 			container.appendChild(historySection);
 		}
 
