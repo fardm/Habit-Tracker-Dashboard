@@ -227,7 +227,7 @@ export class HabitCard extends HTMLElementComponent {
 			verticalContainer.style.cssText = `
 				display: flex;
 				flex-direction: column;
-				align-items: flex-start;
+				align-items: center;
 				gap: 8px;
 			`;
 			
@@ -266,11 +266,11 @@ export class HabitCard extends HTMLElementComponent {
 						const thinRing = document.createElement("div");
 						thinRing.style.cssText = `
 							position: absolute;
-							width: 36px;
-							height: 36px;
-							border: 1px solid var(--interactive-accent);
+							width: 40px;
+							height: 40px;
+							border: 2px solid var(--text-success);
 							border-radius: 50%;
-							opacity: 0.3;
+							opacity: 0.4;
 							top: 50%;
 							left: 50%;
 							transform: translate(-50%, -50%);
@@ -288,11 +288,11 @@ export class HabitCard extends HTMLElementComponent {
 						const thinRing = document.createElement("div");
 						thinRing.style.cssText = `
 							position: absolute;
-							width: 84px;
-							height: 8px;
-							border: 1px solid var(--interactive-accent);
-							border-radius: 4px;
-							opacity: 0.3;
+							width: 88px;
+							height: 12px;
+							border: 1px solid var(--text-success);
+							border-radius: 8px;
+							opacity: 0.4;
 							top: 50%;
 							left: 50%;
 							transform: translate(-50%, -50%);
