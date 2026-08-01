@@ -50,8 +50,11 @@ export class FrontmatterDataReader {
 			const folderPath = this.settings.dataSourceValue;
 			const folder = this.app.vault.getAbstractFileByPath(folderPath);
 			
+			console.log(`[HabitTracker] Folder mode: folderPath=${folderPath}, folder exists=${!!folder}`);
+			
 			if (!folder || !(folder as any).children) {
 				// Folder doesn't exist or is invalid, return empty results
+				console.log(`[HabitTracker] Folder doesn't exist or has no children`);
 				return [];
 			}
 			
@@ -59,6 +62,7 @@ export class FrontmatterDataReader {
 			markdownFiles = this.app.vault.getMarkdownFiles().filter(file => 
 				file.path.startsWith(folderPath + '/') || file.path === folderPath
 			);
+			console.log(`[HabitTracker] Found ${markdownFiles.length} markdown files in folder`);
 		} else if (this.settings.dataSourceType === DataSourceType.TAG && this.settings.dataSourceValue) {
 			// Tag mode: search all files but filter by tag
 			markdownFiles = this.app.vault.getMarkdownFiles();
@@ -81,11 +85,20 @@ export class FrontmatterDataReader {
 				const fileDate = this.extractDateFromPath(file.path, content);
 				
 				// Skip file if date extraction failed (e.g., frontmatter property not found)
-				if (!fileDate) continue;
+				if (!fileDate) {
+					console.log(`[HabitTracker] Skipping ${file.path}: date extraction failed`);
+					continue;
+				}
 				
 				// Filter by date range if specified
-				if (startDate && fileDate < startDate) continue;
-				if (endDate && fileDate > endDate) continue;
+				if (startDate && fileDate < startDate) {
+					console.log(`[HabitTracker] Skipping ${file.path}: date ${fileDate.toISOString()} before start ${startDate.toISOString()}`);
+					continue;
+				}
+				if (endDate && fileDate > endDate) {
+					console.log(`[HabitTracker] Skipping ${file.path}: date ${fileDate.toISOString()} after end ${endDate.toISOString()}`);
+					continue;
+				}
 				
 				// Parse frontmatter
 				const frontmatter = this.parseFrontmatter(content);
@@ -101,7 +114,12 @@ export class FrontmatterDataReader {
 							value: processedValue,
 							filePath: file.path
 						});
+						console.log(`[HabitTracker] Added ${file.path}: ${habit.frontmatterField}=${processedValue}`);
+					} else {
+						console.log(`[HabitTracker] Skipping ${file.path}: value processing returned null for ${habit.frontmatterField}=${rawValue}`);
 					}
+				} else {
+					console.log(`[HabitTracker] Skipping ${file.path}: habit field '${habit.frontmatterField}' not found in frontmatter`);
 				}
 			} catch (error) {
 				console.error(`Error reading file ${file.path}:`, error);

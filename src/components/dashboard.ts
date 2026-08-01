@@ -7,6 +7,7 @@ import { HabitCard, HabitCardProps } from "./habitCard";
 import { HabitModal, HabitFormData } from "./habitModal";
 import { HabitDataManager } from "../handlers/habitDataManager";
 import { FrontmatterDataReader } from "../handlers/frontmatterDataReader";
+import { DateRangeCalculator } from "../handlers/dateRangeCalculator";
 import { DateNavigator } from "./dateNavigator";
 import { ViewModeSwitcher } from "./viewModeSwitcher";
 import { Habit, HabitType, ViewMode, TrackerSettings } from "../types/habitTypes";

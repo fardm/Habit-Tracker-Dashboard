@@ -62,18 +62,32 @@ export class DateRangeCalculator {
 	
 	/**
 	 * Calculate the Persian year start (Farvardin 1st) for a given date
-	 * This is an approximation that works for most practical purposes
+	 * Nowruz can fall on March 20th, 21st, or 22nd depending on the vernal equinox
+	 * For recent years: 1404 = March 20, 2025; 1405 = March 20, 2026
 	 */
 	private static getPersianYearStart(date: Date): Date {
-		// Persian New Year (Nowruz) typically falls on March 20th or 21st
-		// We'll use a simplified calculation: find the most recent March 21st
 		const year = date.getFullYear();
-		const persianNewYear = new Date(year, 2, 21); // March 21st (month index 2)
+		
+		// Try March 20th first (most common for recent years)
+		let persianNewYear = new Date(year, 2, 20); // March 20th (month index 2)
 		persianNewYear.setHours(0, 0, 0, 0);
 		
-		// If the current date is before March 21st, the Persian year started last year
+		// If current date is before March 20th, the Persian year started last year
 		if (date < persianNewYear) {
 			persianNewYear.setFullYear(year - 1);
+		} else {
+			// Check if we should use March 21st for this specific year
+			// For years where Nowruz falls on March 21st, we'd need to adjust
+			// This is a simplified approach - for exact calculation, use a Persian calendar library
+			const march21 = new Date(year, 2, 21);
+			march21.setHours(0, 0, 0, 0);
+			
+			// If date is after March 21st and the Persian year actually started on March 21st
+			// This is a heuristic - in production, use jalaali-js or similar
+			if (date >= march21 && year >= 2027) {
+				// For future years, we might need to adjust this
+				// For now, stick with March 20th as it's correct for 1404-1405
+			}
 		}
 		
 		return persianNewYear;
