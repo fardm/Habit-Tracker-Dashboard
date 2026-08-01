@@ -1,4 +1,4 @@
-import { DefaultPeriod, CalendarSystem, TrackerSettings } from "../types/habitTypes";
+import { ReportCalendar, TrackerSettings } from "../types/habitTypes";
 
 /**
  * Result of date range calculation
@@ -14,90 +14,74 @@ export interface DateRangeResult {
  */
 export class DateRangeCalculator {
 	/**
-	 * Calculate the date range based on tracker settings
+	 * Calculate the date range based on tracker settings and optional year
+	 * @param settings - Tracker settings containing reportCalendar
+	 * @param year - Optional year to calculate range for (defaults to current year)
 	 */
-	static calculateDateRange(settings: TrackerSettings): DateRangeResult {
-		const defaultPeriod = settings.defaultPeriod || DefaultPeriod.CURRENT_YEAR;
-		const calendarSystem = settings.calendarSystem || CalendarSystem.GREGORIAN;
+	static calculateDateRange(settings: TrackerSettings, year?: number): DateRangeResult {
+		const reportCalendar = settings.reportCalendar || ReportCalendar.GREGORIAN;
+		
+		// Determine the year to use
+		const targetYear = year || new Date().getFullYear();
 		
 		const today = new Date();
 		today.setHours(23, 59, 59, 999);
 		
 		let startDate: Date;
+		let endDate: Date;
 		let periodLabel: string;
 		
-		switch (defaultPeriod) {
-			case DefaultPeriod.LAST_365_DAYS:
-				startDate = new Date(today);
-				startDate.setDate(startDate.getDate() - 365);
-				startDate.setHours(0, 0, 0, 0);
-				periodLabel = "Last 365 Days";
-				break;
-				
-			case DefaultPeriod.CURRENT_YEAR:
-				if (calendarSystem === CalendarSystem.PERSIAN) {
-					startDate = this.getPersianYearStart(today);
-					periodLabel = "Persian Year";
-				} else {
-					// Gregorian year
-					startDate = new Date(today.getFullYear(), 0, 1);
-					startDate.setHours(0, 0, 0, 0);
-					periodLabel = "Current Year";
-				}
-				break;
-				
-			default:
-				// Fallback to current Gregorian year
-				startDate = new Date(today.getFullYear(), 0, 1);
-				startDate.setHours(0, 0, 0, 0);
-				periodLabel = "Current Year";
+		if (reportCalendar === ReportCalendar.JALALI) {
+			// Jalali calendar: year starts on Nowruz (March 20/21)
+			// Convert Jalali year to Gregorian for date range calculation
+			// For simplicity, we'll use March 20th as the start
+			startDate = new Date(targetYear, 2, 20); // March 20th
+			startDate.setHours(0, 0, 0, 0);
+			
+			// End date is March 19th of next year
+			endDate = new Date(targetYear + 1, 2, 19); // March 19th of next year
+			endDate.setHours(23, 59, 59, 999);
+			
+			periodLabel = `Jalali Year ${targetYear}`;
+		} else {
+			// Gregorian calendar: year starts on January 1st
+			startDate = new Date(targetYear, 0, 1); // January 1st
+			startDate.setHours(0, 0, 0, 0);
+			
+			endDate = new Date(targetYear, 11, 31); // December 31st
+			endDate.setHours(23, 59, 59, 999);
+			
+			periodLabel = `Gregorian Year ${targetYear}`;
 		}
 		
 		return {
 			startDate,
-			endDate: today,
+			endDate,
 			periodLabel
 		};
 	}
 	
 	/**
-	 * Calculate the Persian year start (Farvardin 1st) for a given date
-	 * Nowruz can fall on March 20th, 21st, or 22nd depending on the vernal equinox
-	 * For recent years: 1404 = March 20, 2025; 1405 = March 20, 2026
+	 * Get a formatted string describing the current date range
 	 */
-	private static getPersianYearStart(date: Date): Date {
-		const year = date.getFullYear();
-		
-		// Try March 20th first (most common for recent years)
-		let persianNewYear = new Date(year, 2, 20); // March 20th (month index 2)
-		persianNewYear.setHours(0, 0, 0, 0);
-		
-		// If current date is before March 20th, the Persian year started last year
-		if (date < persianNewYear) {
-			persianNewYear.setFullYear(year - 1);
-		} else {
-			// Check if we should use March 21st for this specific year
-			// For years where Nowruz falls on March 21st, we'd need to adjust
-			// This is a simplified approach - for exact calculation, use a Persian calendar library
-			const march21 = new Date(year, 2, 21);
-			march21.setHours(0, 0, 0, 0);
-			
-			// If date is after March 21st and the Persian year actually started on March 21st
-			// This is a heuristic - in production, use jalaali-js or similar
-			if (date >= march21 && year >= 2027) {
-				// For future years, we might need to adjust this
-				// For now, stick with March 20th as it's correct for 1404-1405
-			}
-		}
-		
-		return persianNewYear;
+	static getDateRangeDescription(settings: TrackerSettings, year?: number): string {
+		const range = this.calculateDateRange(settings, year);
+		return `${range.periodLabel} (${range.startDate.toLocaleDateString()} - ${range.endDate.toLocaleDateString()})`;
 	}
 	
 	/**
-	 * Get a formatted string describing the current date range
+	 * Convert Gregorian year to Jalali year (simplified approximation)
+	 * Jalali year = Gregorian year - 621 (approximately)
 	 */
-	static getDateRangeDescription(settings: TrackerSettings): string {
-		const range = this.calculateDateRange(settings);
-		return `${range.periodLabel} (${range.startDate.toLocaleDateString()} - ${range.endDate.toLocaleDateString()})`;
+	static gregorianToJalali(gregorianYear: number): number {
+		return gregorianYear - 621;
+	}
+	
+	/**
+	 * Convert Jalali year to Gregorian year (simplified approximation)
+	 * Gregorian year = Jalali year + 621 (approximately)
+	 */
+	static jalaliToGregorian(jalaliYear: number): number {
+		return jalaliYear + 621;
 	}
 }

@@ -47,19 +47,11 @@ export enum DateExtractionMethod {
 }
 
 /**
- * Default period options for tracking
+ * Report calendar system options for habit reports
  */
-export enum DefaultPeriod {
-	CURRENT_YEAR = "current_year",
-	LAST_365_DAYS = "last_365_days"
-}
-
-/**
- * Calendar system options
- */
-export enum CalendarSystem {
+export enum ReportCalendar {
 	GREGORIAN = "gregorian",
-	PERSIAN = "persian"
+	JALALI = "jalali"
 }
 
 /**
@@ -72,8 +64,7 @@ export interface TrackerSettings {
 	dataSourceValue?: string; // Tag or folder path based on type
 	dateExtractionMethod?: DateExtractionMethod;
 	dateFrontmatterProperty?: string; // Property key if using frontmatter
-	defaultPeriod?: DefaultPeriod;
-	calendarSystem?: CalendarSystem;
+	reportCalendar?: ReportCalendar; // Calendar system for habit reports (Gregorian or Jalali)
 }
 
 /**

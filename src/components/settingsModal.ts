@@ -1,13 +1,12 @@
 import { App, Modal, Setting } from "obsidian";
-import { DataSourceType, DateExtractionMethod, TrackerSettings, DefaultPeriod, CalendarSystem } from "../types/habitTypes";
+import { DataSourceType, DateExtractionMethod, TrackerSettings, ReportCalendar } from "../types/habitTypes";
 
 export interface SettingsFormData {
 	dataSourceType: DataSourceType;
 	dataSourceValue: string;
 	dateExtractionMethod: DateExtractionMethod;
 	dateFrontmatterProperty: string;
-	defaultPeriod: DefaultPeriod;
-	calendarSystem: CalendarSystem;
+	reportCalendar: ReportCalendar;
 }
 
 /**
@@ -18,7 +17,6 @@ export class SettingsModal extends Modal {
 	private onSubmit: (data: SettingsFormData) => void;
 	private dataSourceValueContainer?: HTMLElement;
 	private dateFrontmatterContainer?: HTMLElement;
-	private calendarSystemContainer?: HTMLElement;
 
 	constructor(
 		app: App,
@@ -32,8 +30,7 @@ export class SettingsModal extends Modal {
 			dataSourceValue: initialSettings?.dataSourceValue || "",
 			dateExtractionMethod: initialSettings?.dateExtractionMethod || DateExtractionMethod.FILENAME,
 			dateFrontmatterProperty: initialSettings?.dateFrontmatterProperty || "",
-			defaultPeriod: initialSettings?.defaultPeriod || DefaultPeriod.CURRENT_YEAR,
-			calendarSystem: initialSettings?.calendarSystem || CalendarSystem.GREGORIAN
+			reportCalendar: initialSettings?.reportCalendar || ReportCalendar.GREGORIAN
 		};
 	}
 
@@ -83,24 +80,19 @@ export class SettingsModal extends Modal {
 		// Divider
 		contentEl.createEl("hr").style.cssText = "margin: 20px 0; border: none; border-top: 1px solid var(--background-modifier-border);";
 
-		// Default Period
+		// Report Calendar
 		new Setting(contentEl)
-			.setName("Default Period")
-			.setDesc("Choose the default time period for habit tracking")
+			.setName("Report Calendar")
+			.setDesc("Choose the calendar system for habit reports (Heatmap, Streaks, Statistics)")
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOption(DefaultPeriod.CURRENT_YEAR, "Current Year")
-					.addOption(DefaultPeriod.LAST_365_DAYS, "Last 365 Days")
-					.setValue(this.formData.defaultPeriod)
+					.addOption(ReportCalendar.GREGORIAN, "Gregorian")
+					.addOption(ReportCalendar.JALALI, "Solar Hijri (Jalali)")
+					.setValue(this.formData.reportCalendar)
 					.onChange((value) => {
-						this.formData.defaultPeriod = value as DefaultPeriod;
-						this.updateCalendarSystemField();
+						this.formData.reportCalendar = value as ReportCalendar;
 					})
 			);
-
-		// Calendar System (dynamic based on period)
-		this.calendarSystemContainer = contentEl.createDiv();
-		this.updateCalendarSystemField();
 
 		// Buttons
 		new Setting(contentEl)
@@ -159,28 +151,6 @@ export class SettingsModal extends Modal {
 							this.formData.dateFrontmatterProperty = value;
 						})
 						.setValue(this.formData.dateFrontmatterProperty)
-				);
-		}
-	}
-
-	private updateCalendarSystemField(): void {
-		if (!this.calendarSystemContainer) return;
-
-		this.calendarSystemContainer.empty();
-
-		// Only show calendar system option when Current Year is selected
-		if (this.formData.defaultPeriod === DefaultPeriod.CURRENT_YEAR) {
-			new Setting(this.calendarSystemContainer)
-				.setName("Calendar System")
-				.setDesc("Choose the calendar system for year calculation")
-				.addDropdown((dropdown) =>
-					dropdown
-						.addOption(CalendarSystem.GREGORIAN, "Gregorian")
-						.addOption(CalendarSystem.PERSIAN, "Persian")
-						.setValue(this.formData.calendarSystem)
-						.onChange((value) => {
-							this.formData.calendarSystem = value as CalendarSystem;
-						})
 				);
 		}
 	}

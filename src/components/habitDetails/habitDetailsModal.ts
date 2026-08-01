@@ -23,6 +23,8 @@ export class HabitDetailsModal extends Modal {
 	private dataService: HabitDetailsDataService;
 	private dataCache: HabitDataCache;
 	private habitValues: HabitValueEntry[] = [];
+	private selectedYear: number;
+	private yearNavigationContainer?: HTMLElement;
 
 	constructor(app: App, props: HabitDetailsModalProps, habit: Habit, dataCache: HabitDataCache) {
 		super(app);
@@ -31,6 +33,16 @@ export class HabitDetailsModal extends Modal {
 		this.settings = this.getDefaultSettings();
 		this.dataService = new HabitDetailsDataService(app, props.trackerSettings || {});
 		this.dataCache = dataCache;
+		
+		// Initialize selected year based on report calendar
+		const reportCalendar = props.trackerSettings?.reportCalendar || "gregorian";
+		if (reportCalendar === "jalali") {
+			// Use current Jalali year
+			this.selectedYear = DateRangeCalculator.gregorianToJalali(new Date().getFullYear());
+		} else {
+			// Use current Gregorian year
+			this.selectedYear = new Date().getFullYear();
+		}
 	}
 
 	onOpen() {
@@ -81,8 +93,16 @@ export class HabitDetailsModal extends Modal {
 			border-bottom: 1px solid var(--background-modifier-border);
 		`;
 
+		// Left side: Habit info and year navigation
+		const leftSection = header.createDiv();
+		leftSection.style.cssText = `
+			display: flex;
+			align-items: center;
+			gap: 24px;
+		`;
+
 		// Habit info
-		const habitInfo = header.createDiv();
+		const habitInfo = leftSection.createDiv();
 		habitInfo.style.cssText = `
 			display: flex;
 			align-items: center;
@@ -106,6 +126,10 @@ export class HabitDetailsModal extends Modal {
 			color: var(--text-normal);
 		`;
 
+		// Year navigation
+		this.yearNavigationContainer = leftSection.createDiv();
+		this.renderYearNavigation();
+
 		// Settings panel
 		const settingsPanel = new SettingsPanel({
 			settings: this.settings,
@@ -115,6 +139,74 @@ export class HabitDetailsModal extends Modal {
 			}
 		});
 		header.appendChild(settingsPanel.render());
+	}
+
+	private renderYearNavigation(): void {
+		if (!this.yearNavigationContainer) return;
+
+		this.yearNavigationContainer.empty();
+
+		const navContainer = this.yearNavigationContainer.createDiv();
+		navContainer.style.cssText = `
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			background: var(--background-secondary);
+			padding: 8px 16px;
+			border-radius: 8px;
+		`;
+
+		// Previous year button
+		const prevButton = navContainer.createEl("button", {
+			text: "◀"
+		});
+		prevButton.style.cssText = `
+			background: transparent;
+			border: none;
+			color: var(--text-normal);
+			cursor: pointer;
+			font-size: 16px;
+			padding: 4px 8px;
+			border-radius: 4px;
+		`;
+		prevButton.onclick = () => this.handleYearChange(-1);
+		prevButton.onmouseover = () => prevButton.style.background = "var(--background-modifier-hover)";
+		prevButton.onmouseout = () => prevButton.style.background = "transparent";
+
+		// Year display
+		const yearDisplay = navContainer.createEl("span", {
+			text: this.selectedYear.toString()
+		});
+		yearDisplay.style.cssText = `
+			font-size: 18px;
+			font-weight: 600;
+			color: var(--text-normal);
+			min-width: 60px;
+			text-align: center;
+		`;
+
+		// Next year button
+		const nextButton = navContainer.createEl("button", {
+			text: "▶"
+		});
+		nextButton.style.cssText = `
+			background: transparent;
+			border: none;
+			color: var(--text-normal);
+			cursor: pointer;
+			font-size: 16px;
+			padding: 4px 8px;
+			border-radius: 4px;
+		`;
+		nextButton.onclick = () => this.handleYearChange(1);
+		nextButton.onmouseover = () => nextButton.style.background = "var(--background-modifier-hover)";
+		nextButton.onmouseout = () => nextButton.style.background = "transparent";
+	}
+
+	private handleYearChange(delta: number): void {
+		this.selectedYear += delta;
+		this.renderYearNavigation();
+		this.loadHabitData();
 	}
 
 	private renderContentSections(): void {
@@ -197,8 +289,24 @@ export class HabitDetailsModal extends Modal {
 
 	private async loadHabitData(): Promise<void> {
 		try {
-			// Calculate date range using centralized calculator
-			const dateRange = DateRangeCalculator.calculateDateRange(this.props.trackerSettings || {});
+			// Calculate date range using selected year and report calendar
+			const reportCalendar = this.props.trackerSettings?.reportCalendar || "gregorian";
+			let targetYear: number;
+			
+			if (reportCalendar === "jalali") {
+				// Convert Jalali year to Gregorian for date range calculation
+				targetYear = DateRangeCalculator.jalaliToGregorian(this.selectedYear);
+			} else {
+				// Use Gregorian year directly
+				targetYear = this.selectedYear;
+			}
+			
+			const dateRange = DateRangeCalculator.calculateDateRange(
+				this.props.trackerSettings || {},
+				targetYear
+			);
+			
+			console.log(`[HabitDetailsModal] Loading data for year ${this.selectedYear} (${reportCalendar}), date range: ${dateRange.startDate.toISOString()} to ${dateRange.endDate.toISOString()}`);
 			
 			// Use cache for complete historical data instead of dataService
 			const cachedValues = this.dataCache.getHabitValues(
