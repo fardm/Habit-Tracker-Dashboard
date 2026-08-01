@@ -228,6 +228,7 @@ export class Dashboard extends HTMLElementComponent {
 				padding: 40px 20px;
 				color: var(--text-muted);
 				font-style: italic;
+				pointer-events: none;
 			`;
 			container.appendChild(emptyState);
 			return;

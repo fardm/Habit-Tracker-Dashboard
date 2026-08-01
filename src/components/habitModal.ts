@@ -65,12 +65,23 @@ export class HabitModal extends Modal {
 			.setDesc("Choose an emoji to represent your habit")
 			.addText((text) =>
 				text
-					.setPlaceholder("📚")
+					.setPlaceholder("e.g. 📚")
 					.onChange((value) => {
 						this.formData.emoji = value;
 						this.updateFrontmatterField();
 					})
 					.setValue(this.formData.emoji)
+					.then((inputEl) => {
+						// Reduce placeholder opacity for subtle hint
+						const style = document.createElement("style");
+						style.textContent = `
+							.habit-modal-emoji-input::placeholder {
+								opacity: 0.7;
+							}
+						`;
+						contentEl.appendChild(style);
+						inputEl.inputEl.addClass("habit-modal-emoji-input");
+					})
 			);
 
 		// Type
@@ -200,7 +211,7 @@ export class HabitModal extends Modal {
 			.setDesc("The frontmatter field name for storing habit data")
 			.addText((text) =>
 				text
-					.setPlaceholder("📚reading")
+					.setPlaceholder("reading")
 					.onChange((value) => {
 						this.formData.frontmatterField = value;
 					})
