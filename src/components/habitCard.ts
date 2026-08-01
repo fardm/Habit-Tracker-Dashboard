@@ -41,7 +41,7 @@ export class HabitCard extends HTMLElementComponent {
 				background-color: var(--background-secondary);
 				border: 1px solid var(--background-modifier-border);
 				border-radius: 8px;
-				padding: 16px 40px 16px 16px;
+				padding: 16px 40px 16px 40px;
 				display: flex;
 				flex-direction: row;
 				align-items: center;
@@ -56,7 +56,7 @@ export class HabitCard extends HTMLElementComponent {
 				background-color: var(--background-secondary);
 				border: 1px solid var(--background-modifier-border);
 				border-radius: 8px;
-				padding: 16px 40px 16px 16px;
+				padding: 16px 40px 16px 40px;
 				margin-bottom: 12px;
 				display: flex;
 				align-items: center;
@@ -115,19 +115,24 @@ export class HabitCard extends HTMLElementComponent {
 
 		card.appendChild(menuButton);
 
-		// Drag handle
+		// Drag handle - positioned absolutely on the left
 		const dragHandle = document.createElement("div");
 		dragHandle.className = "habit-drag-handle";
 		dragHandle.innerHTML = "⋮⋮";
 		dragHandle.style.cssText = `
+			position: absolute;
+			left: 8px;
+			top: 50%;
+			transform: translateY(-50%);
 			cursor: grab;
 			color: var(--text-muted);
 			font-size: 16px;
 			line-height: 1;
 			letter-spacing: -2px;
-			padding: 4px 8px 4px 4px;
+			padding: 4px;
 			user-select: none;
 			transition: color 0.2s;
+			z-index: 5;
 		`;
 		dragHandle.addEventListener("mouseenter", () => {
 			dragHandle.style.color = "var(--text-normal)";

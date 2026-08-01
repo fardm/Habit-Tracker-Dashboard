@@ -26,6 +26,7 @@ export class Dashboard extends HTMLElementComponent {
 	private dateNavigator?: DateNavigator;
 	private viewModeSwitcher?: ViewModeSwitcher;
 	private draggedHabitId?: string;
+	private dropIndicator?: HTMLElement;
 
 	constructor(app: App, file: TFile) {
 		super();
@@ -424,10 +425,19 @@ export class Dashboard extends HTMLElementComponent {
 	private handleDragOver(event: DragEvent): void {
 		event.preventDefault();
 		event.dataTransfer!.dropEffect = "move";
+
+		// Show drop indicator
+		const target = event.target as HTMLElement;
+		const card = target.closest('.habit-card') as HTMLElement;
+		if (card && this.container) {
+			this.showDropIndicator(card);
+		}
 	}
 
 	private async handleDrop(targetHabitId: string, event: DragEvent): Promise<void> {
 		event.preventDefault();
+		this.hideDropIndicator();
+
 		if (!this.draggedHabitId || this.draggedHabitId === targetHabitId) {
 			return;
 		}
@@ -459,6 +469,34 @@ export class Dashboard extends HTMLElementComponent {
 
 	private handleDragEnd(): void {
 		this.draggedHabitId = undefined;
+		this.hideDropIndicator();
+	}
+
+	private showDropIndicator(targetCard: HTMLElement): void {
+		this.hideDropIndicator();
+
+		if (!this.container) return;
+
+		const indicator = document.createElement("div");
+		indicator.className = "drop-indicator";
+		indicator.style.cssText = `
+			height: 3px;
+			background-color: var(--interactive-accent);
+			border-radius: 2px;
+			margin: 4px 0;
+			transition: all 0.2s ease;
+		`;
+
+		// Insert indicator before the target card
+		targetCard.parentNode?.insertBefore(indicator, targetCard);
+		this.dropIndicator = indicator;
+	}
+
+	private hideDropIndicator(): void {
+		if (this.dropIndicator) {
+			this.dropIndicator.remove();
+			this.dropIndicator = undefined;
+		}
 	}
 
 	private async saveHabitOrder(): Promise<void> {
