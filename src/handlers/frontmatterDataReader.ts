@@ -69,14 +69,14 @@ export class FrontmatterDataReader {
 		
 		for (const file of markdownFiles) {
 			try {
-				// Read file content
-				const content = await this.app.vault.read(file);
-				
 				// Tag filtering: skip files that don't have the required tag
 				if (this.settings.dataSourceType === DataSourceType.TAG && this.settings.dataSourceValue) {
-					const hasTag = this.fileHasTag(content, this.settings.dataSourceValue);
+					const hasTag = this.fileHasTag(file, this.settings.dataSourceValue);
 					if (!hasTag) continue;
 				}
+				
+				// Read file content
+				const content = await this.app.vault.read(file);
 				
 				const fileDate = this.extractDateFromPath(file.path, content);
 				
@@ -120,29 +120,31 @@ export class FrontmatterDataReader {
 	}
 
 	/**
-	 * Checks if a file has a specific tag
-	 * @param content - The file content
+	 * Checks if a file has a specific tag using Obsidian's metadata cache
+	 * @param file - The file to check
 	 * @param tag - The tag to search for (with or without #)
 	 */
-	private fileHasTag(content: string, tag: string): boolean {
-		// Normalize tag (remove # if present)
-		const normalizedTag = tag.startsWith('#') ? tag.substring(1) : tag;
+	private fileHasTag(file: TFile, tag: string): boolean {
+		// Normalize tag (remove # if present and convert to lowercase for comparison)
+		const normalizedTag = tag.startsWith('#') ? tag.substring(1).toLowerCase() : tag.toLowerCase();
 		
-		// Check frontmatter tags
-		const frontmatter = this.parseFrontmatter(content);
-		if (frontmatter && frontmatter.tags) {
-			const tags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [frontmatter.tags];
-			if (tags.some((t: string) => {
-				const normalizedT = t.startsWith('#') ? t.substring(1) : t;
-				return normalizedT === normalizedTag;
-			})) {
-				return true;
+		// Use Obsidian's metadata cache to get file tags
+		const fileCache = this.app.metadataCache.getFileCache(file);
+		if (!fileCache) return false;
+		
+		// Check tags from metadata cache (includes both frontmatter and inline tags)
+		const tags = fileCache.tags;
+		if (tags) {
+			for (const tagObj of Object.keys(tags)) {
+				// Tags in cache are stored with # prefix
+				const cachedTag = tagObj.startsWith('#') ? tagObj.substring(1).toLowerCase() : tagObj.toLowerCase();
+				if (cachedTag === normalizedTag) {
+					return true;
+				}
 			}
 		}
 		
-		// Check inline tags in content
-		const tagPattern = new RegExp(`#${normalizedTag}\\b`, 'i');
-		return tagPattern.test(content);
+		return false;
 	}
 
 	/**
