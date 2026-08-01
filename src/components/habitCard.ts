@@ -39,10 +39,12 @@ export class HabitCard extends HTMLElementComponent {
 				border-radius: 8px;
 				padding: 16px;
 				display: flex;
-				flex-direction: column;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-between;
 				gap: 12px;
 				transition: border-color 0.2s, box-shadow 0.2s;
-				min-height: 120px;
+				min-height: 60px;
 				position: relative;
 			`;
 		} else {
@@ -147,18 +149,9 @@ export class HabitCard extends HTMLElementComponent {
 		const statusDisplay = this.renderStatusDisplay();
 
 		if (this.props.viewMode === ViewMode.GRID) {
-			// Grid layout: stack elements vertically
-			const contentContainer = document.createElement("div");
-			contentContainer.style.cssText = `
-				display: flex;
-				flex-direction: column;
-				gap: 12px;
-				flex: 1;
-			`;
-			
-			contentContainer.appendChild(leftSide);
-			contentContainer.appendChild(statusDisplay);
-			card.appendChild(contentContainer);
+			// Grid layout: horizontal arrangement like list view
+			card.appendChild(leftSide);
+			card.appendChild(statusDisplay);
 		} else {
 			// List layout: horizontal arrangement
 			card.appendChild(leftSide);

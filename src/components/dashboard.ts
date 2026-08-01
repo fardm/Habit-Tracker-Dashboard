@@ -129,9 +129,19 @@ export class Dashboard extends HTMLElementComponent {
 			container.style.cssText = `
 				margin-top: 16px;
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				grid-template-columns: repeat(2, 1fr);
 				gap: 16px;
 			`;
+			// Add responsive breakpoint for smaller screens
+			const style = document.createElement("style");
+			style.textContent = `
+				@media (max-width: 768px) {
+					.habits-container {
+						grid-template-columns: 1fr !important;
+					}
+				}
+			`;
+			container.appendChild(style);
 		} else {
 			container.style.cssText = `
 				margin-top: 16px;
