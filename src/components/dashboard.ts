@@ -2,6 +2,7 @@ import { App, TFile } from "obsidian";
 import { HTMLElementComponent } from "./htmlElementComponent";
 import { AddHabitButton } from "./addHabitButton";
 import { RefreshButton } from "./refreshButton";
+import { SettingsButton } from "./settingsButton";
 import { HabitCard, HabitCardProps } from "./habitCard";
 import { HabitModal, HabitFormData } from "./habitModal";
 import { HabitDataManager } from "../handlers/habitDataManager";
@@ -70,22 +71,10 @@ export class Dashboard extends HTMLElementComponent {
 			gap: 8px;
 		`;
 		
-		const settingsButton = document.createElement("button");
-		settingsButton.innerHTML = "⚙️";
-		settingsButton.title = "Settings";
-		settingsButton.style.cssText = `
-			padding: 8px 12px;
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 6px;
-			cursor: pointer;
-			font-size: 16px;
-			transition: all 0.2s;
-		`;
-		settingsButton.addEventListener("click", () => {
+		const settingsButton = new SettingsButton(() => {
 			this.showSettingsModal();
 		});
-		leftControls.appendChild(settingsButton);
+		leftControls.appendChild(settingsButton.render());
 		
 		const addHabitButton = new AddHabitButton(() => {
 			this.showAddHabitModal();

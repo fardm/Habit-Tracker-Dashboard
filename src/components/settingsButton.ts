@@ -1,0 +1,57 @@
+import { HTMLElementComponent } from "./htmlElementComponent";
+
+/**
+ * Component for the Settings button
+ * Displays a settings icon button that opens the settings modal
+ */
+export class SettingsButton extends HTMLElementComponent {
+	private onClick: () => void;
+
+	constructor(onClick: () => void) {
+		super();
+		this.onClick = onClick;
+	}
+
+	render(): HTMLElement {
+		const button = document.createElement("button");
+		button.className = "habit-tracker-settings-btn";
+		button.type = "button";
+		button.title = "Settings";
+
+		// Settings icon SVG
+		button.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+				<circle cx="12" cy="12" r="3"></circle>
+			</svg>
+		`;
+
+		button.style.cssText = `
+			padding: 8px 12px;
+			background-color: var(--background-secondary);
+			border: 1px solid var(--background-modifier-border);
+			border-radius: 6px;
+			cursor: pointer;
+			transition: all 0.2s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		`;
+
+		button.addEventListener("mouseenter", () => {
+			button.style.backgroundColor = "var(--background-modifier-hover)";
+		});
+
+		button.addEventListener("mouseleave", () => {
+			button.style.backgroundColor = "var(--background-secondary)";
+		});
+
+		button.addEventListener("click", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			this.onClick();
+		});
+
+		return button;
+	}
+}

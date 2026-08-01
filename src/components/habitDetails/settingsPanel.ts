@@ -22,17 +22,36 @@ export class SettingsPanel extends HTMLElementComponent {
 
 		// Settings button
 		const settingsButton = document.createElement("button");
-		settingsButton.innerHTML = "⚙️";
-		settingsButton.title = "Settings";
+		settingsButton.type = "button";
+		settingsButton.title = "View Settings";
+		
+		// Eye icon SVG
+		settingsButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+				<circle cx="12" cy="12" r="3"></circle>
+			</svg>
+		`;
+		
 		settingsButton.style.cssText = `
 			padding: 8px 12px;
 			background-color: var(--background-secondary);
 			border: 1px solid var(--background-modifier-border);
 			border-radius: 6px;
 			cursor: pointer;
-			font-size: 16px;
 			transition: all 0.2s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		`;
+
+		settingsButton.addEventListener("mouseenter", () => {
+			settingsButton.style.backgroundColor = "var(--background-modifier-hover)";
+		});
+
+		settingsButton.addEventListener("mouseleave", () => {
+			settingsButton.style.backgroundColor = "var(--background-secondary)";
+		});
 
 		settingsButton.addEventListener("click", (e) => {
 			e.stopPropagation();
