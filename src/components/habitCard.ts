@@ -11,6 +11,10 @@ export interface HabitCardProps {
 	onEdit: (habitId: string) => void;
 	onDuplicate: (habitId: string) => void;
 	onDelete: (habitId: string) => void;
+	onDragStart?: (habitId: string, event: DragEvent) => void;
+	onDragOver?: (event: DragEvent) => void;
+	onDrop?: (habitId: string, event: DragEvent) => void;
+	onDragEnd?: () => void;
 }
 
 /**
@@ -110,6 +114,63 @@ export class HabitCard extends HTMLElementComponent {
 		});
 
 		card.appendChild(menuButton);
+
+		// Drag handle
+		const dragHandle = document.createElement("div");
+		dragHandle.className = "habit-drag-handle";
+		dragHandle.innerHTML = "⋮⋮";
+		dragHandle.style.cssText = `
+			cursor: grab;
+			color: var(--text-muted);
+			font-size: 16px;
+			line-height: 1;
+			letter-spacing: -2px;
+			padding: 4px 8px 4px 4px;
+			user-select: none;
+			transition: color 0.2s;
+		`;
+		dragHandle.addEventListener("mouseenter", () => {
+			dragHandle.style.color = "var(--text-normal)";
+		});
+		dragHandle.addEventListener("mouseleave", () => {
+			dragHandle.style.color = "var(--text-muted)";
+		});
+		dragHandle.addEventListener("mousedown", () => {
+			dragHandle.style.cursor = "grabbing";
+		});
+		dragHandle.addEventListener("mouseup", () => {
+			dragHandle.style.cursor = "grab";
+		});
+
+		// Make card draggable
+		card.setAttribute("draggable", "true");
+		card.addEventListener("dragstart", (e) => {
+			if (this.props.onDragStart) {
+				this.props.onDragStart(this.props.habit.id, e);
+			}
+			e.dataTransfer!.effectAllowed = "move";
+			card.style.opacity = "0.5";
+		});
+		card.addEventListener("dragend", () => {
+			card.style.opacity = "1";
+			if (this.props.onDragEnd) {
+				this.props.onDragEnd();
+			}
+		});
+		card.addEventListener("dragover", (e) => {
+			e.preventDefault();
+			if (this.props.onDragOver) {
+				this.props.onDragOver(e);
+			}
+		});
+		card.addEventListener("drop", (e) => {
+			e.preventDefault();
+			if (this.props.onDrop) {
+				this.props.onDrop(this.props.habit.id, e);
+			}
+		});
+
+		card.appendChild(dragHandle);
 
 		// Left side: Emoji and name
 		const leftSide = document.createElement("div");

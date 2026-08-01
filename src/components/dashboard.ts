@@ -20,11 +20,12 @@ export class Dashboard extends HTMLElementComponent {
 	private frontmatterReader: FrontmatterDataReader;
 	private habits: Habit[] = [];
 	private habitValues: Map<string, boolean | number> = new Map();
-	private container?: HTMLElement;
 	private currentDate: Date;
-	private currentViewMode: ViewMode = ViewMode.GRID;
+	private currentViewMode: ViewMode;
+	private container?: HTMLElement;
 	private dateNavigator?: DateNavigator;
 	private viewModeSwitcher?: ViewModeSwitcher;
+	private draggedHabitId?: string;
 
 	constructor(app: App, file: TFile) {
 		super();
@@ -203,6 +204,12 @@ export class Dashboard extends HTMLElementComponent {
 	private async loadHabits(): Promise<void> {
 		try {
 			this.habits = await this.dataManager.getHabits();
+			// Sort habits by order property
+			this.habits.sort((a, b) => {
+				const orderA = a.order ?? 999;
+				const orderB = b.order ?? 999;
+				return orderA - orderB;
+			});
 		} catch (error) {
 			console.error("Error loading habits:", error);
 			this.habits = [];
@@ -261,7 +268,11 @@ export class Dashboard extends HTMLElementComponent {
 				viewMode: this.currentViewMode,
 				onEdit: (habitId) => this.handleEditHabit(habitId),
 				onDuplicate: (habitId) => this.handleDuplicateHabit(habitId),
-				onDelete: (habitId) => this.handleDeleteHabit(habitId)
+				onDelete: (habitId) => this.handleDeleteHabit(habitId),
+				onDragStart: (habitId, event) => this.handleDragStart(habitId, event),
+				onDragOver: (event) => this.handleDragOver(event),
+				onDrop: (habitId, event) => this.handleDrop(habitId, event),
+				onDragEnd: () => this.handleDragEnd()
 			});
 			container.appendChild(habitCard.render());
 		});
@@ -402,6 +413,61 @@ export class Dashboard extends HTMLElementComponent {
 		if (this.container) {
 			this.updateContainerLayout(this.container);
 			this.renderHabits(this.container);
+		}
+	}
+
+	private handleDragStart(habitId: string, event: DragEvent): void {
+		this.draggedHabitId = habitId;
+		event.dataTransfer!.setData("text/plain", habitId);
+	}
+
+	private handleDragOver(event: DragEvent): void {
+		event.preventDefault();
+		event.dataTransfer!.dropEffect = "move";
+	}
+
+	private async handleDrop(targetHabitId: string, event: DragEvent): Promise<void> {
+		event.preventDefault();
+		if (!this.draggedHabitId || this.draggedHabitId === targetHabitId) {
+			return;
+		}
+
+		const draggedIndex = this.habits.findIndex(h => h.id === this.draggedHabitId);
+		const targetIndex = this.habits.findIndex(h => h.id === targetHabitId);
+
+		if (draggedIndex === -1 || targetIndex === -1) {
+			return;
+		}
+
+		// Reorder habits array
+		const [draggedHabit] = this.habits.splice(draggedIndex, 1);
+		this.habits.splice(targetIndex, 0, draggedHabit);
+
+		// Update order values for all habits
+		this.habits.forEach((habit, index) => {
+			habit.order = index;
+		});
+
+		// Save the new order
+		await this.saveHabitOrder();
+
+		// Re-render
+		if (this.container) {
+			this.renderHabits(this.container);
+		}
+	}
+
+	private handleDragEnd(): void {
+		this.draggedHabitId = undefined;
+	}
+
+	private async saveHabitOrder(): Promise<void> {
+		try {
+			const data = await this.dataManager.readTrackerData();
+			data.habits = this.habits;
+			await this.dataManager.writeTrackerData(data);
+		} catch (error) {
+			console.error("Error saving habit order:", error);
 		}
 	}
 
