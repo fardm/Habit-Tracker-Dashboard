@@ -205,6 +205,9 @@ export class HabitCard extends HTMLElementComponent {
 		emoji.textContent = this.props.habit.emoji;
 		emoji.style.cssText = `
 			font-size: 24px;
+			border-radius: 6px;
+			padding: 10px;
+			background-color: color-mix(in srgb, var(--interactive-accent), transparent 85%);
 		`;
 
 		const habitInfo = document.createElement("div");
