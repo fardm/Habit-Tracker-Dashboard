@@ -37,7 +37,7 @@ export class HabitCard extends HTMLElementComponent {
 				background-color: var(--background-secondary);
 				border: 1px solid var(--background-modifier-border);
 				border-radius: 8px;
-				padding: 16px;
+				padding: 16px 40px 16px 16px;
 				display: flex;
 				flex-direction: row;
 				align-items: center;
