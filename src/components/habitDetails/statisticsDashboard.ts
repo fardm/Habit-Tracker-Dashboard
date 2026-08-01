@@ -62,9 +62,9 @@ export class StatisticsDashboard extends HTMLElementComponent {
 		
 		if (this.props.habitType === "boolean") {
 			return [
-				{ label: "Total", value: stats.total.toString(), icon: "📊" },
-				{ label: "Completion Rate", value: `${Math.round(stats.completionRate)}%`, icon: "✅" },
-				{ label: "Best Day", value: `${Math.round(stats.highest)}%`, icon: "🏆" }
+				{ label: "Completed", value: stats.total.toString(), icon: "✅" },
+				{ label: "Missed", value: stats.highest.toString(), icon: "❌" },
+				{ label: "Completion Rate", value: `${Math.round(stats.completionRate)}%`, icon: "📊" }
 			];
 		} else {
 			return [

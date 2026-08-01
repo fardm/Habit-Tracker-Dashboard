@@ -111,13 +111,14 @@ export class HabitDetailsDataService {
 
 		if (habitType === "boolean") {
 			const completedCount = values.filter(v => v.value === true).length;
+			const missedCount = values.filter(v => v.value === false).length;
 			const completionRate = (completedCount / values.length) * 100;
 			
 			return {
 				total: completedCount,
 				average: completionRate,
-				highest: completionRate,
-				lowest: completionRate,
+				highest: missedCount,
+				lowest: 0,
 				completionRate
 			};
 		} else {
