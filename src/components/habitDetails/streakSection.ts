@@ -1,5 +1,6 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
 import { StreakSectionProps, HabitStreaks } from "../../types/habitDetailsTypes";
+import { getCalendarAdapter } from "../../utils/calendarAdapter";
 
 /**
  * StreakSection component for displaying habit streak information
@@ -201,8 +202,9 @@ export class StreakSection extends HTMLElementComponent {
 		`;
 
 		const dateRange = document.createElement("span");
-		const startDate = streak.startDate.toLocaleDateString();
-		const endDate = streak.endDate.toLocaleDateString();
+		const adapter = getCalendarAdapter(this.props.reportCalendar);
+		const startDate = adapter.formatDisplayDate(streak.startDate);
+		const endDate = adapter.formatDisplayDate(streak.endDate);
 		dateRange.textContent = `${startDate} - ${endDate}`;
 		dateRange.style.cssText = `
 			color: var(--text-normal);

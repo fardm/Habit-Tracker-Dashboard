@@ -320,7 +320,8 @@ export class HabitDetailsModal extends Modal {
 			const streakComponent = new StreakSection({
 				streaks: streaks,
 				theme: this.settings.theme,
-				minimumStreakLength: this.props.trackerSettings?.minimumStreakLength
+				minimumStreakLength: this.props.trackerSettings?.minimumStreakLength,
+				reportCalendar: this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN
 			});
 			streakSection.appendChild(streakComponent.render());
 		}

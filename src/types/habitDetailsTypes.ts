@@ -157,6 +157,7 @@ export interface StreakSectionProps {
 	streaks: HabitStreaks;
 	theme?: ColorTheme;
 	minimumStreakLength?: number;
+	reportCalendar?: ReportCalendar | string;
 }
 
 /**
