@@ -107,6 +107,7 @@ export class Dashboard extends HTMLElementComponent {
 
 		// Right side: View mode switcher
 		const rightControls = document.createElement("div");
+		rightControls.className = "dashboard-right-controls";
 		rightControls.style.cssText = `
 			display: flex;
 			align-items: center;
@@ -124,6 +125,31 @@ export class Dashboard extends HTMLElementComponent {
 		controlsRow.appendChild(rightControls);
 
 		dashboard.appendChild(controlsRow);
+
+		// Mobile-specific styles
+		const mobileStyle = document.createElement("style");
+		mobileStyle.textContent = `
+			@media (max-width: 768px) {
+				.habit-tracker-dashboard {
+					padding: 12px !important;
+					max-width: 100% !important;
+				}
+				
+				.dashboard-controls {
+					grid-template-columns: 1fr !important;
+					gap: 12px !important;
+				}
+				
+				.dashboard-right-controls {
+					display: none !important;
+				}
+				
+				.dashboard-controls > div:nth-child(2) {
+					justify-self: start !important;
+				}
+			}
+		`;
+		dashboard.appendChild(mobileStyle);
 
 		// Habits container
 		const habitsContainer = document.createElement("div");

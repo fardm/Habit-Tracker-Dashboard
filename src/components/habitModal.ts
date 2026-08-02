@@ -52,6 +52,17 @@ export class HabitModal extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 
+		// Mobile-specific styles for reduced padding
+		const mobileStyle = document.createElement("style");
+		mobileStyle.textContent = `
+			@media (max-width: 768px) {
+				.modal-content {
+					padding: 16px !important;
+				}
+			}
+		`;
+		contentEl.appendChild(mobileStyle);
+
 		contentEl.createEl("h2", { text: this.isEditMode ? "Edit Habit" : "Create New Habit" });
 
 		// Habit Name
