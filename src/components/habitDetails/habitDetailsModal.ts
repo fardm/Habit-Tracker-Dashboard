@@ -359,6 +359,8 @@ export class HabitDetailsModal extends Modal {
 	}
 
 	private getDefaultSettings(): HabitDetailsSettings {
+		const isBooleanHabit = this.props.habitType === "boolean";
+
 		return {
 			theme: {
 				primary: this.habit.themeColor || "var(--interactive-accent)",
@@ -368,7 +370,7 @@ export class HabitDetailsModal extends Modal {
 			},
 			sectionVisibility: {
 				showHeatmap: true,
-				showChart: true,
+				showChart: !isBooleanHabit,
 				showStatistics: true,
 				showStreaks: true
 			},
