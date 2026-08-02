@@ -169,7 +169,6 @@ export class HabitModal extends Modal {
 			display: flex;
 			align-items: center;
 			gap: 8px;
-			cursor: pointer;
 			padding: 12px;
 			background-color: var(--background-secondary);
 			border-radius: 4px;
@@ -202,7 +201,7 @@ export class HabitModal extends Modal {
 			display: none;
 		`;
 
-		headerRow.addEventListener("click", () => {
+		numericSettingsHeader.addEventListener("click", () => {
 			if (this.numericSettingsContent) {
 				const isExpanded = this.numericSettingsContent.style.display !== "none";
 				this.numericSettingsContent.style.display = isExpanded ? "none" : "block";
@@ -252,28 +251,38 @@ export class HabitModal extends Modal {
 			);
 
 		// Visualization (only for numeric habits)
-		this.visualizationContainer = this.numericSettingsContent.createDiv({
-			cls: "visualization-container"
+		const visualizationSetting = this.numericSettingsContent.createDiv({
+			cls: "setting-item-full-width"
 		});
+		visualizationSetting.style.cssText = `
+			padding: 18px 20px;
+			border-top: 1px solid var(--background-modifier-border);
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		`;
 
-		const visualizationLabel = this.visualizationContainer.createEl("div", {
+		const visualizationName = visualizationSetting.createDiv({
 			text: "Visualization"
 		});
-		visualizationLabel.style.cssText = `
-			font-weight: 500;
-			margin-top: 16px;
-			margin-bottom: 8px;
+		visualizationName.style.cssText = `
+			font-weight: var(--font-medium);
+			font-size: var(--font-ui-medium);
 			color: var(--text-normal);
 		`;
 
-		const visualizationDesc = this.visualizationContainer.createEl("div", {
+		const visualizationDesc = visualizationSetting.createDiv({
 			text: "Choose how to display progress for this habit"
 		});
 		visualizationDesc.style.cssText = `
-			font-size: 12px;
+			font-size: var(--font-ui-smaller);
 			color: var(--text-muted);
-			margin-bottom: 12px;
+			line-height: var(--line-height-tight);
 		`;
+
+		this.visualizationContainer = visualizationSetting.createDiv({
+			cls: "visualization-container"
+		});
 
 		const radioContainer = this.visualizationContainer.createDiv();
 		radioContainer.style.cssText = `
