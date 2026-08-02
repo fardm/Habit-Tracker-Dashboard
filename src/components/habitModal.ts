@@ -105,49 +105,20 @@ export class HabitModal extends Modal {
 					.setValue(this.formData.frontmatterField)
 			);
 
-		// Type (radio buttons)
-		const typeSetting = new Setting(contentEl)
+		// Type (dropdown)
+		new Setting(contentEl)
 			.setName("Type")
-			.setDesc("Choose the habit type");
-
-		const typeRadioContainer = typeSetting.controlEl.createDiv();
-		typeRadioContainer.style.cssText = `
-			display: flex;
-			gap: 24px;
-		`;
-
-		const typeOptions = [
-			{ value: HabitType.BOOLEAN, label: "Boolean" },
-			{ value: HabitType.NUMERIC, label: "Numeric" }
-		];
-
-		typeOptions.forEach(option => {
-			const radioRow = typeRadioContainer.createDiv();
-			radioRow.style.cssText = `
-				display: flex;
-				align-items: center;
-				gap: 8px;
-			`;
-
-			const radio = document.createElement("input");
-			radio.type = "radio";
-			radio.name = "habit-type";
-			radio.value = option.value;
-			radio.checked = this.formData.type === option.value;
-			radio.addEventListener("change", () => {
-				this.formData.type = option.value as HabitType;
-				this.updateNumericSettingsVisibility();
-			});
-			radioRow.appendChild(radio);
-
-			const label = radioRow.createEl("label", {
-				text: option.label
-			});
-			label.style.cssText = `
-				cursor: pointer;
-				color: var(--text-normal);
-			`;
-		});
+			.setDesc("Choose the habit type")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption(HabitType.BOOLEAN, "Boolean")
+					.addOption(HabitType.NUMERIC, "Numeric")
+					.setValue(this.formData.type)
+					.onChange((value) => {
+						this.formData.type = value as HabitType;
+						this.updateNumericSettingsVisibility();
+					})
+			);
 
 		// Collapsible Numeric Settings section
 		this.numericSettingsContainer = contentEl.createDiv({
