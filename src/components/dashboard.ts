@@ -145,7 +145,7 @@ export class Dashboard extends HTMLElementComponent {
 				}
 				
 				.dashboard-controls > div:nth-child(2) {
-					justify-self: start !important;
+					justify-self: center !important;
 				}
 			}
 		`;
@@ -169,8 +169,15 @@ export class Dashboard extends HTMLElementComponent {
 		return dashboard;
 	}
 
+	private isMobile(): boolean {
+		return window.innerWidth <= 768;
+	}
+
 	private updateContainerLayout(container: HTMLElement): void {
-		if (this.currentViewMode === ViewMode.GRID) {
+		// Force List view on mobile regardless of saved settings
+		const effectiveViewMode = this.isMobile() ? ViewMode.LIST : this.currentViewMode;
+
+		if (effectiveViewMode === ViewMode.GRID) {
 			container.style.cssText = `
 				margin-top: 16px;
 				display: grid;
@@ -347,11 +354,14 @@ export class Dashboard extends HTMLElementComponent {
 			return;
 		}
 
+		// Force List view on mobile regardless of saved settings
+		const effectiveViewMode = this.isMobile() ? ViewMode.LIST : this.currentViewMode;
+
 		this.habits.forEach(habit => {
 			const habitCard = new HabitCard({
 				habit: habit,
 				currentValue: this.habitValues.get(habit.id),
-				viewMode: this.currentViewMode,
+				viewMode: effectiveViewMode,
 				onEdit: (habitId) => this.handleEditHabit(habitId),
 				onDuplicate: (habitId) => this.handleDuplicateHabit(habitId),
 				onDelete: (habitId) => this.handleDeleteHabit(habitId),
