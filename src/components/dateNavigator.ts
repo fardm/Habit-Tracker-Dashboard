@@ -146,25 +146,24 @@ export class DateNavigator {
 	}
 
 	private openDatePicker(event: MouseEvent, button: HTMLElement): void {
-		// Create a visible date input positioned below the button
+		// Create a hidden date input positioned directly below the button
 		const dateInput = document.createElement("input");
 		dateInput.type = "date";
 		dateInput.style.cssText = `
-			position: absolute;
+			position: fixed;
 			opacity: 0.01;
 			pointer-events: auto;
-			width: 200px;
-			height: 32px;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: 0;
+			border: 0;
 			z-index: 1000;
 		`;
 		
-		// Position the input directly below the button
 		const rect = button.getBoundingClientRect();
-		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-		const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-		
-		dateInput.style.left = `${rect.left + scrollLeft}px`;
-		dateInput.style.top = `${rect.bottom + scrollTop + 2}px`;
+		dateInput.style.left = `${rect.left}px`;
+		dateInput.style.top = `${rect.bottom}px`;
 		
 		// Format date for input (YYYY-MM-DD)
 		const year = this.currentDate.getFullYear();
