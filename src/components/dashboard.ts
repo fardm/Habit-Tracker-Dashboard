@@ -237,7 +237,9 @@ export class Dashboard extends HTMLElementComponent {
 				dataSourceValue: formData.dataSourceValue,
 				dateExtractionMethod: formData.dateExtractionMethod,
 				dateFrontmatterProperty: formData.dateFrontmatterProperty,
-				reportCalendar: formData.reportCalendar
+				reportCalendar: formData.reportCalendar,
+				weekStartDay: formData.weekStartDay,
+				showMonthLabels: formData.showMonthLabels
 			};
 			
 			// Update frontmatter reader with new settings

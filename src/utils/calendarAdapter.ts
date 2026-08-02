@@ -4,7 +4,7 @@ import {
 	isLeapJalaaliYear,
 	jalaaliMonthLength
 } from "jalaali-js";
-import { ReportCalendar } from "../types/habitTypes";
+import { ReportCalendar, WeekStartDay } from "../types/habitTypes";
 
 /**
  * Heatmap cell for GitHub-style year grids.
@@ -13,6 +13,22 @@ import { ReportCalendar } from "../types/habitTypes";
 export interface YearDayCell {
 	isoDate: string | null;
 	isEmpty: boolean;
+	/** 1–12 in the active calendar system; unset for padding cells. */
+	month?: number;
+	/** Day of month in the active calendar system; unset for padding cells. */
+	dayOfMonth?: number;
+}
+
+/** Month label positioned above a week column. */
+export interface MonthLabel {
+	weekIndex: number;
+	label: string;
+}
+
+export interface YearHeatmapLayout {
+	cells: YearDayCell[];
+	monthLabels: MonthLabel[];
+	weeksCount: number;
 }
 
 /**
@@ -28,8 +44,23 @@ export interface CalendarDateAdapter {
 	getDaysInYear(year: number): number;
 	formatDisplayDate(date: Date): string;
 	getPeriodLabel(year: number): string;
-	buildYearHeatmapCells(year: number): YearDayCell[];
+	getMonthName(month: number): string;
+	/** Month (1–12) in this calendar for a Gregorian local Date. */
+	getMonthOfDate(date: Date): number;
+	/** Day of month in this calendar for a Gregorian local Date. */
+	getDayOfMonth(date: Date): number;
+	buildYearHeatmapLayout(year: number, weekStartDay?: WeekStartDay): YearHeatmapLayout;
 }
+
+const GREGORIAN_MONTHS = [
+	"January", "February", "March", "April", "May", "June",
+	"July", "August", "September", "October", "November", "December"
+];
+
+const JALALI_MONTHS = [
+	"Farvardin", "Ordibehesht", "Khordad", "Tir", "Mordad", "Shahrivar",
+	"Mehr", "Aban", "Azar", "Dey", "Bahman", "Esfand"
+];
 
 /** Format a local Date as Gregorian YYYY-MM-DD (avoids UTC shift from toISOString). */
 export function toLocalISODate(date: Date): string {
@@ -46,15 +77,30 @@ export function parseLocalISODate(iso: string): Date {
 }
 
 /**
+ * Offset of a JS weekday (0=Sun…6=Sat) within a week that starts on weekStartDay.
+ * Example: weekStart=Monday(1), Sunday(0) → 6 (last row).
+ */
+export function dayOffsetInWeek(jsWeekday: number, weekStartDay: WeekStartDay): number {
+	return (jsWeekday - weekStartDay + 7) % 7;
+}
+
+/**
  * Build chronological week-column cells for a year range.
- * Leading/trailing empty cells pad to full weeks (Sun–Sat rows).
+ * Leading/trailing empty cells pad to full weeks based on weekStartDay.
  * Iteration stays on consecutive Gregorian civil days — no calendar mixing.
  */
-function buildHeatmapCells(yearStart: Date, daysInYear: number): YearDayCell[] {
+function buildHeatmapLayout(
+	yearStart: Date,
+	daysInYear: number,
+	weekStartDay: WeekStartDay,
+	getMonth: (date: Date) => number,
+	getDayOfMonth: (date: Date) => number,
+	getMonthName: (month: number) => string
+): YearHeatmapLayout {
 	const cells: YearDayCell[] = [];
-	const startDayOfWeek = yearStart.getDay(); // 0 = Sunday
+	const leadingEmpty = dayOffsetInWeek(yearStart.getDay(), weekStartDay);
 
-	for (let i = 0; i < startDayOfWeek; i++) {
+	for (let i = 0; i < leadingEmpty; i++) {
 		cells.push({ isoDate: null, isEmpty: true });
 	}
 
@@ -64,7 +110,12 @@ function buildHeatmapCells(yearStart: Date, daysInYear: number): YearDayCell[] {
 		yearStart.getDate()
 	);
 	for (let i = 0; i < daysInYear; i++) {
-		cells.push({ isoDate: toLocalISODate(cursor), isEmpty: false });
+		cells.push({
+			isoDate: toLocalISODate(cursor),
+			isEmpty: false,
+			month: getMonth(cursor),
+			dayOfMonth: getDayOfMonth(cursor)
+		});
 		cursor.setDate(cursor.getDate() + 1);
 	}
 
@@ -75,7 +126,28 @@ function buildHeatmapCells(yearStart: Date, daysInYear: number): YearDayCell[] {
 		}
 	}
 
-	return cells;
+	const weeksCount = cells.length / 7;
+	const monthLabels: MonthLabel[] = [];
+	let lastLabelWeek = -Infinity;
+
+	for (let weekIndex = 0; weekIndex < weeksCount; weekIndex++) {
+		for (let row = 0; row < 7; row++) {
+			const cell = cells[weekIndex * 7 + row];
+			if (!cell.isEmpty && cell.dayOfMonth === 1 && cell.month !== undefined) {
+				// Avoid overlapping labels when months start in adjacent week columns
+				if (weekIndex - lastLabelWeek >= 3 || !Number.isFinite(lastLabelWeek)) {
+					monthLabels.push({
+						weekIndex,
+						label: getMonthName(cell.month)
+					});
+					lastLabelWeek = weekIndex;
+				}
+				break;
+			}
+		}
+	}
+
+	return { cells, monthLabels, weeksCount };
 }
 
 class GregorianCalendarAdapter implements CalendarDateAdapter {
@@ -111,8 +183,27 @@ class GregorianCalendarAdapter implements CalendarDateAdapter {
 		return `Gregorian Year ${year}`;
 	}
 
-	buildYearHeatmapCells(year: number): YearDayCell[] {
-		return buildHeatmapCells(this.getYearStart(year), this.getDaysInYear(year));
+	getMonthName(month: number): string {
+		return GREGORIAN_MONTHS[month - 1] ?? "";
+	}
+
+	getMonthOfDate(date: Date): number {
+		return date.getMonth() + 1;
+	}
+
+	getDayOfMonth(date: Date): number {
+		return date.getDate();
+	}
+
+	buildYearHeatmapLayout(year: number, weekStartDay: WeekStartDay = WeekStartDay.SUNDAY): YearHeatmapLayout {
+		return buildHeatmapLayout(
+			this.getYearStart(year),
+			this.getDaysInYear(year),
+			weekStartDay,
+			(d) => this.getMonthOfDate(d),
+			(d) => this.getDayOfMonth(d),
+			(m) => this.getMonthName(m)
+		);
 	}
 }
 
@@ -162,8 +253,27 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 		return `Jalali Year ${year}`;
 	}
 
-	buildYearHeatmapCells(year: number): YearDayCell[] {
-		return buildHeatmapCells(this.getYearStart(year), this.getDaysInYear(year));
+	getMonthName(month: number): string {
+		return JALALI_MONTHS[month - 1] ?? "";
+	}
+
+	getMonthOfDate(date: Date): number {
+		return toJalaali(date.getFullYear(), date.getMonth() + 1, date.getDate()).jm;
+	}
+
+	getDayOfMonth(date: Date): number {
+		return toJalaali(date.getFullYear(), date.getMonth() + 1, date.getDate()).jd;
+	}
+
+	buildYearHeatmapLayout(year: number, weekStartDay: WeekStartDay = WeekStartDay.SUNDAY): YearHeatmapLayout {
+		return buildHeatmapLayout(
+			this.getYearStart(year),
+			this.getDaysInYear(year),
+			weekStartDay,
+			(d) => this.getMonthOfDate(d),
+			(d) => this.getDayOfMonth(d),
+			(m) => this.getMonthName(m)
+		);
 	}
 }
 

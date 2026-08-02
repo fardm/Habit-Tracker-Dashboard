@@ -244,7 +244,9 @@ export class HabitDetailsModal extends Modal {
 				theme: this.settings.theme,
 				year: this.selectedYear,
 				reportCalendar:
-					this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN
+					this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN,
+				weekStartDay: this.props.trackerSettings?.weekStartDay,
+				showMonthLabels: this.props.trackerSettings?.showMonthLabels ?? false
 			});
 			heatmapSection.appendChild(heatmap.render());
 		}

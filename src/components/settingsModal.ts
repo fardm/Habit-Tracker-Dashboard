@@ -1,5 +1,11 @@
 import { App, Modal, Setting } from "obsidian";
-import { DataSourceType, DateExtractionMethod, TrackerSettings, ReportCalendar } from "../types/habitTypes";
+import {
+	DataSourceType,
+	DateExtractionMethod,
+	TrackerSettings,
+	ReportCalendar,
+	WeekStartDay
+} from "../types/habitTypes";
 
 export interface SettingsFormData {
 	dataSourceType: DataSourceType;
@@ -7,6 +13,8 @@ export interface SettingsFormData {
 	dateExtractionMethod: DateExtractionMethod;
 	dateFrontmatterProperty: string;
 	reportCalendar: ReportCalendar;
+	weekStartDay: WeekStartDay;
+	showMonthLabels: boolean;
 }
 
 /**
@@ -30,7 +38,9 @@ export class SettingsModal extends Modal {
 			dataSourceValue: initialSettings?.dataSourceValue || "",
 			dateExtractionMethod: initialSettings?.dateExtractionMethod || DateExtractionMethod.FILENAME,
 			dateFrontmatterProperty: initialSettings?.dateFrontmatterProperty || "",
-			reportCalendar: initialSettings?.reportCalendar || ReportCalendar.GREGORIAN
+			reportCalendar: initialSettings?.reportCalendar || ReportCalendar.GREGORIAN,
+			weekStartDay: initialSettings?.weekStartDay ?? WeekStartDay.SUNDAY,
+			showMonthLabels: initialSettings?.showMonthLabels ?? false
 		};
 	}
 
@@ -39,7 +49,6 @@ export class SettingsModal extends Modal {
 
 		contentEl.createEl("h2", { text: "Tracker Settings" });
 
-		// Data Source Type
 		new Setting(contentEl)
 			.setName("Data source")
 			.setDesc("Choose how to filter notes for habit data")
@@ -54,11 +63,9 @@ export class SettingsModal extends Modal {
 					})
 			);
 
-		// Data Source Value (dynamic based on type)
 		this.dataSourceValueContainer = contentEl.createDiv();
 		this.updateDataSourceField();
 
-		// Date Extraction Method
 		new Setting(contentEl)
 			.setName("Date extraction")
 			.setDesc("Choose how to extract dates from notes")
@@ -73,11 +80,9 @@ export class SettingsModal extends Modal {
 					})
 			);
 
-		// Date Frontmatter Property (dynamic based on method)
 		this.dateFrontmatterContainer = contentEl.createDiv();
 		this.updateDateFrontmatterField();
 
-		// Report Calendar
 		new Setting(contentEl)
 			.setName("Report Calendar")
 			.setDesc("Choose the calendar system for habit reports (Heatmap, Streaks, Statistics)")
@@ -91,7 +96,31 @@ export class SettingsModal extends Modal {
 					})
 			);
 
-		// Buttons
+		new Setting(contentEl)
+			.setName("Start of week")
+			.setDesc("First day of each week column in the calendar heatmap")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption(String(WeekStartDay.SUNDAY), "Sunday")
+					.addOption(String(WeekStartDay.MONDAY), "Monday")
+					.addOption(String(WeekStartDay.SATURDAY), "Saturday")
+					.setValue(String(this.formData.weekStartDay))
+					.onChange((value) => {
+						this.formData.weekStartDay = Number(value) as WeekStartDay;
+					})
+			);
+
+		new Setting(contentEl)
+			.setName("Show month labels")
+			.setDesc("Display month names above the calendar heatmap")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.formData.showMonthLabels)
+					.onChange((value) => {
+						this.formData.showMonthLabels = value;
+					})
+			);
+
 		new Setting(contentEl)
 			.addButton((btn) =>
 				btn

@@ -1,15 +1,17 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
 import { CalendarHeatmapProps } from "../../types/habitDetailsTypes";
 import {
+	CalendarDateAdapter,
 	getCalendarAdapter,
 	parseLocalISODate,
-	toLocalISODate
+	toLocalISODate,
+	YearHeatmapLayout
 } from "../../utils/calendarAdapter";
-import { ReportCalendar } from "../../types/habitTypes";
+import { ReportCalendar, WeekStartDay } from "../../types/habitTypes";
 
 /**
  * CalendarHeatmap — GitHub-style yearly activity grid.
- * Columns = weeks, rows = days of week (Sun–Sat).
+ * Columns = weeks, rows = days of week (order depends on weekStartDay).
  * Year bounds come from the calendar adapter (Jan–Dec or Farvardin–Esfand).
  */
 export class CalendarHeatmap extends HTMLElementComponent {
@@ -22,6 +24,10 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 	private getThemeColor(): string {
 		return this.props.theme?.primary || "var(--interactive-accent)";
+	}
+
+	private getWeekStartDay(): WeekStartDay {
+		return this.props.weekStartDay ?? WeekStartDay.SUNDAY;
 	}
 
 	private adjustColorOpacity(color: string, opacity: number): string {
@@ -49,6 +55,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			this.props.reportCalendar || ReportCalendar.GREGORIAN
 		);
 		const year = this.props.year ?? adapter.getCurrentYear();
+		const weekStartDay = this.getWeekStartDay();
+		const layout = adapter.buildYearHeatmapLayout(year, weekStartDay);
 
 		const title = document.createElement("h3");
 		title.textContent = `Activity Heatmap — ${adapter.getPeriodLabel(year)}`;
@@ -66,13 +74,65 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			display: flex;
 			flex-direction: column;
 			gap: 4px;
+			align-items: center;
 		`;
 
-		heatmapContainer.appendChild(this.createHeatmapGrid(adapter, year));
+		const gridBlock = document.createElement("div");
+		gridBlock.style.cssText = `
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			width: fit-content;
+			max-width: 100%;
+			overflow-x: auto;
+		`;
+
+		if (this.props.showMonthLabels) {
+			gridBlock.appendChild(
+				this.createMonthLabelsRow(layout.monthLabels, layout.weeksCount)
+			);
+		}
+
+		gridBlock.appendChild(this.createHeatmapGrid(adapter, layout));
+		heatmapContainer.appendChild(gridBlock);
 		heatmapContainer.appendChild(this.createLegend());
 		container.appendChild(heatmapContainer);
 
 		return container;
+	}
+
+	private createMonthLabelsRow(
+		monthLabels: { weekIndex: number; label: string }[],
+		weeksCount: number
+	): HTMLElement {
+		const cellSize = 10;
+		const gap = 2;
+		const row = document.createElement("div");
+		row.className = "heatmap-month-labels";
+		row.style.cssText = `
+			position: relative;
+			height: 14px;
+			width: ${weeksCount * cellSize + Math.max(0, weeksCount - 1) * gap}px;
+			margin-bottom: 2px;
+			font-size: 10px;
+			color: var(--text-muted);
+			line-height: 14px;
+		`;
+
+		for (const label of monthLabels) {
+			const el = document.createElement("span");
+			el.textContent = label.label;
+			el.style.cssText = `
+				position: absolute;
+				left: ${label.weekIndex * (cellSize + gap)}px;
+				top: 0;
+				white-space: nowrap;
+				pointer-events: none;
+			`;
+			row.appendChild(el);
+		}
+
+		return row;
 	}
 
 	private buildValueMap(): Map<string, number> {
@@ -120,7 +180,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	private formatTooltip(
 		isoDate: string,
 		value: number,
-		adapter: ReturnType<typeof getCalendarAdapter>
+		adapter: CalendarDateAdapter
 	): string {
 		const displayDate = adapter.formatDisplayDate(parseLocalISODate(isoDate));
 		if (this.props.habitType === "boolean") {
@@ -133,11 +193,10 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	}
 
 	private createHeatmapGrid(
-		adapter: ReturnType<typeof getCalendarAdapter>,
-		year: number
+		adapter: CalendarDateAdapter,
+		layout: YearHeatmapLayout
 	): HTMLElement {
-		const cells = adapter.buildYearHeatmapCells(year);
-		const weeksCount = cells.length / 7;
+		const { cells, weeksCount } = layout;
 		const valueMap = this.buildValueMap();
 		const themeColor = this.getThemeColor();
 
@@ -148,16 +207,11 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			grid-auto-flow: column;
 			grid-auto-columns: 10px;
 			gap: 2px;
-			overflow-x: auto;
-			padding-bottom: 8px;
-			justify-content: center;
 			width: fit-content;
-			max-width: 100%;
-			margin: 0 auto;
 		`;
 		grid.setAttribute("data-weeks", String(weeksCount));
+		grid.setAttribute("data-week-start", String(this.getWeekStartDay()));
 
-		// Cells are already chronological: week0 Sun..Sat, week1 Sun..Sat, ...
 		for (const cellData of cells) {
 			const cell = document.createElement("div");
 
@@ -197,6 +251,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			margin-top: 8px;
 			font-size: 11px;
 			color: var(--text-muted);
+			width: 100%;
 		`;
 
 		const legendLabel = document.createElement("span");

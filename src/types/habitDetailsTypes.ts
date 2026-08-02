@@ -1,4 +1,4 @@
-import { TrackerSettings, ReportCalendar } from "./habitTypes";
+import { TrackerSettings, ReportCalendar, WeekStartDay } from "./habitTypes";
 
 /**
  * Time range options for habit details view
@@ -167,6 +167,10 @@ export interface CalendarHeatmapProps {
 	year?: number;
 	/** Calendar system used for year bounds and display labels. */
 	reportCalendar?: ReportCalendar | string;
+	/** First day of each week column (default Sunday). */
+	weekStartDay?: WeekStartDay;
+	/** Show month names above the heatmap grid. */
+	showMonthLabels?: boolean;
 	/** @deprecated Yearly heatmap ignores rolling time ranges. */
 	timeRange?: TimeRange;
 }
