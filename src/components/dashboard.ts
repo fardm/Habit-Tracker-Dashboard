@@ -412,6 +412,10 @@ export class Dashboard extends HTMLElementComponent {
 			});
 
 			this.habits.push(newHabit);
+			
+			// Rebuild cache to include the new habit
+			await this.dataCache.buildCache();
+			
 			await this.loadHabitValues();
 			
 			if (this.container) {
@@ -463,6 +467,10 @@ export class Dashboard extends HTMLElementComponent {
 			});
 
 			await this.loadHabits();
+			
+			// Rebuild cache to reflect habit changes
+			await this.dataCache.buildCache();
+			
 			await this.loadHabitValues();
 			
 			if (this.container) {
@@ -490,6 +498,10 @@ export class Dashboard extends HTMLElementComponent {
 			});
 
 			this.habits.push(newHabit);
+			
+			// Rebuild cache to include the duplicated habit
+			await this.dataCache.buildCache();
+			
 			await this.loadHabitValues();
 			
 			if (this.container) {
@@ -505,6 +517,9 @@ export class Dashboard extends HTMLElementComponent {
 			await this.dataManager.removeHabit(habitId);
 			this.habits = this.habits.filter(h => h.id !== habitId);
 			this.habitValues.delete(habitId);
+			
+			// Rebuild cache to reflect habit deletion
+			await this.dataCache.buildCache();
 			
 			if (this.container) {
 				this.renderHabits(this.container);
