@@ -30,7 +30,7 @@ export class CreateTrackerModal extends Modal {
 			.addButton((btn) =>
 				btn
 					.setButtonText("Cancel")
-					.setCta()
+					.setClass("mod-muted")
 					.onClick(() => {
 						this.close();
 					})
