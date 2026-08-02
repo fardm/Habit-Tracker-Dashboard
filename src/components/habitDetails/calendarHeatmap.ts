@@ -175,7 +175,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const year = this.props.year ?? adapter.getCurrentYear();
 
 		const title = document.createElement("h3");
-		title.textContent = `Activity Heatmap — ${adapter.getPeriodLabel(year)}`;
+		title.textContent = `Activity Heatmap`;
 		title.style.cssText = `
 			margin: 0;
 			font-size: 16px;

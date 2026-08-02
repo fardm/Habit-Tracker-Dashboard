@@ -175,7 +175,7 @@ class GregorianCalendarAdapter implements CalendarDateAdapter {
 	}
 
 	getPeriodLabel(year: number): string {
-		return `Gregorian Year ${year}`;
+		return `Year ${year}`;
 	}
 
 	getMonthName(month: number): string {
@@ -245,7 +245,7 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 	}
 
 	getPeriodLabel(year: number): string {
-		return `Jalali Year ${year}`;
+		return `Year ${year}`;
 	}
 
 	getMonthName(month: number): string {
