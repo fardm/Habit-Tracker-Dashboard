@@ -22,8 +22,9 @@ export class HabitModal extends Modal {
 	private formData: HabitFormData;
 	private onSubmit: (data: HabitFormData) => void;
 	private validationErrors: string[] = [];
-	private trackingSettingsContainer?: HTMLElement;
-	private displaySettingsContainer?: HTMLElement;
+	private numericSettingsContainer?: HTMLElement;
+	private numericSettingsContent?: HTMLElement;
+	private visualizationContainer?: HTMLElement;
 	private isEditMode: boolean;
 
 	constructor(
@@ -107,31 +108,123 @@ export class HabitModal extends Modal {
 					.setValue(this.formData.frontmatterField)
 			);
 
-		// Section 2: Tracking Settings
-		this.createSection(contentEl, "Tracking Settings");
+		// Type (radio buttons)
+		const typeLabel = contentEl.createEl("div", {
+			text: "Type"
+		});
+		typeLabel.style.cssText = `
+			font-weight: 500;
+			margin-top: 16px;
+			margin-bottom: 8px;
+			color: var(--text-normal);
+		`;
 
-		// Type
-		new Setting(contentEl)
-			.setName("Type")
-			.setDesc("Choose the habit type")
-			.addDropdown((dropdown) =>
-				dropdown
-					.addOption(HabitType.BOOLEAN, "Boolean (Completed/Not completed)")
-					.addOption(HabitType.NUMERIC, "Numeric (Track numbers)")
-					.setValue(this.formData.type)
-					.onChange((value) => {
-						this.formData.type = value as HabitType;
-						this.updateTrackingSettingsVisibility();
-					})
-			);
+		const typeDesc = contentEl.createEl("div", {
+			text: "Choose the habit type"
+		});
+		typeDesc.style.cssText = `
+			font-size: 12px;
+			color: var(--text-muted);
+			margin-bottom: 12px;
+		`;
 
-		// Tracking settings container (for numeric-specific fields)
-		this.trackingSettingsContainer = contentEl.createDiv({
-			cls: "tracking-settings-container"
+		const typeRadioContainer = contentEl.createDiv();
+		typeRadioContainer.style.cssText = `
+			display: flex;
+			gap: 24px;
+			margin-bottom: 16px;
+		`;
+
+		const typeOptions = [
+			{ value: HabitType.BOOLEAN, label: "Boolean" },
+			{ value: HabitType.NUMERIC, label: "Numeric" }
+		];
+
+		typeOptions.forEach(option => {
+			const radioRow = typeRadioContainer.createDiv();
+			radioRow.style.cssText = `
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			`;
+
+			const radio = document.createElement("input");
+			radio.type = "radio";
+			radio.name = "habit-type";
+			radio.value = option.value;
+			radio.checked = this.formData.type === option.value;
+			radio.addEventListener("change", () => {
+				this.formData.type = option.value as HabitType;
+				this.updateNumericSettingsVisibility();
+			});
+			radioRow.appendChild(radio);
+
+			const label = radioRow.createEl("label", {
+				text: option.label
+			});
+			label.style.cssText = `
+				cursor: pointer;
+				color: var(--text-normal);
+			`;
+		});
+
+		// Collapsible Numeric Settings section
+		this.numericSettingsContainer = contentEl.createDiv({
+			cls: "numeric-settings-container"
+		});
+		this.numericSettingsContainer.style.cssText = `
+			margin-top: 16px;
+			margin-bottom: 16px;
+		`;
+
+		const numericSettingsHeader = this.numericSettingsContainer.createDiv();
+		numericSettingsHeader.style.cssText = `
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			cursor: pointer;
+			padding: 12px;
+			background-color: var(--background-secondary);
+			border-radius: 4px;
+			border: 1px solid var(--background-modifier-border);
+		`;
+
+		const chevron = numericSettingsHeader.createEl("span", {
+			text: "▶"
+		});
+		chevron.style.cssText = `
+			transition: transform 0.2s ease;
+			font-size: 12px;
+		`;
+
+		const numericSettingsTitle = numericSettingsHeader.createEl("div", {
+			text: "Numeric Settings"
+		});
+		numericSettingsTitle.style.cssText = `
+			font-weight: 500;
+			color: var(--text-normal);
+		`;
+
+		this.numericSettingsContent = this.numericSettingsContainer.createDiv();
+		this.numericSettingsContent.style.cssText = `
+			margin-top: 12px;
+			padding: 12px;
+			background-color: var(--background-secondary);
+			border-radius: 4px;
+			border: 1px solid var(--background-modifier-border);
+			display: none;
+		`;
+
+		numericSettingsHeader.addEventListener("click", () => {
+			if (this.numericSettingsContent) {
+				const isExpanded = this.numericSettingsContent.style.display !== "none";
+				this.numericSettingsContent.style.display = isExpanded ? "none" : "block";
+				chevron.style.transform = isExpanded ? "rotate(0deg)" : "rotate(90deg)";
+			}
 		});
 
 		// Unit field
-		new Setting(this.trackingSettingsContainer)
+		new Setting(this.numericSettingsContent)
 			.setName("Unit")
 			.setDesc("The unit for tracking (e.g., minutes, pages, pomodoro)")
 			.addText((text) =>
@@ -144,7 +237,7 @@ export class HabitModal extends Modal {
 			);
 
 		// Target field
-		new Setting(this.trackingSettingsContainer)
+		new Setting(this.numericSettingsContent)
 			.setName("Target")
 			.setDesc("The target value to achieve (e.g., 10)")
 			.addText((text) =>
@@ -157,7 +250,7 @@ export class HabitModal extends Modal {
 			);
 
 		// Completion Condition
-		new Setting(this.trackingSettingsContainer)
+		new Setting(this.numericSettingsContent)
 			.setName("Completion condition")
 			.setDesc("Choose when this habit counts as completed")
 			.addDropdown((dropdown) =>
@@ -171,29 +264,15 @@ export class HabitModal extends Modal {
 					})
 			);
 
-		// Grace Days
-		new Setting(this.trackingSettingsContainer)
-			.setName("Grace days")
-			.setDesc("Number of missed days allowed before streak breaks (default: 0)")
-			.addText((text) =>
-				text
-					.setPlaceholder("0")
-					.setValue(this.formData.graceDays?.toString() || "0")
-					.onChange((value) => {
-						const num = parseInt(value);
-						this.formData.graceDays = isNaN(num) || num < 0 ? 0 : num;
-					})
-			);
-
-		// Section 3: Display Settings
+		// Section 2: Display Settings
 		this.createSection(contentEl, "Display Settings");
 
 		// Visualization (only for numeric habits)
-		this.displaySettingsContainer = contentEl.createDiv({
-			cls: "display-settings-container"
+		this.visualizationContainer = contentEl.createDiv({
+			cls: "visualization-container"
 		});
 
-		const visualizationLabel = this.displaySettingsContainer.createEl("div", {
+		const visualizationLabel = this.visualizationContainer.createEl("div", {
 			text: "Visualization"
 		});
 		visualizationLabel.style.cssText = `
@@ -202,7 +281,7 @@ export class HabitModal extends Modal {
 			color: var(--text-normal);
 		`;
 
-		const visualizationDesc = this.displaySettingsContainer.createEl("div", {
+		const visualizationDesc = this.visualizationContainer.createEl("div", {
 			text: "Choose how to display progress for this habit"
 		});
 		visualizationDesc.style.cssText = `
@@ -211,7 +290,7 @@ export class HabitModal extends Modal {
 			margin-bottom: 12px;
 		`;
 
-		const radioContainer = this.displaySettingsContainer.createDiv();
+		const radioContainer = this.visualizationContainer.createDiv();
 		radioContainer.style.cssText = `
 			display: flex;
 			flex-direction: column;
@@ -264,6 +343,20 @@ export class HabitModal extends Modal {
 					.setValue(this.formData.themeColor || "")
 			);
 
+		// Grace Days (moved to bottom)
+		new Setting(contentEl)
+			.setName("Grace days")
+			.setDesc("Number of missed days allowed before streak breaks (default: 0)")
+			.addText((text) =>
+				text
+					.setPlaceholder("0")
+					.setValue(this.formData.graceDays?.toString() || "0")
+					.onChange((value) => {
+						const num = parseInt(value);
+						this.formData.graceDays = isNaN(num) || num < 0 ? 0 : num;
+					})
+			);
+
 		// Validation errors display
 		const errorContainer = contentEl.createDiv({
 			cls: "habit-modal-errors"
@@ -298,7 +391,7 @@ export class HabitModal extends Modal {
 			);
 
 		// Initial visibility update
-		this.updateTrackingSettingsVisibility();
+		this.updateNumericSettingsVisibility();
 	}
 
 	private createSection(container: HTMLElement, title: string): void {
@@ -323,20 +416,21 @@ export class HabitModal extends Modal {
 		`;
 	}
 
-	private updateTrackingSettingsVisibility(): void {
-		if (this.trackingSettingsContainer) {
+	private updateNumericSettingsVisibility(): void {
+		if (this.numericSettingsContainer) {
 			if (this.formData.type === HabitType.NUMERIC) {
-				this.trackingSettingsContainer.style.display = "block";
+				this.numericSettingsContainer.style.display = "block";
 			} else {
-				this.trackingSettingsContainer.style.display = "none";
+				this.numericSettingsContainer.style.display = "none";
 			}
 		}
 
-		if (this.displaySettingsContainer) {
+		// Also hide visualization container for Boolean habits
+		if (this.visualizationContainer) {
 			if (this.formData.type === HabitType.NUMERIC) {
-				this.displaySettingsContainer.style.display = "block";
+				this.visualizationContainer.style.display = "block";
 			} else {
-				this.displaySettingsContainer.style.display = "none";
+				this.visualizationContainer.style.display = "none";
 			}
 		}
 	}
