@@ -214,7 +214,6 @@ export class Dashboard extends HTMLElementComponent {
 		
 		// Build the cache
 		await this.dataCache.buildCache();
-		console.log("[Dashboard] Cache stats:", this.dataCache.getStats());
 		
 		await this.loadHabits();
 		await this.loadHabitValues();

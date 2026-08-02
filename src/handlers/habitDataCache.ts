@@ -57,11 +57,9 @@ export class HabitDataCache {
 	 * Builds the cache by scanning all files in the configured data source
 	 */
 	async buildCache(): Promise<void> {
-		console.log("[HabitDataCache] Building cache...");
 		this.clearCache();
 
 		const files = await this.getFilesToScan();
-		console.log(`[HabitDataCache] Found ${files.length} files to scan`);
 
 		for (const file of files) {
 			try {
@@ -73,9 +71,9 @@ export class HabitDataCache {
 					const frontmatter = fileCache?.frontmatter || null;
 					
 					if (frontmatter) {
-						console.log(`[HabitDataCache] Cached ${file.path} with ${Object.keys(frontmatter).length} frontmatter keys`);
+						// File has frontmatter
 					} else {
-						console.log(`[HabitDataCache] No frontmatter found in ${file.path}`);
+						// No frontmatter found
 					}
 					
 					this.fileCache.set(file.path, {
@@ -84,7 +82,7 @@ export class HabitDataCache {
 						frontmatter: frontmatter
 					});
 				} else {
-					console.log(`[HabitDataCache] No date found in filename ${file.name}`);
+					// No date found in filename
 				}
 			} catch (error) {
 				console.error(`[HabitDataCache] Error reading file ${file.path}:`, error);
@@ -92,7 +90,6 @@ export class HabitDataCache {
 		}
 
 		this.isBuilt = true;
-		console.log(`[HabitDataCache] Cache built with ${this.fileCache.size} files`);
 	}
 
 	/**
@@ -106,7 +103,6 @@ export class HabitDataCache {
 			const folder = this.app.vault.getAbstractFileByPath(folderPath);
 			
 			if (!folder || !(folder as any).children) {
-				console.log(`[HabitDataCache] Folder ${folderPath} doesn't exist or has no children`);
 				return [];
 			}
 
@@ -168,17 +164,14 @@ export class HabitDataCache {
 	 */
 	getHabitValues(habit: Habit, startDate?: Date, endDate?: Date): CachedHabitValue[] {
 		if (!this.isBuilt) {
-			console.warn("[HabitDataCache] Cache not built, returning empty array");
 			return [];
 		}
 
 		const values: CachedHabitValue[] = [];
 		const habitId = habit.id;
-		console.log(`[HabitDataCache] Getting values for habit: ${habit.name} (${habit.frontmatterField})`);
 
 		// Check if we have cached values for this habit
 		if (this.habitValueCache.has(habitId)) {
-			console.log(`[HabitDataCache] Using cached values for ${habit.name}`);
 			const cachedValues = this.habitValueCache.get(habitId)!;
 			for (const [dateStr, value] of cachedValues) {
 				const date = parseLocalISODate(dateStr.split("T")[0]);
@@ -190,7 +183,6 @@ export class HabitDataCache {
 		}
 
 		// Build cache for this habit
-		console.log(`[HabitDataCache] Building cache for habit ${habit.name}, scanning ${this.fileCache.size} files`);
 		const habitCache = new Map<string, CachedHabitValue>();
 		let matchCount = 0;
 		
@@ -214,8 +206,6 @@ export class HabitDataCache {
 				}
 			}
 		}
-
-		console.log(`[HabitDataCache] Found ${matchCount} matches for habit ${habit.name}`);
 
 		// Cache the results for this habit
 		this.habitValueCache.set(habitId, habitCache);

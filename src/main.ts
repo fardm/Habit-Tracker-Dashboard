@@ -5,8 +5,6 @@ import { createTrackerFile } from "./handlers/createTrackerHandler";
 
 export default class HabitTrackerPlugin extends Plugin {
 	async onload() {
-		console.log("Loading Habit Tracker Plugin");
-
 		// Register the .tracker file type and custom view
 		registerTrackerFileType(this);
 
@@ -26,8 +24,6 @@ export default class HabitTrackerPlugin extends Plugin {
 	}
 
 	async onunload() {
-		console.log("Unloading Habit Tracker Plugin");
-
 		// Clean up tracker-related resources
 		cleanupTrackerFileType(this);
 	}
