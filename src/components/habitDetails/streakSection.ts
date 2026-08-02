@@ -123,8 +123,6 @@ export class StreakSection extends HTMLElementComponent {
 				display: flex;
 				flex-direction: column;
 				gap: 8px;
-				max-height: 200px;
-				overflow-y: auto;
 			`;
 
 			this.props.streaks.streakHistory.forEach(streak => {
