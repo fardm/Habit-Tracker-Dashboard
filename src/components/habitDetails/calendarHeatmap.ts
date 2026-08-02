@@ -247,16 +247,47 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			display: flex;
 			align-items: center;
 			justify-content: flex-end;
-			gap: 4px;
+			gap: 8px;
 			margin-top: 8px;
 			font-size: 11px;
 			color: var(--text-muted);
 			width: 100%;
+			flex-wrap: wrap;
 		`;
 
-		const legendLabel = document.createElement("span");
-		legendLabel.textContent = "Less";
-		legend.appendChild(legendLabel);
+		if (this.props.habitType === "boolean") {
+			const legendItems = [
+				{ label: "Done", color: this.getThemeColor(), filled: true },
+				{ label: "Not done", color: "transparent", filled: false }
+			];
+
+			legendItems.forEach((item) => {
+				const legendItem = document.createElement("div");
+				legendItem.style.cssText = `
+					display: flex;
+					align-items: center;
+					gap: 4px;
+				`;
+
+				const square = document.createElement("div");
+				square.style.cssText = `
+					width: 10px;
+					height: 10px;
+					border-radius: 2px;
+					background-color: ${item.color};
+					border: 1px solid var(--background-modifier-border);
+					box-sizing: border-box;
+				`;
+
+				const label = document.createElement("span");
+				label.textContent = item.label;
+				legendItem.appendChild(square);
+				legendItem.appendChild(label);
+				legend.appendChild(legendItem);
+			});
+
+			return legend;
+		}
 
 		const themeColor = this.getThemeColor();
 		const legendColors = [
@@ -266,6 +297,10 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			{ color: this.adjustColorOpacity(themeColor, 0.7), label: "51-75%" },
 			{ color: themeColor, label: "76-100%" }
 		];
+
+		const legendLabel = document.createElement("span");
+		legendLabel.textContent = "Less";
+		legend.appendChild(legendLabel);
 
 		legendColors.forEach((item) => {
 			const legendItem = document.createElement("div");
