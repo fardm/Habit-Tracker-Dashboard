@@ -353,6 +353,7 @@ export class HabitCard extends HTMLElementComponent {
 				let progress = 0;
 				let extra = 0;
 				let displayValue = value;
+				let donutColor: string | undefined;
 				
 				switch (completionOperator) {
 					case CompletionOperator.AT_LEAST:
@@ -363,7 +364,16 @@ export class HabitCard extends HTMLElementComponent {
 					case CompletionOperator.AT_MOST:
 						extra = value > target ? value - target : 0;
 						displayValue = value;
-						progress = Math.min(value / target, 1);
+						// Reverse progress: full donut = best (0 value), empty = at limit
+						progress = 1 - Math.min(value / target, 1);
+						// Color transitions based on usage
+						if (value <= target * 0.5) {
+							donutColor = "var(--text-success)"; // Green - best state
+						} else if (value <= target * 0.8) {
+							donutColor = "var(--text-accent)"; // Orange - warning
+						} else if (value <= target) {
+							donutColor = "var(--text-error)"; // Red - near limit
+						}
 						break;
 					case CompletionOperator.EXACTLY:
 						displayValue = value;
@@ -372,14 +382,15 @@ export class HabitCard extends HTMLElementComponent {
 				}
 				
 				const isExceeded = extra > 0 && completionOperator === CompletionOperator.AT_LEAST;
+				const isAtMostExceeded = extra > 0 && completionOperator === CompletionOperator.AT_MOST;
 				
 				// Add visualization based on setting
 				if (visualization === Visualization.DONUT) {
 					const donutChart = new DonutChart(32, 5);
-					const chartElement = donutChart.render(progress);
+					const chartElement = donutChart.render(progress, isExceeded, donutColor);
 					visualizationContainer.appendChild(chartElement);
 					
-					// Add thin ring for exceeded targets
+					// Add thin ring for exceeded targets (At least)
 					if (isExceeded) {
 						const thinRing = document.createElement("div");
 						thinRing.style.cssText = `
@@ -395,6 +406,52 @@ export class HabitCard extends HTMLElementComponent {
 						`;
 						visualizationContainer.style.position = "relative";
 						visualizationContainer.appendChild(thinRing);
+					}
+					
+					// Add overflow ring for At most when exceeded
+					if (isAtMostExceeded) {
+						const overflowRing = document.createElement("div");
+						overflowRing.style.cssText = `
+							position: absolute;
+							width: 40px;
+							height: 40px;
+							border: 2px solid var(--text-error);
+							border-radius: 50%;
+							opacity: 0.4;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+						`;
+						visualizationContainer.style.position = "relative";
+						visualizationContainer.appendChild(overflowRing);
+					}
+					
+					// Add checkmark icon for At least when completed
+					if (completionOperator === CompletionOperator.AT_LEAST && isCompleted) {
+						const checkIcon = document.createElement("div");
+						checkIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><path d="M20 6L9 17l-5-5"></path></svg>`;
+						checkIcon.style.cssText = `
+							position: absolute;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+						`;
+						visualizationContainer.style.position = "relative";
+						visualizationContainer.appendChild(checkIcon);
+					}
+					
+					// Add warning icon for At most when exceeded
+					if (isAtMostExceeded) {
+						const warningIcon = document.createElement("div");
+						warningIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-error);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+						warningIcon.style.cssText = `
+							position: absolute;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+						`;
+						visualizationContainer.style.position = "relative";
+						visualizationContainer.appendChild(warningIcon);
 					}
 				} else if (visualization === Visualization.PROGRESS_BAR) {
 					const progressBar = new ProgressBar(80, 6);

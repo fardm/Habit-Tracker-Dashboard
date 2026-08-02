@@ -20,7 +20,7 @@ export class DonutChart {
 	/**
 	 * Renders the donut chart with the given progress (0-1)
 	 */
-	render(progress: number, isExceeded: boolean = false): HTMLElement {
+	render(progress: number, isExceeded: boolean = false, color?: string): HTMLElement {
 		this.container.empty();
 
 		const normalizedProgress = Math.min(Math.max(progress, 0), 1);
@@ -50,7 +50,7 @@ export class DonutChart {
 		progressCircle.setAttribute("cy", (this.size / 2).toString());
 		progressCircle.setAttribute("r", ((this.size - this.strokeWidth) / 2).toString());
 		progressCircle.setAttribute("fill", "none");
-		progressCircle.setAttribute("stroke", normalizedProgress >= 1 ? "var(--text-success)" : "#90EE90");
+		progressCircle.setAttribute("stroke", color || (normalizedProgress >= 1 ? "var(--text-success)" : "#90EE90"));
 		progressCircle.setAttribute("stroke-width", this.strokeWidth.toString());
 		progressCircle.setAttribute("stroke-linecap", "round");
 		progressCircle.setAttribute("stroke-dasharray", circumference.toString());
