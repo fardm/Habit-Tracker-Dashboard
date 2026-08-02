@@ -159,6 +159,30 @@ export interface StreakSectionProps {
 }
 
 /**
+ * Color scale mode for heatmap
+ */
+export enum ColorScaleMode {
+	AUTOMATIC = "automatic",
+	MANUAL = "manual"
+}
+
+/**
+ * Heatmap-specific settings
+ */
+export interface HeatmapSettings {
+	/** First day of each week column (default Sunday). */
+	weekStartDay?: WeekStartDay;
+	/** Show month names above the heatmap grid. */
+	showMonthLabels?: boolean;
+	/** Color scale mode for heatmap intensity. */
+	colorScaleMode?: ColorScaleMode;
+	/** Minimum value for manual color scaling. */
+	colorScaleMin?: number;
+	/** Maximum value for manual color scaling. */
+	colorScaleMax?: number;
+}
+
+/**
  * Props for CalendarHeatmap
  */
 export interface CalendarHeatmapProps {
@@ -170,10 +194,10 @@ export interface CalendarHeatmapProps {
 	year?: number;
 	/** Calendar system used for year bounds and display labels. */
 	reportCalendar?: ReportCalendar | string;
-	/** First day of each week column (default Sunday). */
-	weekStartDay?: WeekStartDay;
-	/** Show month names above the heatmap grid. */
-	showMonthLabels?: boolean;
+	/** Heatmap-specific settings. */
+	heatmapSettings?: HeatmapSettings;
+	/** Callback when heatmap settings change. */
+	onHeatmapSettingsChange?: (settings: HeatmapSettings) => void;
 	/** @deprecated Yearly heatmap ignores rolling time ranges. */
 	timeRange?: TimeRange;
 }

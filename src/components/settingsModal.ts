@@ -3,8 +3,7 @@ import {
 	DataSourceType,
 	DateExtractionMethod,
 	TrackerSettings,
-	ReportCalendar,
-	WeekStartDay
+	ReportCalendar
 } from "../types/habitTypes";
 
 export interface SettingsFormData {
@@ -13,8 +12,6 @@ export interface SettingsFormData {
 	dateExtractionMethod: DateExtractionMethod;
 	dateFrontmatterProperty: string;
 	reportCalendar: ReportCalendar;
-	weekStartDay: WeekStartDay;
-	showMonthLabels: boolean;
 }
 
 /**
@@ -38,9 +35,7 @@ export class SettingsModal extends Modal {
 			dataSourceValue: initialSettings?.dataSourceValue || "",
 			dateExtractionMethod: initialSettings?.dateExtractionMethod || DateExtractionMethod.FILENAME,
 			dateFrontmatterProperty: initialSettings?.dateFrontmatterProperty || "",
-			reportCalendar: initialSettings?.reportCalendar || ReportCalendar.GREGORIAN,
-			weekStartDay: initialSettings?.weekStartDay ?? WeekStartDay.SUNDAY,
-			showMonthLabels: initialSettings?.showMonthLabels ?? false
+			reportCalendar: initialSettings?.reportCalendar || ReportCalendar.GREGORIAN
 		};
 	}
 
@@ -93,31 +88,6 @@ export class SettingsModal extends Modal {
 					.setValue(this.formData.reportCalendar)
 					.onChange((value) => {
 						this.formData.reportCalendar = value as ReportCalendar;
-					})
-			);
-
-		new Setting(contentEl)
-			.setName("Start of week")
-			.setDesc("First day of each week column in the calendar heatmap")
-			.addDropdown((dropdown) =>
-				dropdown
-					.addOption(String(WeekStartDay.SUNDAY), "Sunday")
-					.addOption(String(WeekStartDay.MONDAY), "Monday")
-					.addOption(String(WeekStartDay.SATURDAY), "Saturday")
-					.setValue(String(this.formData.weekStartDay))
-					.onChange((value) => {
-						this.formData.weekStartDay = Number(value) as WeekStartDay;
-					})
-			);
-
-		new Setting(contentEl)
-			.setName("Show month labels")
-			.setDesc("Display month names above the calendar heatmap")
-			.addToggle((toggle) =>
-				toggle
-					.setValue(this.formData.showMonthLabels)
-					.onChange((value) => {
-						this.formData.showMonthLabels = value;
 					})
 			);
 

@@ -1,6 +1,6 @@
 import { App, Modal } from "obsidian";
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { HabitDetailsModalProps, ChartType, HabitDetailsSettings, HabitValueEntry, HabitStatistics, HabitStreaks } from "../../types/habitDetailsTypes";
+import { HabitDetailsModalProps, ChartType, HabitDetailsSettings, HabitValueEntry, HabitStatistics, HabitStreaks, HeatmapSettings, ColorScaleMode } from "../../types/habitDetailsTypes";
 import { ChartSection } from "./chartSection";
 import { StatisticsDashboard } from "./statisticsDashboard";
 import { StreakSection } from "./streakSection";
@@ -21,6 +21,7 @@ export class HabitDetailsModal extends Modal {
 	private habit: Habit;
 	private chartType: ChartType = ChartType.LINE;
 	private settings: HabitDetailsSettings;
+	private heatmapSettings: HeatmapSettings;
 	private contentContainer?: HTMLElement;
 	private readonly storageMapKey: string;
 	private dataService: HabitDetailsDataService;
@@ -36,6 +37,7 @@ export class HabitDetailsModal extends Modal {
 		this.habit = habit;
 		this.storageMapKey = props.habitId;
 		this.settings = this.getDefaultSettings();
+		this.heatmapSettings = this.getDefaultHeatmapSettings();
 		this.trackerDataManager = this.createTrackerDataManager();
 		this.dataService = new HabitDetailsDataService(app, props.trackerSettings || {});
 		this.dataCache = dataCache;
@@ -255,8 +257,10 @@ export class HabitDetailsModal extends Modal {
 				year: this.selectedYear,
 				reportCalendar:
 					this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN,
-				weekStartDay: this.props.trackerSettings?.weekStartDay,
-				showMonthLabels: this.props.trackerSettings?.showMonthLabels ?? false
+				heatmapSettings: this.heatmapSettings,
+				onHeatmapSettingsChange: (newSettings) => {
+					this.heatmapSettings = newSettings;
+				}
 			});
 			heatmapSection.appendChild(heatmap.render());
 		}
@@ -381,6 +385,14 @@ export class HabitDetailsModal extends Modal {
 		};
 	}
 
+	private getDefaultHeatmapSettings(): HeatmapSettings {
+		return {
+			colorScaleMode: ColorScaleMode.AUTOMATIC,
+			colorScaleMin: 0,
+			colorScaleMax: 60
+		};
+	}
+
 	private createTrackerDataManager(): HabitDataManager | null {
 		if (!this.props.trackerFilePath) {
 			return null;
@@ -394,9 +406,15 @@ export class HabitDetailsModal extends Modal {
 		try {
 			const savedVisibility = await this.loadVisibilityFromTrackerFile();
 			this.settings = this.mergeSettings(savedVisibility ? { sectionVisibility: savedVisibility } : null);
+			
+			const savedHeatmapSettings = await this.loadHeatmapSettingsFromTrackerFile();
+			if (savedHeatmapSettings) {
+				this.heatmapSettings = { ...this.getDefaultHeatmapSettings(), ...savedHeatmapSettings };
+			}
 		} catch (error) {
 			console.warn("Failed to load habit details settings from tracker file:", error);
 			this.settings = this.getDefaultSettings();
+			this.heatmapSettings = this.getDefaultHeatmapSettings();
 		}
 	}
 
@@ -409,9 +427,14 @@ export class HabitDetailsModal extends Modal {
 			const trackerData = await this.trackerDataManager.readTrackerData();
 			const habitSectionVisibility = trackerData.settings?.habitSectionVisibility ?? {};
 			habitSectionVisibility[this.storageMapKey] = this.settings.sectionVisibility;
+			
+			const habitHeatmapSettings = trackerData.settings?.habitHeatmapSettings ?? {};
+			habitHeatmapSettings[this.storageMapKey] = this.heatmapSettings;
+			
 			trackerData.settings = {
 				...(trackerData.settings ?? {}),
-				habitSectionVisibility
+				habitSectionVisibility,
+				habitHeatmapSettings
 			};
 			await this.trackerDataManager.writeTrackerData(trackerData);
 		} catch (error) {
@@ -426,6 +449,28 @@ export class HabitDetailsModal extends Modal {
 
 		const trackerData = await this.trackerDataManager.readTrackerData();
 		return trackerData.settings?.habitSectionVisibility?.[this.storageMapKey] ?? null;
+	}
+
+	private async loadHeatmapSettingsFromTrackerFile(): Promise<HeatmapSettings | null> {
+		if (!this.trackerDataManager) {
+			return null;
+		}
+
+		const trackerData = await this.trackerDataManager.readTrackerData();
+		const saved = trackerData.settings?.habitHeatmapSettings?.[this.storageMapKey];
+		
+		if (!saved) {
+			return null;
+		}
+
+		// Convert string colorScaleMode to ColorScaleMode enum
+		return {
+			weekStartDay: saved.weekStartDay,
+			showMonthLabels: saved.showMonthLabels,
+			colorScaleMode: saved.colorScaleMode as ColorScaleMode,
+			colorScaleMin: saved.colorScaleMin,
+			colorScaleMax: saved.colorScaleMax
+		};
 	}
 
 	private mergeSettings(savedSettings: unknown): HabitDetailsSettings {

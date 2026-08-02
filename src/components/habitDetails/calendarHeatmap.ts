@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { CalendarHeatmapProps } from "../../types/habitDetailsTypes";
+import { CalendarHeatmapProps, HeatmapSettings, ColorScaleMode } from "../../types/habitDetailsTypes";
 import {
 	CalendarDateAdapter,
 	getCalendarAdapter,
@@ -16,18 +16,34 @@ import { ReportCalendar, WeekStartDay } from "../../types/habitTypes";
  */
 export class CalendarHeatmap extends HTMLElementComponent {
 	private props: CalendarHeatmapProps;
+	private settings: HeatmapSettings;
+	private isMenuOpen: boolean = false;
+	private heatmapContainer?: HTMLElement;
+	private gridBlock?: HTMLElement;
+	private legendElement?: HTMLElement;
 
 	constructor(props: CalendarHeatmapProps) {
 		super();
 		this.props = props;
+		this.settings = props.heatmapSettings || this.getDefaultSettings();
 	}
 
 	private getThemeColor(): string {
 		return this.props.theme?.primary || "var(--interactive-accent)";
 	}
 
+	private getDefaultSettings(): HeatmapSettings {
+		return {
+			weekStartDay: WeekStartDay.SUNDAY,
+			showMonthLabels: false,
+			colorScaleMode: ColorScaleMode.AUTOMATIC,
+			colorScaleMin: 0,
+			colorScaleMax: 60
+		};
+	}
+
 	private getWeekStartDay(): WeekStartDay {
-		return this.props.weekStartDay ?? WeekStartDay.SUNDAY;
+		return this.settings.weekStartDay ?? WeekStartDay.SUNDAY;
 	}
 
 	private adjustColorOpacity(color: string, opacity: number): string {
@@ -49,7 +65,374 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			border-radius: 8px;
 			padding: 20px;
 			margin-bottom: 20px;
+			position: relative;
 		`;
+
+		// Header with title and menu button
+		const header = this.createHeader();
+		container.appendChild(header);
+
+		// Create heatmap container
+		this.heatmapContainer = document.createElement("div");
+		this.heatmapContainer.className = "heatmap-container";
+		this.heatmapContainer.style.cssText = `
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			align-items: center;
+		`;
+
+		this.updateHeatmapContent();
+		container.appendChild(this.heatmapContainer);
+
+		// Close menu when clicking outside
+		document.addEventListener("click", (e) => {
+			if (this.isMenuOpen && !container.contains(e.target as Node)) {
+				this.isMenuOpen = false;
+				this.toggleMenu();
+			}
+		});
+
+		return container;
+	}
+
+	private createHeader(): HTMLElement {
+		const header = document.createElement("div");
+		header.style.cssText = `
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 16px;
+		`;
+
+		const adapter = getCalendarAdapter(
+			this.props.reportCalendar || ReportCalendar.GREGORIAN
+		);
+		const year = this.props.year ?? adapter.getCurrentYear();
+
+		const title = document.createElement("h3");
+		title.textContent = `Activity Heatmap — ${adapter.getPeriodLabel(year)}`;
+		title.style.cssText = `
+			margin: 0;
+			font-size: 16px;
+			font-weight: 600;
+			color: var(--text-normal);
+		`;
+		header.appendChild(title);
+
+		// Menu button
+		const menuButton = document.createElement("button");
+		menuButton.type = "button";
+		menuButton.title = "Heatmap Settings";
+		menuButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="12" cy="12" r="1"></circle>
+				<circle cx="12" cy="5" r="1"></circle>
+				<circle cx="12" cy="19" r="1"></circle>
+			</svg>
+		`;
+		menuButton.style.cssText = `
+			padding: 6px 8px;
+			background-color: var(--background-secondary);
+			border: 1px solid var(--background-modifier-border);
+			border-radius: 6px;
+			cursor: pointer;
+			transition: all 0.2s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		`;
+
+		menuButton.addEventListener("mouseenter", () => {
+			menuButton.style.backgroundColor = "var(--background-modifier-hover)";
+		});
+
+		menuButton.addEventListener("mouseleave", () => {
+			menuButton.style.backgroundColor = "var(--background-secondary)";
+		});
+
+		menuButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			this.isMenuOpen = !this.isMenuOpen;
+			this.toggleMenu();
+		});
+
+		header.appendChild(menuButton);
+
+		// Settings dropdown
+		const menuDropdown = this.createSettingsMenu();
+		header.appendChild(menuDropdown);
+
+		return header;
+	}
+
+	private createSettingsMenu(): HTMLElement {
+		const menu = document.createElement("div");
+		menu.className = "heatmap-settings-menu";
+		menu.id = "heatmap-settings-menu";
+		menu.style.cssText = `
+			position: absolute;
+			top: 50px;
+			right: 20px;
+			width: 280px;
+			background-color: var(--background-secondary);
+			border: 1px solid var(--background-modifier-border);
+			border-radius: 8px;
+			padding: 16px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			z-index: 1000;
+			display: none;
+		`;
+
+		// Week start day setting
+		const weekStartLabel = document.createElement("label");
+		weekStartLabel.textContent = "Week start day";
+		weekStartLabel.style.cssText = `
+			display: block;
+			font-size: 13px;
+			font-weight: 600;
+			color: var(--text-normal);
+			margin-bottom: 8px;
+		`;
+		menu.appendChild(weekStartLabel);
+
+		const weekStartSelect = document.createElement("select");
+		weekStartSelect.style.cssText = `
+			width: 100%;
+			padding: 6px 8px;
+			margin-bottom: 16px;
+			background-color: var(--background-primary);
+			border: 1px solid var(--background-modifier-border);
+			border-radius: 4px;
+			color: var(--text-normal);
+			font-size: 13px;
+		`;
+
+		[WeekStartDay.SUNDAY, WeekStartDay.MONDAY, WeekStartDay.SATURDAY].forEach(day => {
+			const option = document.createElement("option");
+			option.value = String(day);
+			option.textContent = day === WeekStartDay.SUNDAY ? "Sunday" : day === WeekStartDay.MONDAY ? "Monday" : "Saturday";
+			option.selected = this.settings.weekStartDay === day;
+			weekStartSelect.appendChild(option);
+		});
+
+		weekStartSelect.addEventListener("change", () => {
+			this.settings.weekStartDay = Number(weekStartSelect.value) as WeekStartDay;
+			this.notifySettingsChange();
+			this.updateHeatmapContent();
+		});
+
+		menu.appendChild(weekStartSelect);
+
+		// Month labels setting
+		const monthLabelsContainer = document.createElement("div");
+		monthLabelsContainer.style.cssText = `
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 16px;
+		`;
+
+		const monthLabelsLabel = document.createElement("label");
+		monthLabelsLabel.textContent = "Show month labels";
+		monthLabelsLabel.style.cssText = `
+			font-size: 13px;
+			color: var(--text-normal);
+		`;
+
+		const monthLabelsToggle = document.createElement("input");
+		monthLabelsToggle.type = "checkbox";
+		monthLabelsToggle.checked = this.settings.showMonthLabels ?? false;
+		monthLabelsToggle.style.cssText = `
+			width: 16px;
+			height: 16px;
+			cursor: pointer;
+		`;
+
+		monthLabelsToggle.addEventListener("change", () => {
+			this.settings.showMonthLabels = monthLabelsToggle.checked;
+			this.notifySettingsChange();
+			this.updateHeatmapContent();
+		});
+
+		monthLabelsContainer.appendChild(monthLabelsLabel);
+		monthLabelsContainer.appendChild(monthLabelsToggle);
+		menu.appendChild(monthLabelsContainer);
+
+		// Color scale mode setting
+		const colorScaleLabel = document.createElement("label");
+		colorScaleLabel.textContent = "Color scale mode";
+		colorScaleLabel.style.cssText = `
+			display: block;
+			font-size: 13px;
+			font-weight: 600;
+			color: var(--text-normal);
+			margin-bottom: 8px;
+		`;
+		menu.appendChild(colorScaleLabel);
+
+		const colorScaleContainer = document.createElement("div");
+		colorScaleContainer.style.cssText = `
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			margin-bottom: 16px;
+		`;
+
+		[ColorScaleMode.AUTOMATIC, ColorScaleMode.MANUAL].forEach(mode => {
+			const radioContainer = document.createElement("div");
+			radioContainer.style.cssText = `
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			`;
+
+			const radio = document.createElement("input");
+			radio.type = "radio";
+			radio.name = "colorScaleMode";
+			radio.value = mode;
+			radio.checked = this.settings.colorScaleMode === mode;
+			radio.style.cssText = `
+				width: 16px;
+				height: 16px;
+				cursor: pointer;
+			`;
+
+			radio.addEventListener("change", () => {
+				this.settings.colorScaleMode = mode as ColorScaleMode;
+				this.notifySettingsChange();
+				this.updateHeatmapContent();
+				this.updateManualFieldsVisibility();
+			});
+
+			const label = document.createElement("label");
+			label.textContent = mode === ColorScaleMode.AUTOMATIC ? "Automatic" : "Manual";
+			label.style.cssText = `
+				font-size: 13px;
+				color: var(--text-normal);
+				cursor: pointer;
+			`;
+
+			radioContainer.appendChild(radio);
+			radioContainer.appendChild(label);
+			colorScaleContainer.appendChild(radioContainer);
+		});
+
+		menu.appendChild(colorScaleContainer);
+
+		// Manual scale fields (shown only when manual mode is selected)
+		const manualFieldsContainer = document.createElement("div");
+		manualFieldsContainer.id = "manual-scale-fields";
+		manualFieldsContainer.style.cssText = `
+			display: ${this.settings.colorScaleMode === ColorScaleMode.MANUAL ? "block" : "none"};
+			flex-direction: column;
+			gap: 12px;
+		`;
+
+		// Minimum value field
+		const minFieldContainer = document.createElement("div");
+		minFieldContainer.style.cssText = `
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		`;
+
+		const minLabel = document.createElement("label");
+		minLabel.textContent = "Minimum value";
+		minLabel.style.cssText = `
+			font-size: 13px;
+			color: var(--text-normal);
+		`;
+
+		const minInput = document.createElement("input");
+		minInput.type = "number";
+		minInput.value = String(this.settings.colorScaleMin ?? 0);
+		minInput.style.cssText = `
+			padding: 6px 8px;
+			background-color: var(--background-primary);
+			border: 1px solid var(--background-modifier-border);
+			border-radius: 4px;
+			color: var(--text-normal);
+			font-size: 13px;
+		`;
+
+		minInput.addEventListener("change", () => {
+			this.settings.colorScaleMin = parseFloat(minInput.value) || 0;
+			this.notifySettingsChange();
+			this.updateHeatmapContent();
+		});
+
+		minFieldContainer.appendChild(minLabel);
+		minFieldContainer.appendChild(minInput);
+		manualFieldsContainer.appendChild(minFieldContainer);
+
+		// Maximum value field
+		const maxFieldContainer = document.createElement("div");
+		maxFieldContainer.style.cssText = `
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		`;
+
+		const maxLabel = document.createElement("label");
+		maxLabel.textContent = "Maximum value";
+		maxLabel.style.cssText = `
+			font-size: 13px;
+			color: var(--text-normal);
+		`;
+
+		const maxInput = document.createElement("input");
+		maxInput.type = "number";
+		maxInput.value = String(this.settings.colorScaleMax ?? 60);
+		maxInput.style.cssText = `
+			padding: 6px 8px;
+			background-color: var(--background-primary);
+			border: 1px solid var(--background-modifier-border);
+			border-radius: 4px;
+			color: var(--text-normal);
+			font-size: 13px;
+		`;
+
+		maxInput.addEventListener("change", () => {
+			this.settings.colorScaleMax = parseFloat(maxInput.value) || 60;
+			this.notifySettingsChange();
+			this.updateHeatmapContent();
+		});
+
+		maxFieldContainer.appendChild(maxLabel);
+		maxFieldContainer.appendChild(maxInput);
+		manualFieldsContainer.appendChild(maxFieldContainer);
+
+		menu.appendChild(manualFieldsContainer);
+
+		// Hide color scale settings for boolean habits
+		if (this.props.habitType === "boolean") {
+			colorScaleLabel.style.display = "none";
+			colorScaleContainer.style.display = "none";
+			manualFieldsContainer.style.display = "none";
+		}
+
+		return menu;
+	}
+
+	private toggleMenu(): void {
+		const menu = document.getElementById("heatmap-settings-menu");
+		if (menu) {
+			menu.style.display = this.isMenuOpen ? "block" : "none";
+		}
+	}
+
+	private updateManualFieldsVisibility(): void {
+		const manualFields = document.getElementById("manual-scale-fields");
+		if (manualFields) {
+			manualFields.style.display = this.settings.colorScaleMode === ColorScaleMode.MANUAL ? "block" : "none";
+		}
+	}
+
+	private updateHeatmapContent(): void {
+		if (!this.heatmapContainer) return;
+
+		this.heatmapContainer.empty();
 
 		const adapter = getCalendarAdapter(
 			this.props.reportCalendar || ReportCalendar.GREGORIAN
@@ -58,27 +441,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const weekStartDay = this.getWeekStartDay();
 		const layout = adapter.buildYearHeatmapLayout(year, weekStartDay);
 
-		const title = document.createElement("h3");
-		title.textContent = `Activity Heatmap — ${adapter.getPeriodLabel(year)}`;
-		title.style.cssText = `
-			margin: 0 0 16px 0;
-			font-size: 16px;
-			font-weight: 600;
-			color: var(--text-normal);
-		`;
-		container.appendChild(title);
-
-		const heatmapContainer = document.createElement("div");
-		heatmapContainer.className = "heatmap-container";
-		heatmapContainer.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 4px;
-			align-items: center;
-		`;
-
-		const gridBlock = document.createElement("div");
-		gridBlock.style.cssText = `
+		this.gridBlock = document.createElement("div");
+		this.gridBlock.style.cssText = `
 			display: flex;
 			flex-direction: column;
 			gap: 2px;
@@ -87,18 +451,23 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			overflow-x: auto;
 		`;
 
-		if (this.props.showMonthLabels) {
-			gridBlock.appendChild(
+		if (this.settings.showMonthLabels) {
+			this.gridBlock.appendChild(
 				this.createMonthLabelsRow(layout.monthLabels, layout.weeksCount)
 			);
 		}
 
-		gridBlock.appendChild(this.createHeatmapGrid(adapter, layout));
-		heatmapContainer.appendChild(gridBlock);
-		heatmapContainer.appendChild(this.createLegend());
-		container.appendChild(heatmapContainer);
+		this.gridBlock.appendChild(this.createHeatmapGrid(adapter, layout));
+		this.heatmapContainer.appendChild(this.gridBlock);
 
-		return container;
+		this.legendElement = this.createLegend();
+		this.heatmapContainer.appendChild(this.legendElement);
+	}
+
+	private notifySettingsChange(): void {
+		if (this.props.onHeatmapSettingsChange) {
+			this.props.onHeatmapSettingsChange(this.settings);
+		}
 	}
 
 	private createMonthLabelsRow(
@@ -137,12 +506,21 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 	private buildValueMap(): Map<string, number> {
 		const valueMap = new Map<string, number>();
-		const maxNumeric = Math.max(
-			...this.props.values.map((v) =>
-				typeof v.value === "number" ? v.value : 0
-			),
-			1
-		);
+		
+		// Determine scale based on mode
+		let minScale = 0;
+		let maxScale = 1;
+		
+		if (this.settings.colorScaleMode === ColorScaleMode.MANUAL) {
+			minScale = this.settings.colorScaleMin ?? 0;
+			maxScale = this.settings.colorScaleMax ?? 60;
+		} else {
+			// Automatic mode: use actual data range
+			const numericValues = this.props.values
+				.map((v) => typeof v.value === "number" ? v.value : 0)
+				.filter(v => v > 0);
+			maxScale = Math.max(...numericValues, 1);
+		}
 
 		this.props.values.forEach((entry) => {
 			const dateKey = toLocalISODate(entry.date);
@@ -150,11 +528,9 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				valueMap.set(dateKey, entry.value === true ? 1 : 0);
 			} else {
 				const numValue = entry.value as number;
-				if (this.props.target !== undefined && this.props.target > 0) {
-					valueMap.set(dateKey, Math.min(numValue / this.props.target, 1));
-				} else {
-					valueMap.set(dateKey, numValue / maxNumeric);
-				}
+				// Normalize to 0-1 range based on scale
+				const normalized = (numValue - minScale) / (maxScale - minScale);
+				valueMap.set(dateKey, Math.max(0, Math.min(1, normalized)));
 			}
 		});
 
@@ -290,13 +666,32 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		}
 
 		const themeColor = this.getThemeColor();
-		const legendColors = [
-			{ color: "var(--background-modifier-border)", label: "0" },
-			{ color: this.adjustColorOpacity(themeColor, 0.3), label: "1-25%" },
-			{ color: this.adjustColorOpacity(themeColor, 0.5), label: "26-50%" },
-			{ color: this.adjustColorOpacity(themeColor, 0.7), label: "51-75%" },
-			{ color: themeColor, label: "76-100%" }
-		];
+		let legendColors;
+
+		if (this.settings.colorScaleMode === ColorScaleMode.MANUAL) {
+			// Dynamic labels based on manual min/max
+			const min = this.settings.colorScaleMin ?? 0;
+			const max = this.settings.colorScaleMax ?? 60;
+			const range = max - min;
+			const step = range / 4;
+
+			legendColors = [
+				{ color: "var(--background-modifier-border)", label: `${min}` },
+				{ color: this.adjustColorOpacity(themeColor, 0.3), label: `${Math.round(min + step * 1)}-${Math.round(min + step * 2)}` },
+				{ color: this.adjustColorOpacity(themeColor, 0.5), label: `${Math.round(min + step * 2)}-${Math.round(min + step * 3)}` },
+				{ color: this.adjustColorOpacity(themeColor, 0.7), label: `${Math.round(min + step * 3)}-${Math.round(min + step * 4)}` },
+				{ color: themeColor, label: `${Math.round(min + step * 4)}+` }
+			];
+		} else {
+			// Percentage labels for automatic mode
+			legendColors = [
+				{ color: "var(--background-modifier-border)", label: "0" },
+				{ color: this.adjustColorOpacity(themeColor, 0.3), label: "1-25%" },
+				{ color: this.adjustColorOpacity(themeColor, 0.5), label: "26-50%" },
+				{ color: this.adjustColorOpacity(themeColor, 0.7), label: "51-75%" },
+				{ color: themeColor, label: "76-100%" }
+			];
+		}
 
 		const legendLabel = document.createElement("span");
 		legendLabel.textContent = "Less";
