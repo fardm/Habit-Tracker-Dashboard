@@ -25,14 +25,16 @@ export class DateNavigator {
 		const leftButton = document.createElement("button");
 		leftButton.innerHTML = "<";
 		leftButton.style.cssText = `
-			background: none;
-			border: none;
 			color: var(--text-muted);
 			font-size: 16px;
 			cursor: pointer;
 			padding: 4px 6px;
 			transition: color 0.2s;
 			line-height: 1;
+
+			background: var(--background-secondary);
+			border-radius: 6px;
+			border: 1px solid var(--background-modifier-border);
 		`;
 		leftButton.addEventListener("mouseenter", () => {
 			leftButton.style.color = "var(--text-normal)";
@@ -48,8 +50,8 @@ export class DateNavigator {
 		const dateDisplay = document.createElement("button");
 		dateDisplay.textContent = this.formatDate(this.currentDate);
 		dateDisplay.style.cssText = `
-			background: none;
-			border: none;
+			background: var(--background-secondary);
+			border: 1px solid var(--background-modifier-border);
 			color: var(--text-normal);
 			font-size: 13px;
 			font-weight: 500;
@@ -74,14 +76,16 @@ export class DateNavigator {
 		const rightButton = document.createElement("button");
 		rightButton.innerHTML = ">";
 		rightButton.style.cssText = `
-			background: none;
-			border: none;
 			color: var(--text-muted);
 			font-size: 16px;
 			cursor: pointer;
 			padding: 4px 6px;
 			transition: color 0.2s;
 			line-height: 1;
+
+			background: var(--background-secondary);
+			border-radius: 6px;
+			border: 1px solid var(--background-modifier-border);
 		`;
 		rightButton.addEventListener("mouseenter", () => {
 			rightButton.style.color = "var(--text-normal)";

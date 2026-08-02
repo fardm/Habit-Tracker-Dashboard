@@ -142,10 +142,6 @@ export class HabitDetailsModal extends Modal {
 			display: inline-flex;
 			align-items: center;
 			gap: 12px;
-			background: var(--background-secondary);
-			padding: 8px 16px;
-			border-radius: 20px;
-			border: 1px solid var(--background-modifier-border);
 		`;
 
 		// Previous year button
@@ -153,14 +149,14 @@ export class HabitDetailsModal extends Modal {
 			text: "‹"
 		});
 		prevButton.style.cssText = `
-			background: transparent;
-			border: none;
 			color: var(--text-muted);
 			cursor: pointer;
 			font-size: 16px;
-			padding: 4px 8px;
 			line-height: 1;
+			background: var(--background-secondary);
+			padding: 6px 8px;
 			border-radius: 6px;
+			border: 1px solid var(--background-modifier-border);
 			transition: all 0.15s ease;
 		`;
 		prevButton.onclick = () => this.handleYearChange(-1);
@@ -186,6 +182,10 @@ export class HabitDetailsModal extends Modal {
 			min-width: 50px;
 			text-align: center;
 			user-select: none;
+			background: var(--background-secondary);
+			padding: 6px 12px;
+			border-radius: 6px;
+			border: 1px solid var(--background-modifier-border);
 		`;
 
 		// Next year button
@@ -193,14 +193,16 @@ export class HabitDetailsModal extends Modal {
 			text: "›"
 		});
 		nextButton.style.cssText = `
-			background: transparent;
-			border: none;
 			color: var(--text-muted);
 			cursor: pointer;
 			font-size: 16px;
-			padding: 4px 8px;
 			line-height: 1;
+
+			background: var(--background-secondary);
+			padding: 6px 8px;
 			border-radius: 6px;
+			border: 1px solid var(--background-modifier-border);
+
 			transition: all 0.15s ease;
 		`;
 		nextButton.onclick = () => this.handleYearChange(1);
