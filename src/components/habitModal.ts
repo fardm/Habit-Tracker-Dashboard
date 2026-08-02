@@ -255,7 +255,7 @@ export class HabitModal extends Modal {
 			cls: "setting-item-full-width"
 		});
 		visualizationSetting.style.cssText = `
-			padding: 18px 20px;
+			padding: 18px 0px;
 			border-top: 1px solid var(--background-modifier-border);
 			display: flex;
 			flex-direction: column;
@@ -266,8 +266,8 @@ export class HabitModal extends Modal {
 			text: "Visualization"
 		});
 		visualizationName.style.cssText = `
-			font-weight: var(--font-medium);
-			font-size: var(--font-ui-medium);
+			font-weight: var(--font-small);
+			font-size: var(--font-ui-small);
 			color: var(--text-normal);
 		`;
 
@@ -362,27 +362,36 @@ export class HabitModal extends Modal {
 		`;
 
 		// Buttons
-		new Setting(contentEl)
-			.addButton((btn) =>
-				btn
-					.setButtonText("Cancel")
-					.onClick(() => {
-						this.close();
-					})
-			)
-			.addButton((btn) =>
-				btn
-					.setButtonText(this.isEditMode ? "Update" : "Create")
-					.setCta()
-					.onClick(() => {
-						if (this.validate()) {
-							this.close();
-							this.onSubmit(this.formData);
-						} else {
-							errorContainer.innerHTML = this.validationErrors.join("<br>");
-						}
-					})
-			);
+		const buttonContainer = contentEl.createDiv({
+			cls: "setting-item-control"
+		});
+		buttonContainer.style.cssText = `
+			display: flex;
+			justify-content: flex-end;
+			gap: 12px;
+			margin-top: 16px;
+		`;
+
+		const cancelButton = buttonContainer.createEl("button", {
+			text: "Cancel",
+			cls: "mod-cancel"
+		});
+		cancelButton.addEventListener("click", () => {
+			this.close();
+		});
+
+		const createButton = buttonContainer.createEl("button", {
+			text: this.isEditMode ? "Update" : "Create",
+			cls: "mod-cta"
+		});
+		createButton.addEventListener("click", () => {
+			if (this.validate()) {
+				this.close();
+				this.onSubmit(this.formData);
+			} else {
+				errorContainer.innerHTML = this.validationErrors.join("<br>");
+			}
+		});
 
 		// Initial visibility update
 		this.updateNumericSettingsVisibility();
