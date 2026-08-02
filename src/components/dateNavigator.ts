@@ -52,6 +52,7 @@ export class DateNavigator {
 		dateDisplay.style.cssText = `
 			background: var(--background-secondary);
 			border: 1px solid var(--background-modifier-border);
+			border-radius: 4px;
 			color: var(--text-normal);
 			font-size: 13px;
 			font-weight: 500;

@@ -131,7 +131,7 @@ export class HabitModal extends Modal {
 					})
 			);
 
-		// Collapsible Numeric Settings section
+		// Numeric Settings section
 		this.numericSettingsContainer = contentEl.createDiv({
 			cls: "numeric-settings-container"
 		});
@@ -140,76 +140,23 @@ export class HabitModal extends Modal {
 			margin-bottom: 16px;
 		`;
 
-		const numericSettingsHeader = this.numericSettingsContainer.createDiv();
-		numericSettingsHeader.style.cssText = `
-			display: flex;
-			flex-direction: column;
-		`;
-
-		const headerRow = numericSettingsHeader.createDiv();
-		headerRow.style.cssText = `
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			padding: 12px;
-			background-color: var(--background-secondary);
-			border-radius: 4px;
-			border: 1px solid var(--background-modifier-border);
-		`;
-
-		const chevron = headerRow.createEl("span", {
-			text: "▶"
-		});
-		chevron.style.cssText = `
-			transition: transform 0.2s ease;
-			font-size: 12px;
-		`;
-
-		const numericSettingsTitle = headerRow.createEl("div", {
+		const numericSettingsTitle = this.numericSettingsContainer.createEl("h3", {
 			text: "Numeric Settings"
 		});
 		numericSettingsTitle.style.cssText = `
+			margin: 0 0 12px 0;
+			font-size: 14px;
 			font-weight: 500;
 			color: var(--text-normal);
 		`;
 
-		this.numericSettingsContent = numericSettingsHeader.createDiv();
+		this.numericSettingsContent = this.numericSettingsContainer.createDiv();
 		this.numericSettingsContent.style.cssText = `
-			margin-top: 12px;
 			padding: 12px;
 			background-color: var(--background-secondary);
 			border-radius: 4px;
 			border: 1px solid var(--background-modifier-border);
-			display: none;
-			opacity: 0;
-			transform: translateY(-8px);
-			transition: opacity 0.2s ease, transform 0.2s ease;
 		`;
-
-		headerRow.addEventListener("click", () => {
-			if (this.numericSettingsContent) {
-				const isExpanded = this.numericSettingsContent.style.display !== "none";
-				if (isExpanded) {
-					this.numericSettingsContent.style.opacity = "0";
-					this.numericSettingsContent.style.transform = "translateY(-8px)";
-					setTimeout(() => {
-						if (this.numericSettingsContent) {
-							this.numericSettingsContent.style.display = "none";
-						}
-					}, 200);
-					chevron.style.transform = "rotate(0deg)";
-				} else {
-					this.numericSettingsContent.style.display = "block";
-					requestAnimationFrame(() => {
-						if (this.numericSettingsContent) {
-							this.numericSettingsContent.style.opacity = "1";
-							this.numericSettingsContent.style.transform = "translateY(0)";
-						}
-					});
-					chevron.style.transform = "rotate(90deg)";
-				}
-			}
-		});
 
 		// Unit field
 		new Setting(this.numericSettingsContent)
