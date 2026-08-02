@@ -18,6 +18,13 @@ export class StreakSection extends HTMLElementComponent {
 		return this.props.theme?.primary || "var(--interactive-accent)";
 	}
 
+	private formatStreakText(value: number): string {
+		if (value === 0) {
+			return "-";
+		}
+		return `${value} day${value === 1 ? '' : 's'}`;
+	}
+
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "streak-section";
@@ -51,8 +58,7 @@ export class StreakSection extends HTMLElementComponent {
 		const currentStreakCard = this.createStreakCard(
 			"🔥",
 			"Current Streak",
-			this.props.streaks.currentStreak.toString(),
-			"days"
+			this.formatStreakText(this.props.streaks.currentStreak)
 		);
 		grid.appendChild(currentStreakCard);
 
@@ -60,8 +66,7 @@ export class StreakSection extends HTMLElementComponent {
 		const longestStreakCard = this.createStreakCard(
 			"🏆",
 			"Longest Streak",
-			this.props.streaks.longestStreak.toString(),
-			"days"
+			this.formatStreakText(this.props.streaks.longestStreak)
 		);
 		grid.appendChild(longestStreakCard);
 
@@ -150,7 +155,7 @@ export class StreakSection extends HTMLElementComponent {
 		return container;
 	}
 
-	private createStreakCard(icon: string, label: string, value: string, unit: string): HTMLElement {
+	private createStreakCard(icon: string, label: string, valueText: string): HTMLElement {
 		const card = document.createElement("div");
 		card.style.cssText = `
 			background-color: var(--background-primary);
@@ -169,7 +174,7 @@ export class StreakSection extends HTMLElementComponent {
 		card.appendChild(iconEl);
 
 		const valueEl = document.createElement("div");
-		valueEl.textContent = `${value} ${unit}`;
+		valueEl.textContent = valueText;
 		valueEl.style.cssText = `
 			font-size: 24px;
 			font-weight: 700;
@@ -212,7 +217,7 @@ export class StreakSection extends HTMLElementComponent {
 		item.appendChild(dateRange);
 
 		const length = document.createElement("span");
-		length.textContent = `${streak.length} days`;
+		length.textContent = this.formatStreakText(streak.length);
 		length.style.cssText = `
 			color: var(--text-muted);
 			font-weight: 500;
