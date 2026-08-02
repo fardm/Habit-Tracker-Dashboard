@@ -22,9 +22,8 @@ export class HabitModal extends Modal {
 	private formData: HabitFormData;
 	private onSubmit: (data: HabitFormData) => void;
 	private validationErrors: string[] = [];
-	private numericFieldsContainer?: HTMLElement;
-	private visualizationContainer?: HTMLElement;
-	private completionConditionContainer?: HTMLElement;
+	private trackingSettingsContainer?: HTMLElement;
+	private displaySettingsContainer?: HTMLElement;
 	private isEditMode: boolean;
 
 	constructor(
@@ -54,6 +53,9 @@ export class HabitModal extends Modal {
 
 		contentEl.createEl("h2", { text: this.isEditMode ? "Edit Habit" : "Create New Habit" });
 
+		// Section 1: Habit Information
+		this.createSection(contentEl, "Habit Information");
+
 		// Habit Name
 		new Setting(contentEl)
 			.setName("Habit name")
@@ -81,7 +83,6 @@ export class HabitModal extends Modal {
 					})
 					.setValue(this.formData.emoji)
 					.then((inputEl) => {
-						// Reduce placeholder opacity for subtle hint
 						const style = document.createElement("style");
 						style.textContent = `
 							.habit-modal-emoji-input::placeholder {
@@ -92,6 +93,22 @@ export class HabitModal extends Modal {
 						inputEl.inputEl.addClass("habit-modal-emoji-input");
 					})
 			);
+
+		// Frontmatter Field
+		new Setting(contentEl)
+			.setName("Frontmatter field")
+			.setDesc("The frontmatter field name for storing habit data")
+			.addText((text) =>
+				text
+					.setPlaceholder("reading")
+					.onChange((value) => {
+						this.formData.frontmatterField = value;
+					})
+					.setValue(this.formData.frontmatterField)
+			);
+
+		// Section 2: Tracking Settings
+		this.createSection(contentEl, "Tracking Settings");
 
 		// Type
 		new Setting(contentEl)
@@ -104,24 +121,17 @@ export class HabitModal extends Modal {
 					.setValue(this.formData.type)
 					.onChange((value) => {
 						this.formData.type = value as HabitType;
-						this.updateNumericFieldsVisibility();
+						this.updateTrackingSettingsVisibility();
 					})
 			);
 
-		// Numeric fields container (shown only for numeric habits)
-		this.numericFieldsContainer = contentEl.createDiv({
-			cls: "numeric-fields-container"
+		// Tracking settings container (for numeric-specific fields)
+		this.trackingSettingsContainer = contentEl.createDiv({
+			cls: "tracking-settings-container"
 		});
-		this.numericFieldsContainer.style.cssText = `
-			margin-top: 16px;
-			padding: 12px;
-			background-color: var(--background-secondary);
-			border-radius: 4px;
-			border: 1px solid var(--background-modifier-border);
-		`;
 
 		// Unit field
-		new Setting(this.numericFieldsContainer)
+		new Setting(this.trackingSettingsContainer)
 			.setName("Unit")
 			.setDesc("The unit for tracking (e.g., minutes, pages, pomodoro)")
 			.addText((text) =>
@@ -134,7 +144,7 @@ export class HabitModal extends Modal {
 			);
 
 		// Target field
-		new Setting(this.numericFieldsContainer)
+		new Setting(this.trackingSettingsContainer)
 			.setName("Target")
 			.setDesc("The target value to achieve (e.g., 10)")
 			.addText((text) =>
@@ -146,17 +156,44 @@ export class HabitModal extends Modal {
 					.setValue(this.formData.target ? this.formData.target.toString() : "")
 			);
 
-		// Visualization radio buttons
-		this.visualizationContainer = this.numericFieldsContainer.createDiv({
-			cls: "visualization-container"
-		});
-		this.visualizationContainer.style.cssText = `
-			margin-top: 16px;
-			padding-top: 12px;
-			border-top: 1px solid var(--background-modifier-border);
-		`;
+		// Completion Condition
+		new Setting(this.trackingSettingsContainer)
+			.setName("Completion condition")
+			.setDesc("Choose when this habit counts as completed")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption(CompletionOperator.AT_LEAST, "At least")
+					.addOption(CompletionOperator.AT_MOST, "At most")
+					.addOption(CompletionOperator.EXACTLY, "Exactly")
+					.setValue(this.formData.completionRule?.operator || CompletionOperator.AT_LEAST)
+					.onChange((value) => {
+						this.formData.completionRule = { operator: value as CompletionOperator };
+					})
+			);
 
-		const visualizationLabel = this.visualizationContainer.createEl("div", {
+		// Grace Days
+		new Setting(this.trackingSettingsContainer)
+			.setName("Grace days")
+			.setDesc("Number of missed days allowed before streak breaks (default: 0)")
+			.addText((text) =>
+				text
+					.setPlaceholder("0")
+					.setValue(this.formData.graceDays?.toString() || "0")
+					.onChange((value) => {
+						const num = parseInt(value);
+						this.formData.graceDays = isNaN(num) || num < 0 ? 0 : num;
+					})
+			);
+
+		// Section 3: Display Settings
+		this.createSection(contentEl, "Display Settings");
+
+		// Visualization (only for numeric habits)
+		this.displaySettingsContainer = contentEl.createDiv({
+			cls: "display-settings-container"
+		});
+
+		const visualizationLabel = this.displaySettingsContainer.createEl("div", {
 			text: "Visualization"
 		});
 		visualizationLabel.style.cssText = `
@@ -165,7 +202,7 @@ export class HabitModal extends Modal {
 			color: var(--text-normal);
 		`;
 
-		const visualizationDesc = this.visualizationContainer.createEl("div", {
+		const visualizationDesc = this.displaySettingsContainer.createEl("div", {
 			text: "Choose how to display progress for this habit"
 		});
 		visualizationDesc.style.cssText = `
@@ -174,7 +211,7 @@ export class HabitModal extends Modal {
 			margin-bottom: 12px;
 		`;
 
-		const radioContainer = this.visualizationContainer.createDiv();
+		const radioContainer = this.displaySettingsContainer.createDiv();
 		radioContainer.style.cssText = `
 			display: flex;
 			flex-direction: column;
@@ -215,20 +252,7 @@ export class HabitModal extends Modal {
 			`;
 		});
 
-		// Frontmatter Field
-		new Setting(contentEl)
-			.setName("Frontmatter field")
-			.setDesc("The frontmatter field name for storing habit data")
-			.addText((text) =>
-				text
-					.setPlaceholder("reading")
-					.onChange((value) => {
-						this.formData.frontmatterField = value;
-					})
-					.setValue(this.formData.frontmatterField)
-			);
-
-		// Color Theme
+		// Color Theme (shown for both habit types)
 		new Setting(contentEl)
 			.setName("Color theme")
 			.setDesc("Choose a custom color for this habit (optional)")
@@ -238,46 +262,6 @@ export class HabitModal extends Modal {
 						this.formData.themeColor = value;
 					})
 					.setValue(this.formData.themeColor || "")
-			);
-
-		// Grace Days
-		new Setting(contentEl)
-			.setName("Grace days")
-			.setDesc("Number of missed days allowed before streak breaks (default: 0)")
-			.addText((text) =>
-				text
-					.setPlaceholder("0")
-					.setValue(this.formData.graceDays?.toString() || "0")
-					.onChange((value) => {
-						const num = parseInt(value);
-						this.formData.graceDays = isNaN(num) || num < 0 ? 0 : num;
-					})
-			);
-
-		// Completion Condition (only for numeric habits)
-		this.completionConditionContainer = contentEl.createDiv({
-			cls: "completion-condition-container"
-		});
-		this.completionConditionContainer.style.cssText = `
-			margin-top: 16px;
-			padding: 12px;
-			background-color: var(--background-secondary);
-			border-radius: 4px;
-			border: 1px solid var(--background-modifier-border);
-		`;
-
-		new Setting(this.completionConditionContainer)
-			.setName("Completion condition")
-			.setDesc("Choose when this habit counts as completed")
-			.addDropdown((dropdown) =>
-				dropdown
-					.addOption(CompletionOperator.AT_LEAST, "At least")
-					.addOption(CompletionOperator.AT_MOST, "At most")
-					.addOption(CompletionOperator.EXACTLY, "Exactly")
-					.setValue(this.formData.completionRule?.operator || CompletionOperator.AT_LEAST)
-					.onChange((value) => {
-						this.formData.completionRule = { operator: value as CompletionOperator };
-					})
 			);
 
 		// Validation errors display
@@ -314,23 +298,45 @@ export class HabitModal extends Modal {
 			);
 
 		// Initial visibility update
-		this.updateNumericFieldsVisibility();
+		this.updateTrackingSettingsVisibility();
 	}
 
-	private updateNumericFieldsVisibility(): void {
-		if (this.numericFieldsContainer) {
+	private createSection(container: HTMLElement, title: string): void {
+		const section = container.createEl("div");
+		section.style.cssText = `
+			margin-top: 24px;
+			margin-bottom: 16px;
+			padding-bottom: 8px;
+			border-bottom: 1px solid var(--background-modifier-border);
+		`;
+
+		const sectionTitle = section.createEl("h3", {
+			text: title
+		});
+		sectionTitle.style.cssText = `
+			margin: 0;
+			font-size: 14px;
+			font-weight: 600;
+			color: var(--text-normal);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		`;
+	}
+
+	private updateTrackingSettingsVisibility(): void {
+		if (this.trackingSettingsContainer) {
 			if (this.formData.type === HabitType.NUMERIC) {
-				this.numericFieldsContainer.style.display = "block";
+				this.trackingSettingsContainer.style.display = "block";
 			} else {
-				this.numericFieldsContainer.style.display = "none";
+				this.trackingSettingsContainer.style.display = "none";
 			}
 		}
 
-		if (this.completionConditionContainer) {
+		if (this.displaySettingsContainer) {
 			if (this.formData.type === HabitType.NUMERIC) {
-				this.completionConditionContainer.style.display = "block";
+				this.displaySettingsContainer.style.display = "block";
 			} else {
-				this.completionConditionContainer.style.display = "none";
+				this.displaySettingsContainer.style.display = "none";
 			}
 		}
 	}
