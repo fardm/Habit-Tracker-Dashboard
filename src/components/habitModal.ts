@@ -322,6 +322,7 @@ export class HabitModal extends Modal {
 			label.style.cssText = `
 				cursor: pointer;
 				color: var(--text-normal);
+				font-size: var(--font-ui-small);
 			`;
 		});
 
