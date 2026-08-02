@@ -1,5 +1,5 @@
 import { App } from "obsidian";
-import { Habit, HabitType, TrackerSettings } from "../types/habitTypes";
+import { Habit, HabitType, TrackerSettings, CompletionOperator } from "../types/habitTypes";
 import { FrontmatterDataReader, HabitValue } from "./frontmatterDataReader";
 import { DateRangeCalculator } from "./dateRangeCalculator";
 import { 
@@ -102,7 +102,8 @@ export class HabitDetailsDataService {
 		values: HabitValueEntry[],
 		habitType: "boolean" | "numeric",
 		target?: number,
-		graceDays: number = 0
+		graceDays: number = 0,
+		completionOperator?: CompletionOperator
 	): HabitStreaks {
 		if (values.length === 0) {
 			return {
@@ -128,7 +129,19 @@ export class HabitDetailsDataService {
 				return value === true;
 			} else {
 				if (target !== undefined) {
-					return (value as number) >= target;
+					const numValue = value as number;
+					const operator = completionOperator || CompletionOperator.AT_LEAST;
+					
+					switch (operator) {
+						case CompletionOperator.AT_LEAST:
+							return numValue >= target;
+						case CompletionOperator.AT_MOST:
+							return numValue <= target;
+						case CompletionOperator.EXACTLY:
+							return numValue === target;
+						default:
+							return numValue >= target;
+					}
 				}
 				return (value as number) > 0;
 			}

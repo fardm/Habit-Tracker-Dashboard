@@ -1,4 +1,4 @@
-import { TrackerSettings, ReportCalendar, WeekStartDay } from "./habitTypes";
+import { TrackerSettings, ReportCalendar, WeekStartDay, CompletionRule } from "./habitTypes";
 
 /**
  * Time range options for habit details view
@@ -96,6 +96,7 @@ export interface HabitDetailsData {
 	habitType: "boolean" | "numeric";
 	unit?: string;
 	target?: number;
+	completionRule?: CompletionRule;
 	values: HabitValueEntry[];
 	timeRange: TimeRange;
 	customDateStart?: Date;

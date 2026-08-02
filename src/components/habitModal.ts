@@ -1,5 +1,5 @@
 import { App, Modal, Setting } from "obsidian";
-import { HabitType, Visualization } from "../types/habitTypes";
+import { HabitType, Visualization, CompletionOperator, CompletionRule } from "../types/habitTypes";
 import { HabitDataManager } from "../handlers/habitDataManager";
 
 export interface HabitFormData {
@@ -12,6 +12,7 @@ export interface HabitFormData {
 	visualization?: Visualization;
 	themeColor?: string;
 	graceDays?: number;
+	completionRule?: CompletionRule;
 }
 
 /**
@@ -23,6 +24,7 @@ export class HabitModal extends Modal {
 	private validationErrors: string[] = [];
 	private numericFieldsContainer?: HTMLElement;
 	private visualizationContainer?: HTMLElement;
+	private completionConditionContainer?: HTMLElement;
 	private isEditMode: boolean;
 
 	constructor(
@@ -42,7 +44,8 @@ export class HabitModal extends Modal {
 			target: initialData?.target,
 			visualization: initialData?.visualization || Visualization.DONUT,
 			themeColor: initialData?.themeColor || "",
-			graceDays: initialData?.graceDays ?? 0
+			graceDays: initialData?.graceDays ?? 0,
+			completionRule: initialData?.completionRule || { operator: CompletionOperator.AT_LEAST }
 		};
 	}
 
@@ -251,6 +254,32 @@ export class HabitModal extends Modal {
 					})
 			);
 
+		// Completion Condition (only for numeric habits)
+		this.completionConditionContainer = contentEl.createDiv({
+			cls: "completion-condition-container"
+		});
+		this.completionConditionContainer.style.cssText = `
+			margin-top: 16px;
+			padding: 12px;
+			background-color: var(--background-secondary);
+			border-radius: 4px;
+			border: 1px solid var(--background-modifier-border);
+		`;
+
+		new Setting(this.completionConditionContainer)
+			.setName("Completion condition")
+			.setDesc("Choose when this habit counts as completed")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption(CompletionOperator.AT_LEAST, "At least")
+					.addOption(CompletionOperator.AT_MOST, "At most")
+					.addOption(CompletionOperator.EXACTLY, "Exactly")
+					.setValue(this.formData.completionRule?.operator || CompletionOperator.AT_LEAST)
+					.onChange((value) => {
+						this.formData.completionRule = { operator: value as CompletionOperator };
+					})
+			);
+
 		// Validation errors display
 		const errorContainer = contentEl.createDiv({
 			cls: "habit-modal-errors"
@@ -294,6 +323,14 @@ export class HabitModal extends Modal {
 				this.numericFieldsContainer.style.display = "block";
 			} else {
 				this.numericFieldsContainer.style.display = "none";
+			}
+		}
+
+		if (this.completionConditionContainer) {
+			if (this.formData.type === HabitType.NUMERIC) {
+				this.completionConditionContainer.style.display = "block";
+			} else {
+				this.completionConditionContainer.style.display = "none";
 			}
 		}
 	}

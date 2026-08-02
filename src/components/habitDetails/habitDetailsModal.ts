@@ -310,7 +310,8 @@ export class HabitDetailsModal extends Modal {
 				this.habitValues,
 				this.props.habitType,
 				this.props.target,
-				this.habit.graceDays ?? 0
+				this.habit.graceDays ?? 0,
+				this.habit.completionRule?.operator
 			);
 			const streakComponent = new StreakSection({
 				streaks: streaks,

@@ -64,6 +64,22 @@ export enum WeekStartDay {
 }
 
 /**
+ * Completion condition operators for numeric habits
+ */
+export enum CompletionOperator {
+	AT_LEAST = "at_least",
+	AT_MOST = "at_most",
+	EXACTLY = "exactly"
+}
+
+/**
+ * Completion rule for numeric habits
+ */
+export interface CompletionRule {
+	operator: CompletionOperator;
+}
+
+/**
  * User settings stored in tracker file
  */
 export interface TrackerSettings {
@@ -108,6 +124,7 @@ export interface Habit {
 	visualization?: Visualization; // For numeric habits visualization
 	themeColor?: string; // Custom theme color for the habit
 	graceDays?: number; // Number of missed days allowed in streak calculations
+	completionRule?: CompletionRule; // Completion condition for numeric habits
 }
 
 /**

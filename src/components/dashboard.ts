@@ -372,7 +372,8 @@ export class Dashboard extends HTMLElementComponent {
 				target: formData.target,
 				visualization: formData.visualization,
 				themeColor: formData.themeColor,
-				graceDays: formData.graceDays
+				graceDays: formData.graceDays,
+				completionRule: formData.completionRule
 			});
 
 			this.habits.push(newHabit);
@@ -404,7 +405,8 @@ export class Dashboard extends HTMLElementComponent {
 				target: habit.target,
 				visualization: habit.visualization,
 				themeColor: habit.themeColor,
-				graceDays: habit.graceDays
+				graceDays: habit.graceDays,
+				completionRule: habit.completionRule
 			}
 		);
 		modal.open();
@@ -421,7 +423,8 @@ export class Dashboard extends HTMLElementComponent {
 				target: formData.target,
 				visualization: formData.visualization,
 				themeColor: formData.themeColor,
-				graceDays: formData.graceDays
+				graceDays: formData.graceDays,
+				completionRule: formData.completionRule
 			});
 
 			await this.loadHabits();
@@ -447,7 +450,8 @@ export class Dashboard extends HTMLElementComponent {
 				frontmatterField: `${habit.frontmatterField}_copy`,
 				unit: habit.unit,
 				target: habit.target,
-				visualization: habit.visualization
+				visualization: habit.visualization,
+				completionRule: habit.completionRule
 			});
 
 			this.habits.push(newHabit);

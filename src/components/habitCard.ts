@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "./htmlElementComponent";
-import { Habit, ViewMode, Visualization } from "../types/habitTypes";
+import { Habit, ViewMode, Visualization, CompletionOperator } from "../types/habitTypes";
 import { HabitMenu } from "./habitMenu";
 import { DonutChart } from "./donutChart";
 import { ProgressBar } from "./progressBar";
@@ -304,6 +304,7 @@ export class HabitCard extends HTMLElementComponent {
 			const target = this.props.habit.target;
 			const unit = this.props.habit.unit || "";
 			const visualization = this.props.habit.visualization || Visualization.DONUT;
+			const completionOperator = this.props.habit.completionRule?.operator || CompletionOperator.AT_LEAST;
 			
 			// Create vertical layout container
 			const verticalContainer = document.createElement("div");
@@ -331,12 +332,46 @@ export class HabitCard extends HTMLElementComponent {
 				text-align: center;
 			`;
 			
+			// Determine completion status based on operator
+			let isCompleted = false;
+			if (target !== undefined) {
+				switch (completionOperator) {
+					case CompletionOperator.AT_LEAST:
+						isCompleted = value >= target;
+						break;
+					case CompletionOperator.AT_MOST:
+						isCompleted = value <= target;
+						break;
+					case CompletionOperator.EXACTLY:
+						isCompleted = value === target;
+						break;
+				}
+			}
+			
 			if (target) {
 				// Target is set
-				const extra = value > target ? value - target : 0;
-				const displayValue = extra > 0 ? target : value;
-				const progress = Math.min(displayValue / target, 1);
-				const isExceeded = extra > 0;
+				let progress = 0;
+				let extra = 0;
+				let displayValue = value;
+				
+				switch (completionOperator) {
+					case CompletionOperator.AT_LEAST:
+						extra = value > target ? value - target : 0;
+						displayValue = extra > 0 ? target : value;
+						progress = Math.min(displayValue / target, 1);
+						break;
+					case CompletionOperator.AT_MOST:
+						extra = value < target ? target - value : 0;
+						displayValue = value;
+						progress = Math.min(value / target, 1);
+						break;
+					case CompletionOperator.EXACTLY:
+						displayValue = value;
+						progress = value === target ? 1 : Math.min(value / target, 1);
+						break;
+				}
+				
+				const isExceeded = extra > 0 && completionOperator === CompletionOperator.AT_LEAST;
 				
 				// Add visualization based on setting
 				if (visualization === Visualization.DONUT) {
@@ -389,13 +424,15 @@ export class HabitCard extends HTMLElementComponent {
 					const dashedIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
 					
 					const iconContainer = document.createElement("div");
-					iconContainer.innerHTML = value > 0 ? checkIcon : dashedIcon;
+					iconContainer.innerHTML = isCompleted ? checkIcon : dashedIcon;
 					visualizationContainer.appendChild(iconContainer);
 				}
 				
-				// Display text with extra amount if exceeded
-				if (extra > 0) {
+				// Display text based on operator
+				if (completionOperator === CompletionOperator.AT_LEAST && extra > 0) {
 					progressText.textContent = `${target}/${target} ${unit} (+${extra})`;
+				} else if (completionOperator === CompletionOperator.AT_MOST && extra > 0) {
+					progressText.textContent = `${value}/${target} ${unit} (-${extra})`;
 				} else {
 					progressText.textContent = `${value}/${target} ${unit}`;
 				}
