@@ -51,6 +51,7 @@ export class HabitCard extends HTMLElementComponent {
 				transition: border-color 0.2s, box-shadow 0.2s;
 				min-height: 90px;
 				position: relative;
+				cursor: pointer;
 				
 			`;
 		} else {
