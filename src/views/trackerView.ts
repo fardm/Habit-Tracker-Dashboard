@@ -64,4 +64,14 @@ export class TrackerView extends ItemView {
 			this.dashboard = undefined;
 		}
 	}
+
+	getState(): any {
+		// Save the file path so Obsidian can restore the view after restart
+		if (this.file) {
+			return {
+				file: this.file.path,
+			};
+		}
+		return {};
+	}
 }
