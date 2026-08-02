@@ -54,9 +54,6 @@ export class HabitModal extends Modal {
 
 		contentEl.createEl("h2", { text: this.isEditMode ? "Edit Habit" : "Create New Habit" });
 
-		// Section 1: Habit Information
-		this.createSection(contentEl, "Habit Information");
-
 		// Habit Name
 		new Setting(contentEl)
 			.setName("Habit name")
@@ -109,30 +106,14 @@ export class HabitModal extends Modal {
 			);
 
 		// Type (radio buttons)
-		const typeLabel = contentEl.createEl("div", {
-			text: "Type"
-		});
-		typeLabel.style.cssText = `
-			font-weight: 500;
-			margin-top: 16px;
-			margin-bottom: 8px;
-			color: var(--text-normal);
-		`;
+		const typeSetting = new Setting(contentEl)
+			.setName("Type")
+			.setDesc("Choose the habit type");
 
-		const typeDesc = contentEl.createEl("div", {
-			text: "Choose the habit type"
-		});
-		typeDesc.style.cssText = `
-			font-size: 12px;
-			color: var(--text-muted);
-			margin-bottom: 12px;
-		`;
-
-		const typeRadioContainer = contentEl.createDiv();
+		const typeRadioContainer = typeSetting.controlEl.createDiv();
 		typeRadioContainer.style.cssText = `
 			display: flex;
 			gap: 24px;
-			margin-bottom: 16px;
 		`;
 
 		const typeOptions = [
@@ -180,6 +161,12 @@ export class HabitModal extends Modal {
 		const numericSettingsHeader = this.numericSettingsContainer.createDiv();
 		numericSettingsHeader.style.cssText = `
 			display: flex;
+			flex-direction: column;
+		`;
+
+		const headerRow = numericSettingsHeader.createDiv();
+		headerRow.style.cssText = `
+			display: flex;
 			align-items: center;
 			gap: 8px;
 			cursor: pointer;
@@ -189,7 +176,7 @@ export class HabitModal extends Modal {
 			border: 1px solid var(--background-modifier-border);
 		`;
 
-		const chevron = numericSettingsHeader.createEl("span", {
+		const chevron = headerRow.createEl("span", {
 			text: "▶"
 		});
 		chevron.style.cssText = `
@@ -197,7 +184,7 @@ export class HabitModal extends Modal {
 			font-size: 12px;
 		`;
 
-		const numericSettingsTitle = numericSettingsHeader.createEl("div", {
+		const numericSettingsTitle = headerRow.createEl("div", {
 			text: "Numeric Settings"
 		});
 		numericSettingsTitle.style.cssText = `
@@ -205,7 +192,7 @@ export class HabitModal extends Modal {
 			color: var(--text-normal);
 		`;
 
-		this.numericSettingsContent = this.numericSettingsContainer.createDiv();
+		this.numericSettingsContent = numericSettingsHeader.createDiv();
 		this.numericSettingsContent.style.cssText = `
 			margin-top: 12px;
 			padding: 12px;
@@ -215,7 +202,7 @@ export class HabitModal extends Modal {
 			display: none;
 		`;
 
-		numericSettingsHeader.addEventListener("click", () => {
+		headerRow.addEventListener("click", () => {
 			if (this.numericSettingsContent) {
 				const isExpanded = this.numericSettingsContent.style.display !== "none";
 				this.numericSettingsContent.style.display = isExpanded ? "none" : "block";
@@ -264,11 +251,8 @@ export class HabitModal extends Modal {
 					})
 			);
 
-		// Section 2: Display Settings
-		this.createSection(contentEl, "Display Settings");
-
 		// Visualization (only for numeric habits)
-		this.visualizationContainer = contentEl.createDiv({
+		this.visualizationContainer = this.numericSettingsContent.createDiv({
 			cls: "visualization-container"
 		});
 
@@ -277,6 +261,7 @@ export class HabitModal extends Modal {
 		});
 		visualizationLabel.style.cssText = `
 			font-weight: 500;
+			margin-top: 16px;
 			margin-bottom: 8px;
 			color: var(--text-normal);
 		`;
@@ -394,43 +379,12 @@ export class HabitModal extends Modal {
 		this.updateNumericSettingsVisibility();
 	}
 
-	private createSection(container: HTMLElement, title: string): void {
-		const section = container.createEl("div");
-		section.style.cssText = `
-			margin-top: 24px;
-			margin-bottom: 16px;
-			padding-bottom: 8px;
-			border-bottom: 1px solid var(--background-modifier-border);
-		`;
-
-		const sectionTitle = section.createEl("h3", {
-			text: title
-		});
-		sectionTitle.style.cssText = `
-			margin: 0;
-			font-size: 14px;
-			font-weight: 600;
-			color: var(--text-normal);
-			text-transform: uppercase;
-			letter-spacing: 0.5px;
-		`;
-	}
-
 	private updateNumericSettingsVisibility(): void {
 		if (this.numericSettingsContainer) {
 			if (this.formData.type === HabitType.NUMERIC) {
 				this.numericSettingsContainer.style.display = "block";
 			} else {
 				this.numericSettingsContainer.style.display = "none";
-			}
-		}
-
-		// Also hide visualization container for Boolean habits
-		if (this.visualizationContainer) {
-			if (this.formData.type === HabitType.NUMERIC) {
-				this.visualizationContainer.style.display = "block";
-			} else {
-				this.visualizationContainer.style.display = "none";
 			}
 		}
 	}
