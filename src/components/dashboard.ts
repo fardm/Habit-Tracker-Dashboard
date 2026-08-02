@@ -61,9 +61,9 @@ export class Dashboard extends HTMLElementComponent {
 		const controlsRow = document.createElement("div");
 		controlsRow.className = "dashboard-controls";
 		controlsRow.style.cssText = `
-			display: flex;
+			display: grid;
+			grid-template-columns: 1fr auto 1fr;
 			align-items: center;
-			justify-content: space-between;
 			margin-bottom: 20px;
 			gap: 16px;
 		`;
@@ -74,6 +74,7 @@ export class Dashboard extends HTMLElementComponent {
 			display: flex;
 			align-items: center;
 			gap: 8px;
+			justify-self: start;
 		`;
 		
 		const settingsButton = new SettingsButton(() => {
@@ -96,6 +97,7 @@ export class Dashboard extends HTMLElementComponent {
 		centerControls.style.cssText = `
 			display: flex;
 			align-items: center;
+			justify-self: center;
 		`;
 		
 		this.dateNavigator = new DateNavigator(this.currentDate, (date) => {
@@ -108,6 +110,7 @@ export class Dashboard extends HTMLElementComponent {
 		rightControls.style.cssText = `
 			display: flex;
 			align-items: center;
+			justify-self: end;
 		`;
 		
 		this.viewModeSwitcher = new ViewModeSwitcher({
