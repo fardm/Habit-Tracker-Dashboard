@@ -9,7 +9,8 @@ import { SettingsPanel } from "./settingsPanel";
 import { HabitDetailsDataService } from "../../handlers/habitDetailsDataService";
 import { DateRangeCalculator } from "../../handlers/dateRangeCalculator";
 import { HabitDataCache } from "../../handlers/habitDataCache";
-import { Habit } from "../../types/habitTypes";
+import { Habit, ReportCalendar } from "../../types/habitTypes";
+import { getCalendarAdapter, parseLocalISODate } from "../../utils/calendarAdapter";
 
 /**
  * HabitDetailsModal - Main modal for displaying detailed habit information
@@ -34,15 +35,9 @@ export class HabitDetailsModal extends Modal {
 		this.dataService = new HabitDetailsDataService(app, props.trackerSettings || {});
 		this.dataCache = dataCache;
 		
-		// Initialize selected year based on report calendar
-		const reportCalendar = props.trackerSettings?.reportCalendar || "gregorian";
-		if (reportCalendar === "jalali") {
-			// Use current Jalali year
-			this.selectedYear = DateRangeCalculator.gregorianToJalali(new Date().getFullYear());
-		} else {
-			// Use current Gregorian year
-			this.selectedYear = new Date().getFullYear();
-		}
+		// Initialize selected year in the active calendar system
+		const adapter = getCalendarAdapter(props.trackerSettings?.reportCalendar);
+		this.selectedYear = adapter.getCurrentYear();
 	}
 
 	onOpen() {
@@ -246,7 +241,10 @@ export class HabitDetailsModal extends Modal {
 				values: this.habitValues,
 				habitType: this.props.habitType,
 				target: this.props.target,
-				theme: this.settings.theme
+				theme: this.settings.theme,
+				year: this.selectedYear,
+				reportCalendar:
+					this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN
 			});
 			heatmapSection.appendChild(heatmap.render());
 		}
@@ -310,40 +308,36 @@ export class HabitDetailsModal extends Modal {
 
 	private async loadHabitData(): Promise<void> {
 		try {
-			// Calculate date range using selected year and report calendar
-			const reportCalendar = this.props.trackerSettings?.reportCalendar || "gregorian";
-			let targetYear: number;
-			
-			if (reportCalendar === "jalali") {
-				// Convert Jalali year to Gregorian for date range calculation
-				targetYear = DateRangeCalculator.jalaliToGregorian(this.selectedYear);
-			} else {
-				// Use Gregorian year directly
-				targetYear = this.selectedYear;
-			}
-			
+			// selectedYear is already in the active calendar system (Gregorian or Jalali)
+			const reportCalendar =
+				this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN;
 			const dateRange = DateRangeCalculator.calculateDateRange(
 				this.props.trackerSettings || {},
-				targetYear
+				this.selectedYear
 			);
-			
-			console.log(`[HabitDetailsModal] Loading data for year ${this.selectedYear} (${reportCalendar}), date range: ${dateRange.startDate.toISOString()} to ${dateRange.endDate.toISOString()}`);
-			
-			// Use cache for complete historical data instead of dataService
+
+			console.log(
+				`[HabitDetailsModal] Loading data for year ${this.selectedYear} (${reportCalendar}), date range: ${dateRange.startDate.toISOString()} to ${dateRange.endDate.toISOString()}`
+			);
+
 			const cachedValues = this.dataCache.getHabitValues(
 				this.habit,
 				dateRange.startDate,
 				dateRange.endDate
 			);
-			
-			console.log(`[HabitDetailsModal] Loaded ${cachedValues.length} values from cache for ${this.habit.name}`);
-			
-			// Convert to HabitValueEntry format
-			this.habitValues = cachedValues.map(v => ({
-				date: new Date(v.date),
-				value: v.value
-			})).sort((a, b) => a.date.getTime() - b.date.getTime()); // Sort oldest first
-			
+
+			console.log(
+				`[HabitDetailsModal] Loaded ${cachedValues.length} values from cache for ${this.habit.name}`
+			);
+
+			// Parse ISO habit dates as local midnight so heatmap keys stay Gregorian YYYY-MM-DD
+			this.habitValues = cachedValues
+				.map((v) => ({
+					date: parseLocalISODate(v.date.split("T")[0]),
+					value: v.value
+				}))
+				.sort((a, b) => a.date.getTime() - b.date.getTime());
+
 			if (this.contentContainer) {
 				this.renderContentSections();
 			}

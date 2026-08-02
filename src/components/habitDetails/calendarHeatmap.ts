@@ -1,8 +1,16 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { CalendarHeatmapProps, HabitValueEntry, TimeRange } from "../../types/habitDetailsTypes";
+import { CalendarHeatmapProps } from "../../types/habitDetailsTypes";
+import {
+	getCalendarAdapter,
+	parseLocalISODate,
+	toLocalISODate
+} from "../../utils/calendarAdapter";
+import { ReportCalendar } from "../../types/habitTypes";
 
 /**
- * CalendarHeatmap component for GitHub-style activity visualization
+ * CalendarHeatmap — GitHub-style yearly activity grid.
+ * Columns = weeks, rows = days of week (Sun–Sat).
+ * Year bounds come from the calendar adapter (Jan–Dec or Farvardin–Esfand).
  */
 export class CalendarHeatmap extends HTMLElementComponent {
 	private props: CalendarHeatmapProps;
@@ -17,14 +25,12 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	}
 
 	private adjustColorOpacity(color: string, opacity: number): string {
-		// Simple opacity adjustment for hex colors
-		if (color.startsWith('#')) {
+		if (color.startsWith("#")) {
 			const r = parseInt(color.slice(1, 3), 16);
 			const g = parseInt(color.slice(3, 5), 16);
 			const b = parseInt(color.slice(5, 7), 16);
 			return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 		}
-		// For CSS variables, return as-is (they handle opacity differently)
 		return color;
 	}
 
@@ -39,8 +45,13 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			margin-bottom: 20px;
 		`;
 
+		const adapter = getCalendarAdapter(
+			this.props.reportCalendar || ReportCalendar.GREGORIAN
+		);
+		const year = this.props.year ?? adapter.getCurrentYear();
+
 		const title = document.createElement("h3");
-		title.textContent = "Activity Heatmap";
+		title.textContent = `Activity Heatmap — ${adapter.getPeriodLabel(year)}`;
 		title.style.cssText = `
 			margin: 0 0 16px 0;
 			font-size: 16px;
@@ -49,7 +60,6 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		`;
 		container.appendChild(title);
 
-		// Heatmap container
 		const heatmapContainer = document.createElement("div");
 		heatmapContainer.className = "heatmap-container";
 		heatmapContainer.style.cssText = `
@@ -58,35 +68,24 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			gap: 4px;
 		`;
 
-		// Create grid with real data
-		const grid = this.createHeatmapGrid();
-		heatmapContainer.appendChild(grid);
-
-		// Legend
-		const legend = this.createLegend();
-		heatmapContainer.appendChild(legend);
-
+		heatmapContainer.appendChild(this.createHeatmapGrid(adapter, year));
+		heatmapContainer.appendChild(this.createLegend());
 		container.appendChild(heatmapContainer);
 
 		return container;
 	}
 
-	private createHeatmapGrid(): HTMLElement {
-		const weeksCount = this.getWeeksCount();
-		const grid = document.createElement("div");
-		grid.style.cssText = `
-			display: grid;
-			grid-template-columns: repeat(${weeksCount}, 10px);
-			gap: 2px;
-			overflow-x: auto;
-			padding-bottom: 8px;
-			justify-content: center;
-		`;
-
-		// Create value map from props
+	private buildValueMap(): Map<string, number> {
 		const valueMap = new Map<string, number>();
-		this.props.values.forEach(entry => {
-			const dateKey = entry.date.toISOString().split('T')[0];
+		const maxNumeric = Math.max(
+			...this.props.values.map((v) =>
+				typeof v.value === "number" ? v.value : 0
+			),
+			1
+		);
+
+		this.props.values.forEach((entry) => {
+			const dateKey = toLocalISODate(entry.date);
 			if (this.props.habitType === "boolean") {
 				valueMap.set(dateKey, entry.value === true ? 1 : 0);
 			} else {
@@ -94,74 +93,98 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				if (this.props.target !== undefined && this.props.target > 0) {
 					valueMap.set(dateKey, Math.min(numValue / this.props.target, 1));
 				} else {
-					// Normalize numeric values for display
-					const maxVal = Math.max(...this.props.values.map(v => typeof v.value === 'number' ? v.value : 0), 1);
-					valueMap.set(dateKey, numValue / maxVal);
+					valueMap.set(dateKey, numValue / maxNumeric);
 				}
 			}
 		});
 
-		// Generate data for the selected time range
-		const today = new Date();
+		return valueMap;
+	}
+
+	private intensityColor(value: number, themeColor: string): string {
+		if (value <= 0) {
+			return "var(--background-modifier-border)";
+		}
+		if (value <= 0.25) {
+			return this.adjustColorOpacity(themeColor, 0.3);
+		}
+		if (value <= 0.5) {
+			return this.adjustColorOpacity(themeColor, 0.5);
+		}
+		if (value <= 0.75) {
+			return this.adjustColorOpacity(themeColor, 0.7);
+		}
+		return themeColor;
+	}
+
+	private formatTooltip(
+		isoDate: string,
+		value: number,
+		adapter: ReturnType<typeof getCalendarAdapter>
+	): string {
+		const displayDate = adapter.formatDisplayDate(parseLocalISODate(isoDate));
+		if (this.props.habitType === "boolean") {
+			return `${displayDate}: ${value > 0 ? "Completed" : "Not completed"}`;
+		}
+		const raw = this.props.values.find(
+			(v) => toLocalISODate(v.date) === isoDate
+		)?.value;
+		return `${displayDate}: ${raw ?? 0}`;
+	}
+
+	private createHeatmapGrid(
+		adapter: ReturnType<typeof getCalendarAdapter>,
+		year: number
+	): HTMLElement {
+		const cells = adapter.buildYearHeatmapCells(year);
+		const weeksCount = cells.length / 7;
+		const valueMap = this.buildValueMap();
 		const themeColor = this.getThemeColor();
-		
-		for (let week = 0; week < weeksCount; week++) {
-			for (let day = 0; day < 7; day++) {
-				const date = new Date(today);
-				date.setDate(date.getDate() - ((weeksCount - week - 1) * 7 + (6 - day)));
-				const dateKey = date.toISOString().split('T')[0];
-				
-				const cell = document.createElement("div");
-				const value = valueMap.get(dateKey) || 0;
-				
-				let bgColor = "var(--background-modifier-border)";
-				if (value > 0) {
-					if (value <= 0.25) {
-						bgColor = this.adjustColorOpacity(themeColor, 0.3);
-					} else if (value <= 0.5) {
-						bgColor = this.adjustColorOpacity(themeColor, 0.5);
-					} else if (value <= 0.75) {
-						bgColor = this.adjustColorOpacity(themeColor, 0.7);
-					} else {
-						bgColor = themeColor;
-					}
-				}
-				
+
+		const grid = document.createElement("div");
+		grid.style.cssText = `
+			display: grid;
+			grid-template-rows: repeat(7, 10px);
+			grid-auto-flow: column;
+			grid-auto-columns: 10px;
+			gap: 2px;
+			overflow-x: auto;
+			padding-bottom: 8px;
+			justify-content: center;
+			width: fit-content;
+			max-width: 100%;
+			margin: 0 auto;
+		`;
+		grid.setAttribute("data-weeks", String(weeksCount));
+
+		// Cells are already chronological: week0 Sun..Sat, week1 Sun..Sat, ...
+		for (const cellData of cells) {
+			const cell = document.createElement("div");
+
+			if (cellData.isEmpty || !cellData.isoDate) {
 				cell.style.cssText = `
 					width: 10px;
 					height: 10px;
 					border-radius: 2px;
-					background-color: ${bgColor};
-					transition: background-color 0.2s;
+					background-color: transparent;
 				`;
-				
-				const displayValue = this.props.habitType === "boolean" 
-					? (value > 0 ? "Completed" : "Not completed")
-					: `${this.props.values.find(v => v.date.toISOString().split('T')[0] === dateKey)?.value || 0}`;
-				
-				cell.title = `${dateKey}: ${displayValue}`;
 				grid.appendChild(cell);
+				continue;
 			}
+
+			const value = valueMap.get(cellData.isoDate) || 0;
+			cell.style.cssText = `
+				width: 10px;
+				height: 10px;
+				border-radius: 2px;
+				background-color: ${this.intensityColor(value, themeColor)};
+				transition: background-color 0.2s;
+			`;
+			cell.title = this.formatTooltip(cellData.isoDate, value, adapter);
+			grid.appendChild(cell);
 		}
 
 		return grid;
-	}
-
-	private getWeeksCount(): number {
-		switch (this.props.timeRange) {
-			case TimeRange.LAST_7_DAYS:
-				return 1; // 1 week
-			case TimeRange.LAST_30_DAYS:
-				return 4; // ~4 weeks
-			case TimeRange.LAST_90_DAYS:
-				return 13; // ~13 weeks
-			case TimeRange.LAST_YEAR:
-				return 52; // 52 weeks
-			case TimeRange.ALL_TIME:
-				return 53; // Full year view
-			default:
-				return 53;
-		}
 	}
 
 	private createLegend(): HTMLElement {
@@ -189,7 +212,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			{ color: themeColor, label: "76-100%" }
 		];
 
-		legendColors.forEach(item => {
+		legendColors.forEach((item) => {
 			const legendItem = document.createElement("div");
 			legendItem.style.cssText = `
 				width: 10px;

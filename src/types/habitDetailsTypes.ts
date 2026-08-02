@@ -1,4 +1,4 @@
-import { TrackerSettings } from "./habitTypes";
+import { TrackerSettings, ReportCalendar } from "./habitTypes";
 
 /**
  * Time range options for habit details view
@@ -163,6 +163,11 @@ export interface CalendarHeatmapProps {
 	habitType: "boolean" | "numeric";
 	target?: number;
 	theme?: ColorTheme;
+	/** Year in the selected calendar system (Gregorian or Jalali). */
+	year?: number;
+	/** Calendar system used for year bounds and display labels. */
+	reportCalendar?: ReportCalendar | string;
+	/** @deprecated Yearly heatmap ignores rolling time ranges. */
 	timeRange?: TimeRange;
 }
 

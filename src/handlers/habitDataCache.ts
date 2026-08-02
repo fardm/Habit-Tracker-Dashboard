@@ -1,5 +1,6 @@
 import { App, TFile } from "obsidian";
 import { Habit, TrackerSettings, DataSourceType, HabitType } from "../types/habitTypes";
+import { parseLocalISODate, toLocalISODate } from "../utils/calendarAdapter";
 
 /**
  * Cached habit value for a specific date and habit
@@ -121,15 +122,14 @@ export class HabitDataCache {
 	}
 
 	/**
-	 * Extracts date from filename using YYYY-MM-DD pattern
+	 * Extracts date from filename using YYYY-MM-DD pattern (Gregorian ISO).
 	 */
 	private extractDateFromFilename(filename: string): Date | null {
 		const datePattern = /(\d{4}-\d{2}-\d{2})/;
 		const match = filename.match(datePattern);
 		
 		if (match) {
-			const dateStr = match[1];
-			const date = new Date(dateStr);
+			const date = parseLocalISODate(match[1]);
 			if (!isNaN(date.getTime())) {
 				return date;
 			}
@@ -181,7 +181,7 @@ export class HabitDataCache {
 			console.log(`[HabitDataCache] Using cached values for ${habit.name}`);
 			const cachedValues = this.habitValueCache.get(habitId)!;
 			for (const [dateStr, value] of cachedValues) {
-				const date = new Date(dateStr);
+				const date = parseLocalISODate(dateStr.split("T")[0]);
 				if ((!startDate || date >= startDate) && (!endDate || date <= endDate)) {
 					values.push(value);
 				}
@@ -203,7 +203,7 @@ export class HabitDataCache {
 				
 				if (processedValue !== null) {
 					matchCount++;
-					const dateStr = entry.date.toISOString().split('T')[0];
+					const dateStr = toLocalISODate(entry.date);
 					const cachedValue: CachedHabitValue = {
 						date: dateStr,
 						value: processedValue,
@@ -222,11 +222,11 @@ export class HabitDataCache {
 		
 		// Filter by date range and sort
 		const filtered = values.filter(v => {
-			const date = new Date(v.date);
+			const date = parseLocalISODate(v.date.split("T")[0]);
 			return (!startDate || date >= startDate) && (!endDate || date <= endDate);
 		});
 		
-		return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+		return filtered.sort((a, b) => parseLocalISODate(b.date.split("T")[0]).getTime() - parseLocalISODate(a.date.split("T")[0]).getTime());
 	}
 
 	/**
@@ -241,7 +241,7 @@ export class HabitDataCache {
 	 * Gets habit value for a specific date
 	 */
 	getHabitValueForDate(habit: Habit, date: Date): CachedHabitValue | null {
-		const dateStr = date.toISOString().split('T')[0];
+		const dateStr = toLocalISODate(date);
 		const startDate = new Date(date);
 		startDate.setHours(0, 0, 0, 0);
 		const endDate = new Date(date);

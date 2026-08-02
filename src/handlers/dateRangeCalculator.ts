@@ -1,4 +1,6 @@
+import { toJalaali, toGregorian } from "jalaali-js";
 import { ReportCalendar, TrackerSettings } from "../types/habitTypes";
+import { getCalendarAdapter } from "../utils/calendarAdapter";
 
 /**
  * Result of date range calculation
@@ -10,57 +12,30 @@ export interface DateRangeResult {
 }
 
 /**
- * Centralized service for calculating date ranges based on tracker settings
+ * Centralized service for calculating date ranges based on tracker settings.
+ * Year numbers are interpreted in the selected calendar system
+ * (Gregorian year or Jalali year). Returned bounds are Gregorian Dates
+ * suitable for loading habit data keyed by ISO dates.
  */
 export class DateRangeCalculator {
 	/**
 	 * Calculate the date range based on tracker settings and optional year
 	 * @param settings - Tracker settings containing reportCalendar
-	 * @param year - Optional year to calculate range for (defaults to current year)
+	 * @param year - Year in the selected calendar system (defaults to current)
 	 */
 	static calculateDateRange(settings: TrackerSettings, year?: number): DateRangeResult {
-		const reportCalendar = settings.reportCalendar || ReportCalendar.GREGORIAN;
-		
-		// Determine the year to use
-		const targetYear = year || new Date().getFullYear();
-		
-		const today = new Date();
-		today.setHours(23, 59, 59, 999);
-		
-		let startDate: Date;
-		let endDate: Date;
-		let periodLabel: string;
-		
-		if (reportCalendar === ReportCalendar.JALALI) {
-			// Jalali calendar: year starts on Nowruz (March 20/21)
-			// Convert Jalali year to Gregorian for date range calculation
-			// For simplicity, we'll use March 20th as the start
-			startDate = new Date(targetYear, 2, 20); // March 20th
-			startDate.setHours(0, 0, 0, 0);
-			
-			// End date is March 19th of next year
-			endDate = new Date(targetYear + 1, 2, 19); // March 19th of next year
-			endDate.setHours(23, 59, 59, 999);
-			
-			periodLabel = `Jalali Year ${targetYear}`;
-		} else {
-			// Gregorian calendar: year starts on January 1st
-			startDate = new Date(targetYear, 0, 1); // January 1st
-			startDate.setHours(0, 0, 0, 0);
-			
-			endDate = new Date(targetYear, 11, 31); // December 31st
-			endDate.setHours(23, 59, 59, 999);
-			
-			periodLabel = `Gregorian Year ${targetYear}`;
-		}
-		
+		const adapter = getCalendarAdapter(
+			settings.reportCalendar || ReportCalendar.GREGORIAN
+		);
+		const targetYear = year ?? adapter.getCurrentYear();
+
 		return {
-			startDate,
-			endDate,
-			periodLabel
+			startDate: adapter.getYearStart(targetYear),
+			endDate: adapter.getYearEnd(targetYear),
+			periodLabel: adapter.getPeriodLabel(targetYear)
 		};
 	}
-	
+
 	/**
 	 * Get a formatted string describing the current date range
 	 */
@@ -68,20 +43,18 @@ export class DateRangeCalculator {
 		const range = this.calculateDateRange(settings, year);
 		return `${range.periodLabel} (${range.startDate.toLocaleDateString()} - ${range.endDate.toLocaleDateString()})`;
 	}
-	
+
 	/**
-	 * Convert Gregorian year to Jalali year (simplified approximation)
-	 * Jalali year = Gregorian year - 621 (approximately)
+	 * Convert Gregorian calendar year to Jalali year using Jan 1 of that year.
 	 */
 	static gregorianToJalali(gregorianYear: number): number {
-		return gregorianYear - 621;
+		return toJalaali(gregorianYear, 1, 1).jy;
 	}
-	
+
 	/**
-	 * Convert Jalali year to Gregorian year (simplified approximation)
-	 * Gregorian year = Jalali year + 621 (approximately)
+	 * Convert Jalali year to the Gregorian year of Farvardin 1.
 	 */
 	static jalaliToGregorian(jalaliYear: number): number {
-		return jalaliYear + 621;
+		return toGregorian(jalaliYear, 1, 1).gy;
 	}
 }
