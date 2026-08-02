@@ -313,7 +313,6 @@ export class HabitModal extends Modal {
 
 		const visualizationOptions = [
 			{ value: Visualization.DONUT, label: "Donut" },
-			{ value: Visualization.PROGRESS_BAR, label: "Progress Bar" },
 			{ value: Visualization.CIRCLE_CHECK, label: "Circle Check" },
 			{ value: Visualization.NONE, label: "None" }
 		];
