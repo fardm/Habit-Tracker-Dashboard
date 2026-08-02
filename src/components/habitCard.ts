@@ -386,7 +386,7 @@ export class HabitCard extends HTMLElementComponent {
 				// Add visualization based on setting
 				if (visualization === Visualization.DONUT) {
 					const donutChart = new DonutChart(32, 5);
-					const chartElement = donutChart.render(progress, isExceeded, donutColor);
+					const chartElement = donutChart.render(progress, false, donutColor);
 					visualizationContainer.appendChild(chartElement);
 					
 					// Add thin ring for exceeded targets (At least)
