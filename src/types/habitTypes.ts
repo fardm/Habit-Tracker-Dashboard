@@ -102,6 +102,7 @@ export interface TrackerSettings {
 		colorScaleMin?: number;
 		colorScaleMax?: number;
 	}>;
+	minimumStreakLength?: number; // Minimum streak length to show in history (default: 7 days)
 }
 
 /**

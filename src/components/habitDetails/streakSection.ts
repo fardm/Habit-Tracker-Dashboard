@@ -67,7 +67,10 @@ export class StreakSection extends HTMLElementComponent {
 		container.appendChild(grid);
 
 		// Streak history section
-		if (this.props.streaks.streakHistory.length > 0) {
+		const minimumLength = this.props.minimumStreakLength || 7;
+		const filteredHistory = this.props.streaks.streakHistory.filter(streak => streak.length >= minimumLength);
+		
+		if (filteredHistory.length > 0) {
 			const historySection = document.createElement("div");
 			historySection.style.cssText = `
 				margin-top: 20px;
@@ -125,7 +128,7 @@ export class StreakSection extends HTMLElementComponent {
 				gap: 8px;
 			`;
 
-			this.props.streaks.streakHistory.forEach(streak => {
+			filteredHistory.forEach(streak => {
 				const historyItem = this.createHistoryItem(streak);
 				historyList.appendChild(historyItem);
 			});

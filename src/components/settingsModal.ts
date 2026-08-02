@@ -12,6 +12,7 @@ export interface SettingsFormData {
 	dateExtractionMethod: DateExtractionMethod;
 	dateFrontmatterProperty: string;
 	reportCalendar: ReportCalendar;
+	minimumStreakLength: number;
 }
 
 /**
@@ -35,7 +36,8 @@ export class SettingsModal extends Modal {
 			dataSourceValue: initialSettings?.dataSourceValue || "",
 			dateExtractionMethod: initialSettings?.dateExtractionMethod || DateExtractionMethod.FILENAME,
 			dateFrontmatterProperty: initialSettings?.dateFrontmatterProperty || "",
-			reportCalendar: initialSettings?.reportCalendar || ReportCalendar.GREGORIAN
+			reportCalendar: initialSettings?.reportCalendar || ReportCalendar.GREGORIAN,
+			minimumStreakLength: initialSettings?.minimumStreakLength || 7
 		};
 	}
 
@@ -88,6 +90,19 @@ export class SettingsModal extends Modal {
 					.setValue(this.formData.reportCalendar)
 					.onChange((value) => {
 						this.formData.reportCalendar = value as ReportCalendar;
+					})
+			);
+
+		new Setting(contentEl)
+			.setName("Minimum streak length for history")
+			.setDesc("Minimum number of days a streak must have to appear in Streak History")
+			.addText((text) =>
+				text
+					.setPlaceholder("7")
+					.setValue(this.formData.minimumStreakLength.toString())
+					.onChange((value) => {
+						const numValue = parseInt(value);
+						this.formData.minimumStreakLength = isNaN(numValue) || numValue < 1 ? 7 : numValue;
 					})
 			);
 

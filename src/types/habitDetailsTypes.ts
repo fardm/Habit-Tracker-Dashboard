@@ -156,6 +156,7 @@ export interface StatisticsDashboardProps {
 export interface StreakSectionProps {
 	streaks: HabitStreaks;
 	theme?: ColorTheme;
+	minimumStreakLength?: number;
 }
 
 /**
