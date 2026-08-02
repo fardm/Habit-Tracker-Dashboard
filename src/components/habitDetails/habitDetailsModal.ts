@@ -266,7 +266,9 @@ export class HabitDetailsModal extends Modal {
 				habitType: this.props.habitType,
 				unit: this.props.unit,
 				target: this.props.target,
-				theme: this.settings.theme
+				theme: this.settings.theme,
+				reportCalendar:
+					this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN
 			});
 			chartSection.appendChild(chart.render());
 		}

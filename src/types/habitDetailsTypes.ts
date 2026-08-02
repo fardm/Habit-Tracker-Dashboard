@@ -135,6 +135,7 @@ export interface ChartSectionProps {
 	unit?: string;
 	target?: number;
 	theme?: ColorTheme;
+	reportCalendar?: ReportCalendar | string;
 }
 
 /**
