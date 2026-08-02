@@ -16,11 +16,11 @@ You add your habit data inside your daily notes' frontmatter, and the plugin rea
 4. Copy the plugin folder to your Obsidian vault's `.obsidian/plugins/` directory
 5. Enable the plugin in Obsidian Settings > Community Plugins
 
-## How to Use
+## Usage
 
 ### Step 1: Configure Data Source
 
-Open the plugin settings (⚙️ button) to define where your habit data should be extracted from:
+Open the Tracker Settings (⚙️ button) to define where your habit data should be extracted from:
 
 **Data Source:**
 - **Tag mode**: Filter notes by a specific tag (e.g., `#journal`)
@@ -40,8 +40,10 @@ Open the plugin settings (⚙️ button) to define where your habit data should 
    - **Frontmatter Field**: The property name used in your daily notes
    - **Unit**: For numeric habits (e.g., "minutes", "pages")
    - **Target**: Optional target value for numeric habits
-   - **Visualization**: Choose how to display progress (Donut, Progress Bar, Circle Check, or None)
+   - **Completion Condition**: For numeric habits, choose when the habit counts as completed
+   - **Visualization**: Choose how to display progress (Donut, Circle Check, or None)
    - **Color Theme**: Custom accent color for the habit
+   - **Grace Days**: Number of missed days allowed before streak breaks
 
 3. Add the habit data to your daily notes' frontmatter:
 
@@ -61,40 +63,86 @@ exercise_minutes: 30
 
 The plugin will read these daily notes and visualize your progress on the dashboard.
 
+### Step 3: Track and View Reports
+
+- **Daily Dashboard**: See your habits for the current day with progress indicators
+- **Click on a habit**: Opens detailed reports with heatmap, charts, statistics, and streak information
+- **Navigate dates**: Use the date navigator to view past days or future date
+
 ## Features
 
-### GitHub-style Calendar Heatmap
-Visualize your habit consistency over time with an interactive heatmap similar to GitHub's contribution graph. See at a glance which days you completed your habits and identify patterns in your behavior.
+- 📅 **Daily Dashboard and Date Navigation**: View all your habits for the current day with progress indicators, and browse different time periods with the date navigator
 
-### Charts
-Track habit progress with visual charts that support different views:
-- **Line Charts**: Show trends over time
-- **Bar Charts**: Compare values across periods
-- **Donut Charts**: Display completion percentages
-- **Progress Bars**: Visual progress toward targets
+- 📊 **Full Yearly Reports**: Access comprehensive reports for any habit with detailed visualizations
+- 🔥 **Calendar Heatmap**: GitHub-style heatmap showing habit consistency over the entire year
+- 📈 **Line and Bar Charts**: Track trends and compare values over time with interactive line and bar charts
+- 🔗 **Habit Streak Calculation**: Track current streak, longest streak, and streak history
+- 📊 **Detailed Statistics**: Total, average, highest, lowest, completion rate.
+- 🎨 **Custom Colors**: Personalize each habit with a unique theme color
+- 🌍 **Calendar System Support**: Choose between Gregorian or Solar Hijri (Jalali) calendar for reports
 
-### Statistics & Reports
-Get comprehensive metrics about your habits:
-- **Total**: Sum of all values
-- **Average**: Mean value over the selected period
-- **Highest**: Maximum value achieved
-- **Lowest**: Minimum value recorded
-- **Completion Rate**: Percentage of days with activity
+## How It Works
 
-### Streak Tracking
-Monitor your consistency with detailed streak information:
-- **Current Streak**: How many consecutive days you've maintained the habit
-- **Longest Streak**: Your best streak ever
-- **Streak History**: View past streaks and their durations
+### The Refresh Button
 
-### Customizable Dashboard
-- **Grid or List View**: Choose your preferred layout
-- **Date Navigation**: Browse different time periods
-- **Time Range Filters**: View data for specific ranges (last 30 days, last 90 days, etc.)
-- **Habit Reordering**: Drag and drop habits to organize your dashboard
-- **Custom Colors**: Personalize each habit with a unique theme color
+The Refresh button (🔄) on the dashboard serves an important purpose:
 
-## Development
+**What problem it solves:**
+The plugin automatically updates when you create, edit, or delete habits through the dashboard. However, if you manually edit your daily notes' frontmatter directly (outside of the plugin), the dashboard won't immediately reflect those changes.
 
-- `npm run dev` - Build in watch mode for development
-- `npm run build` - Build for production
+**When to use it:**
+- After manually adding or updating habit data in your daily notes
+- After changing the data source settings
+- If you notice the dashboard data seems outdated
+
+**What it does:**
+Clicking the Refresh button forces the plugin to re-scan your notes and rebuild the data cache, ensuring the dashboard displays the most up-to-date information from your vault.
+
+## Advanced Settings Explanation
+
+### Completion Condition (Numeric Habits)
+
+For numeric habits, the Completion Condition determines when the habit counts as "completed" for streak calculations and statistics. Choose the option that best matches your goal:
+
+- **At least**: The habit is completed when the value meets or exceeds the target.
+  - *Example*: Target = 30 minutes. If you log 30 or more minutes, it counts as completed.
+  - *Best for*: Habits where doing more is always better (exercise, reading, study time)
+
+- **At most**: The habit is completed when the value is at or below the target.
+  - *Example*: Target = 2000 calories. If you log 2000 or fewer calories, it counts as completed.
+  - *Best for*: Habits where staying under a limit is the goal (calories, screen time, spending)
+
+- **Exactly**: The habit is completed only when the value matches the target precisely.
+  - *Example*: Target = 8 glasses. Only logging exactly 8 glasses counts as completed.
+  - *Best for*: Habits with a precise target (medication doses, specific workout repetitions)
+
+### Grace Days
+
+Grace Days allow for occasional missed days without breaking your streak. This setting is useful for maintaining motivation while still tracking consistency.
+
+**How it works:**
+- If you set Grace Days to 1, you can miss 1 consecutive day without your streak breaking
+- If you set Grace Days to 3, you can miss up to 3 consecutive days without your streak breaking
+- Once you exceed the grace day limit, the streak resets
+
+**When to use it:**
+- Set to 0 for strict tracking (no missed days allowed)
+- Set to 1-2 for realistic tracking (allows for occasional off days)
+- Set higher values for flexible tracking during busy periods
+
+### Report Calendar
+
+Choose the calendar system used for habit reports and date displays:
+
+- **Gregorian**: The standard Western calendar (January-December)
+- **Solar Hijri (Jalali)**: The Persian/Iranian calendar system
+
+This setting affects how dates are displayed in the heatmap, streak history, and other date-based visualizations.
+
+### Minimum Streak Length for History
+
+This setting filters which streaks appear in the Streak History section. Only streaks that meet or exceed this length will be shown.
+
+- **Default**: 7 days
+- **Purpose**: Keeps the history focused on meaningful streaks
+- **Adjustment**: Increase to show only longer streaks, decrease to include shorter ones
