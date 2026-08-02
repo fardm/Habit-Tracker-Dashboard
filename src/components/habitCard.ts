@@ -361,7 +361,7 @@ export class HabitCard extends HTMLElementComponent {
 						progress = Math.min(displayValue / target, 1);
 						break;
 					case CompletionOperator.AT_MOST:
-						extra = value < target ? target - value : 0;
+						extra = value > target ? value - target : 0;
 						displayValue = value;
 						progress = Math.min(value / target, 1);
 						break;
@@ -432,7 +432,7 @@ export class HabitCard extends HTMLElementComponent {
 				if (completionOperator === CompletionOperator.AT_LEAST && extra > 0) {
 					progressText.textContent = `${target}/${target} ${unit} (+${extra})`;
 				} else if (completionOperator === CompletionOperator.AT_MOST && extra > 0) {
-					progressText.textContent = `${value}/${target} ${unit} (-${extra})`;
+					progressText.textContent = `${target}/${target} ${unit} (+${extra})`;
 				} else {
 					progressText.textContent = `${value}/${target} ${unit}`;
 				}
