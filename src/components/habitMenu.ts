@@ -63,6 +63,12 @@ export class HabitMenu extends HTMLElementComponent {
 			menuItem.addEventListener("click", (e) => {
 				e.stopPropagation();
 				item.action();
+				// Remove menu from DOM
+				if (this.menuElement) {
+					this.menuElement.remove();
+					const menuManager = MenuManager.getInstance();
+					menuManager.clearActiveMenu();
+				}
 				this.props.onClose();
 			});
 
