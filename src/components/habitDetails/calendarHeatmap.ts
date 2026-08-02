@@ -46,14 +46,78 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		return this.settings.weekStartDay ?? WeekStartDay.SUNDAY;
 	}
 
-	private adjustColorOpacity(color: string, opacity: number): string {
+	private adjustColorLightness(color: string, lightnessFactor: number): string {
+		// Convert hex to RGB
+		let r: number, g: number, b: number;
+		
 		if (color.startsWith("#")) {
-			const r = parseInt(color.slice(1, 3), 16);
-			const g = parseInt(color.slice(3, 5), 16);
-			const b = parseInt(color.slice(5, 7), 16);
-			return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+			r = parseInt(color.slice(1, 3), 16);
+			g = parseInt(color.slice(3, 5), 16);
+			b = parseInt(color.slice(5, 7), 16);
+		} else if (color.startsWith("rgb(")) {
+			const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+			if (match) {
+				r = parseInt(match[1]);
+				g = parseInt(match[2]);
+				b = parseInt(match[3]);
+			} else {
+				return color;
+			}
+		} else {
+			// For CSS variables, return as-is
+			return color;
 		}
-		return color;
+
+		// Convert RGB to HSL
+		const rNorm = r / 255;
+		const gNorm = g / 255;
+		const bNorm = b / 255;
+
+		const max = Math.max(rNorm, gNorm, bNorm);
+		const min = Math.min(rNorm, gNorm, bNorm);
+		let h = 0, s = 0, l = (max + min) / 2;
+
+		if (max !== min) {
+			const d = max - min;
+			s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+			
+			switch (max) {
+				case rNorm:
+					h = ((gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0)) / 6;
+					break;
+				case gNorm:
+					h = ((bNorm - rNorm) / d + 2) / 6;
+					break;
+				case bNorm:
+					h = ((rNorm - gNorm) / d + 4) / 6;
+					break;
+			}
+		}
+
+		// Adjust lightness: lightnessFactor 0 = lightest, 1 = darkest
+		// We want lower values to be lighter, higher values to be darker
+		// So higher lightnessFactor = lower lightness value = darker color
+		// Interpolate between light (0.9) and dark (0.3)
+		const adjustedL = 0.9 - lightnessFactor * 0.6;
+
+		// Convert HSL back to RGB
+		const q = adjustedL < 0.5 ? adjustedL * (1 + s) : adjustedL + s - adjustedL * s;
+		const p = 2 * adjustedL - q;
+
+		const rNew = Math.round(this.hueToRgb(p, q, h + 1/3) * 255);
+		const gNew = Math.round(this.hueToRgb(p, q, h) * 255);
+		const bNew = Math.round(this.hueToRgb(p, q, h - 1/3) * 255);
+
+		return `rgb(${rNew}, ${gNew}, ${bNew})`;
+	}
+
+	private hueToRgb(p: number, q: number, t: number): number {
+		if (t < 0) t += 1;
+		if (t > 1) t -= 1;
+		if (t < 1/6) return p + (q - p) * 6 * t;
+		if (t < 1/2) return q;
+		if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+		return p;
 	}
 
 	render(): HTMLElement {
@@ -542,15 +606,15 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			return "var(--background-modifier-border)";
 		}
 		if (value <= 0.25) {
-			return this.adjustColorOpacity(themeColor, 0.3);
+			return this.adjustColorLightness(themeColor, 0.25);
 		}
 		if (value <= 0.5) {
-			return this.adjustColorOpacity(themeColor, 0.5);
+			return this.adjustColorLightness(themeColor, 0.5);
 		}
 		if (value <= 0.75) {
-			return this.adjustColorOpacity(themeColor, 0.7);
+			return this.adjustColorLightness(themeColor, 0.75);
 		}
-		return themeColor;
+		return this.adjustColorLightness(themeColor, 1.0);
 	}
 
 	private formatTooltip(
@@ -677,19 +741,19 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 			legendColors = [
 				{ color: "var(--background-modifier-border)", label: `${min}` },
-				{ color: this.adjustColorOpacity(themeColor, 0.3), label: `${Math.round(min + step * 1)}-${Math.round(min + step * 2)}` },
-				{ color: this.adjustColorOpacity(themeColor, 0.5), label: `${Math.round(min + step * 2)}-${Math.round(min + step * 3)}` },
-				{ color: this.adjustColorOpacity(themeColor, 0.7), label: `${Math.round(min + step * 3)}-${Math.round(min + step * 4)}` },
-				{ color: themeColor, label: `${Math.round(min + step * 4)}+` }
+				{ color: this.adjustColorLightness(themeColor, 0.25), label: `${Math.round(min + step * 1)}-${Math.round(min + step * 2)}` },
+				{ color: this.adjustColorLightness(themeColor, 0.5), label: `${Math.round(min + step * 2)}-${Math.round(min + step * 3)}` },
+				{ color: this.adjustColorLightness(themeColor, 0.75), label: `${Math.round(min + step * 3)}-${Math.round(min + step * 4)}` },
+				{ color: this.adjustColorLightness(themeColor, 1.0), label: `${Math.round(min + step * 4)}+` }
 			];
 		} else {
 			// Percentage labels for automatic mode
 			legendColors = [
 				{ color: "var(--background-modifier-border)", label: "0" },
-				{ color: this.adjustColorOpacity(themeColor, 0.3), label: "1-25%" },
-				{ color: this.adjustColorOpacity(themeColor, 0.5), label: "26-50%" },
-				{ color: this.adjustColorOpacity(themeColor, 0.7), label: "51-75%" },
-				{ color: themeColor, label: "76-100%" }
+				{ color: this.adjustColorLightness(themeColor, 0.25), label: "1-25%" },
+				{ color: this.adjustColorLightness(themeColor, 0.5), label: "26-50%" },
+				{ color: this.adjustColorLightness(themeColor, 0.75), label: "51-75%" },
+				{ color: this.adjustColorLightness(themeColor, 1.0), label: "76-100%" }
 			];
 		}
 
