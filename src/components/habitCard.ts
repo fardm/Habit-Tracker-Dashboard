@@ -3,6 +3,7 @@ import { Habit, ViewMode, Visualization } from "../types/habitTypes";
 import { HabitMenu } from "./habitMenu";
 import { DonutChart } from "./donutChart";
 import { ProgressBar } from "./progressBar";
+import { createTranslucentColor } from "../utils/colorUtils";
 
 export interface HabitCardProps {
 	habit: Habit;
@@ -37,9 +38,12 @@ export class HabitCard extends HTMLElementComponent {
 		card.style.position = "relative";
 
 		// Apply grid or list styling based on view mode
+		const habitColor = this.props.habit.themeColor;
+		const cardBackground = habitColor ? createTranslucentColor(habitColor, 0.05) : "var(--background-secondary)";
+
 		if (this.props.viewMode === ViewMode.GRID) {
 			card.style.cssText = `
-				background-color: var(--background-secondary);
+				background-color: ${cardBackground};
 				border: 1px solid var(--background-modifier-border);
 				border-radius: 8px;
 				padding: 16px 40px 16px 40px;
@@ -52,11 +56,10 @@ export class HabitCard extends HTMLElementComponent {
 				min-height: 90px;
 				position: relative;
 				cursor: pointer;
-				
 			`;
 		} else {
 			card.style.cssText = `
-				background-color: var(--background-secondary);
+				background-color: ${cardBackground};
 				border: 1px solid var(--background-modifier-border);
 				border-radius: 8px;
 				padding: 16px 40px 16px 40px;
@@ -205,11 +208,12 @@ export class HabitCard extends HTMLElementComponent {
 		emoji.className = "habit-emoji";
 		emoji.textContent = this.props.habit.emoji;
 		const bgColor = this.props.habit.themeColor || 'var(--interactive-accent)';
+		const emojiBackground = createTranslucentColor(bgColor, 0.20);
 		emoji.style.cssText = `
 			font-size: 24px;
 			border-radius: 6px;
 			padding: 10px;
-			background-color: color-mix(in srgb, ${bgColor}, transparent 92%);
+			background-color: ${emojiBackground};
 		`;
 
 		const habitInfo = document.createElement("div");
