@@ -199,13 +199,33 @@ export class HabitModal extends Modal {
 			border-radius: 4px;
 			border: 1px solid var(--background-modifier-border);
 			display: none;
+			opacity: 0;
+			transform: translateY(-8px);
+			transition: opacity 0.2s ease, transform 0.2s ease;
 		`;
 
-		numericSettingsHeader.addEventListener("click", () => {
+		headerRow.addEventListener("click", () => {
 			if (this.numericSettingsContent) {
 				const isExpanded = this.numericSettingsContent.style.display !== "none";
-				this.numericSettingsContent.style.display = isExpanded ? "none" : "block";
-				chevron.style.transform = isExpanded ? "rotate(0deg)" : "rotate(90deg)";
+				if (isExpanded) {
+					this.numericSettingsContent.style.opacity = "0";
+					this.numericSettingsContent.style.transform = "translateY(-8px)";
+					setTimeout(() => {
+						if (this.numericSettingsContent) {
+							this.numericSettingsContent.style.display = "none";
+						}
+					}, 200);
+					chevron.style.transform = "rotate(0deg)";
+				} else {
+					this.numericSettingsContent.style.display = "block";
+					requestAnimationFrame(() => {
+						if (this.numericSettingsContent) {
+							this.numericSettingsContent.style.opacity = "1";
+							this.numericSettingsContent.style.transform = "translateY(0)";
+						}
+					});
+					chevron.style.transform = "rotate(90deg)";
+				}
 			}
 		});
 
