@@ -605,6 +605,10 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		if (value <= 0) {
 			return "var(--background-modifier-border)";
 		}
+		// For boolean habits, use base theme color to match legend
+		if (this.props.habitType === "boolean") {
+			return themeColor;
+		}
 		if (value <= 0.25) {
 			return this.adjustColorLightness(themeColor, 0.25);
 		}
