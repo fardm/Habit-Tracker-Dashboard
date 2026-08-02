@@ -106,23 +106,33 @@ export class SettingsModal extends Modal {
 					})
 			);
 
-		new Setting(contentEl)
-			.addButton((btn) =>
-				btn
-					.setButtonText("Cancel")
-					.onClick(() => {
-						this.close();
-					})
-			)
-			.addButton((btn) =>
-				btn
-					.setButtonText("Save")
-					.setCta()
-					.onClick(() => {
-						this.onSubmit(this.formData);
-						this.close();
-					})
-			);
+		// Buttons
+		const buttonContainer = contentEl.createDiv({
+			cls: "setting-item-control"
+		});
+		buttonContainer.style.cssText = `
+			display: flex;
+			justify-content: flex-end;
+			gap: 12px;
+			margin-top: 16px;
+		`;
+
+		const cancelButton = buttonContainer.createEl("button", {
+			text: "Cancel",
+			cls: "mod-cancel"
+		});
+		cancelButton.addEventListener("click", () => {
+			this.close();
+		});
+
+		const saveButton = buttonContainer.createEl("button", {
+			text: "Save",
+			cls: "mod-cta"
+		});
+		saveButton.addEventListener("click", () => {
+			this.onSubmit(this.formData);
+			this.close();
+		});
 	}
 
 	private updateDataSourceField(): void {
