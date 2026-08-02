@@ -113,6 +113,7 @@ export interface HabitDetailsModalProps {
 	unit?: string;
 	target?: number;
 	trackerSettings?: TrackerSettings;
+	trackerFilePath?: string;
 	onClose: () => void;
 }
 

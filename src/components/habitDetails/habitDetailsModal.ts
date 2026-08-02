@@ -9,6 +9,7 @@ import { SettingsPanel } from "./settingsPanel";
 import { HabitDetailsDataService } from "../../handlers/habitDetailsDataService";
 import { DateRangeCalculator } from "../../handlers/dateRangeCalculator";
 import { HabitDataCache } from "../../handlers/habitDataCache";
+import { HabitDataManager } from "../../handlers/habitDataManager";
 import { Habit, ReportCalendar } from "../../types/habitTypes";
 import { getCalendarAdapter, parseLocalISODate } from "../../utils/calendarAdapter";
 
@@ -21,7 +22,9 @@ export class HabitDetailsModal extends Modal {
 	private chartType: ChartType = ChartType.LINE;
 	private settings: HabitDetailsSettings;
 	private contentContainer?: HTMLElement;
+	private readonly storageMapKey: string;
 	private dataService: HabitDetailsDataService;
+	private trackerDataManager: HabitDataManager | null;
 	private dataCache: HabitDataCache;
 	private habitValues: HabitValueEntry[] = [];
 	private selectedYear: number;
@@ -31,7 +34,9 @@ export class HabitDetailsModal extends Modal {
 		super(app);
 		this.props = props;
 		this.habit = habit;
+		this.storageMapKey = props.habitId;
 		this.settings = this.getDefaultSettings();
+		this.trackerDataManager = this.createTrackerDataManager();
 		this.dataService = new HabitDetailsDataService(app, props.trackerSettings || {});
 		this.dataCache = dataCache;
 		
@@ -40,7 +45,7 @@ export class HabitDetailsModal extends Modal {
 		this.selectedYear = adapter.getCurrentYear();
 	}
 
-	onOpen() {
+	async onOpen() {
 		const { contentEl, modalEl } = this;
 		contentEl.empty();
 
@@ -62,6 +67,8 @@ export class HabitDetailsModal extends Modal {
 		this.contentContainer.style.cssText = `
 			padding: 24px;
 		`;
+
+		await this.loadSettingsFromStorage();
 
 		// Header section
 		this.renderHeader();
@@ -118,6 +125,7 @@ export class HabitDetailsModal extends Modal {
 			settings: this.settings,
 			onSettingsChange: (newSettings) => {
 				this.settings = newSettings;
+				void this.saveSettingsToStorage();
 				this.renderContentSections();
 			}
 		});
@@ -368,11 +376,79 @@ export class HabitDetailsModal extends Modal {
 		};
 	}
 
+	private createTrackerDataManager(): HabitDataManager | null {
+		if (!this.props.trackerFilePath) {
+			return null;
+		}
+
+		const trackerFile = this.app.vault.getFileByPath(this.props.trackerFilePath);
+		return trackerFile ? new HabitDataManager(this.app.vault, trackerFile) : null;
+	}
+
+	private async loadSettingsFromStorage(): Promise<void> {
+		try {
+			const savedVisibility = await this.loadVisibilityFromTrackerFile();
+			this.settings = this.mergeSettings(savedVisibility ? { sectionVisibility: savedVisibility } : null);
+		} catch (error) {
+			console.warn("Failed to load habit details settings from tracker file:", error);
+			this.settings = this.getDefaultSettings();
+		}
+	}
+
+	private async saveSettingsToStorage(): Promise<void> {
+		if (!this.trackerDataManager) {
+			return;
+		}
+
+		try {
+			const trackerData = await this.trackerDataManager.readTrackerData();
+			const habitSectionVisibility = trackerData.settings?.habitSectionVisibility ?? {};
+			habitSectionVisibility[this.storageMapKey] = this.settings.sectionVisibility;
+			trackerData.settings = {
+				...(trackerData.settings ?? {}),
+				habitSectionVisibility
+			};
+			await this.trackerDataManager.writeTrackerData(trackerData);
+		} catch (error) {
+			console.warn("Failed to save habit details settings to tracker file:", error);
+		}
+	}
+
+	private async loadVisibilityFromTrackerFile(): Promise<Record<string, boolean> | null> {
+		if (!this.trackerDataManager) {
+			return null;
+		}
+
+		const trackerData = await this.trackerDataManager.readTrackerData();
+		return trackerData.settings?.habitSectionVisibility?.[this.storageMapKey] ?? null;
+	}
+
+	private mergeSettings(savedSettings: unknown): HabitDetailsSettings {
+		const defaults = this.getDefaultSettings();
+		if (!savedSettings || typeof savedSettings !== "object") {
+			return defaults;
+		}
+
+		const settings = savedSettings as Partial<HabitDetailsSettings>;
+		return {
+			theme: {
+				...defaults.theme,
+				...(settings.theme || {})
+			},
+			sectionVisibility: {
+				...defaults.sectionVisibility,
+				...(settings.sectionVisibility || {})
+			},
+			defaultChartType: settings.defaultChartType || defaults.defaultChartType
+		};
+	}
+
 	private getThemeColor(): string {
 		return this.habit.themeColor || "var(--interactive-accent)";
 	}
 
 	onClose() {
+		void this.saveSettingsToStorage();
 		const { contentEl } = this;
 		contentEl.empty();
 	}

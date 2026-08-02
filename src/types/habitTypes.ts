@@ -76,6 +76,12 @@ export interface TrackerSettings {
 	reportCalendar?: ReportCalendar; // Calendar system for habit reports (Gregorian or Jalali)
 	weekStartDay?: WeekStartDay; // First day of week for heatmap (default Sunday)
 	showMonthLabels?: boolean; // Show month names above heatmap (default false)
+	habitSectionVisibility?: Record<string, {
+		showHeatmap: boolean;
+		showChart: boolean;
+		showStatistics: boolean;
+		showStreaks: boolean;
+	}>;
 }
 
 /**
