@@ -53,13 +53,13 @@ export interface CalendarDateAdapter {
 }
 
 const GREGORIAN_MONTHS = [
-	"January", "February", "March", "April", "May", "June",
-	"July", "August", "September", "October", "November", "December"
+	"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 ];
 
 const JALALI_MONTHS = [
-	"Farvardin", "Ordibehesht", "Khordad", "Tir", "Mordad", "Shahrivar",
-	"Mehr", "Aban", "Azar", "Dey", "Bahman", "Esfand"
+	"Far", "Ord", "Kho", "Tir", "Mor", "Sha",
+	"Meh", "Aba", "Aza", "Dey", "Bah", "Esf"
 ];
 
 /** Format a local Date as Gregorian YYYY-MM-DD (avoids UTC shift from toISOString). */
@@ -128,20 +128,15 @@ function buildHeatmapLayout(
 
 	const weeksCount = cells.length / 7;
 	const monthLabels: MonthLabel[] = [];
-	let lastLabelWeek = -Infinity;
 
 	for (let weekIndex = 0; weekIndex < weeksCount; weekIndex++) {
 		for (let row = 0; row < 7; row++) {
 			const cell = cells[weekIndex * 7 + row];
 			if (!cell.isEmpty && cell.dayOfMonth === 1 && cell.month !== undefined) {
-				// Avoid overlapping labels when months start in adjacent week columns
-				if (weekIndex - lastLabelWeek >= 3 || !Number.isFinite(lastLabelWeek)) {
-					monthLabels.push({
-						weekIndex,
-						label: getMonthName(cell.month)
-					});
-					lastLabelWeek = weekIndex;
-				}
+				monthLabels.push({
+					weekIndex,
+					label: getMonthName(cell.month)
+				});
 				break;
 			}
 		}
