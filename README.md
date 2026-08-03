@@ -1,4 +1,4 @@
-# Obsidian Habit Tracker Plugin
+# Habit Tracker Dashboard
 
 <div align="center">
   <img src="img/dashboard.webp" width="30%" />

@@ -40,7 +40,7 @@ function handleTrackerFileOpen(plugin: Plugin, file: TFile): void {
 	setTimeout(() => {
 		const leaves = plugin.app.workspace.getLeavesOfType(TRACKER_VIEW_TYPE);
 		const matchingLeaves = leaves.filter(leaf => {
-			const leafFile = (leaf.view as any).file;
+			const leafFile = (leaf.view as { file?: TFile }).file;
 			return leafFile && leafFile.path === file.path;
 		});
 

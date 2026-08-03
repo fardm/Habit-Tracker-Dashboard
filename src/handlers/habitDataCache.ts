@@ -102,7 +102,7 @@ export class HabitDataCache {
 			const folderPath = this.settings.dataSourceValue;
 			const folder = this.app.vault.getAbstractFileByPath(folderPath);
 			
-			if (!folder || !(folder as any).children) {
+			if (!folder || !('children' in folder)) {
 				return [];
 			}
 

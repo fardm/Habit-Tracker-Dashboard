@@ -50,7 +50,7 @@ export class FrontmatterDataReader {
 			const folderPath = this.settings.dataSourceValue;
 			const folder = this.app.vault.getAbstractFileByPath(folderPath);
 			
-			if (!folder || !(folder as any).children) {
+			if (!folder || !('children' in folder)) {
 				// Folder doesn't exist or is invalid, return empty results
 				return [];
 			}
@@ -155,8 +155,8 @@ export class FrontmatterDataReader {
 			const frontmatterTags = fileCache.frontmatter.tags;
 			if (frontmatterTags) {
 				const tags = Array.isArray(frontmatterTags) ? frontmatterTags : [frontmatterTags];
-				
-				for (const t of tags) {
+				const uniqueTags = [...new Set(tags)];
+				for (const t of uniqueTags) {
 					const tagStr = String(t).trim();
 					const normalizedT = tagStr.startsWith('#') ? tagStr.substring(1).trim().toLowerCase() : tagStr.trim().toLowerCase();
 					if (normalizedT === normalizedTag) {
@@ -201,15 +201,17 @@ export class FrontmatterDataReader {
 			content) {
 			
 			const frontmatter = this.parseFrontmatter(content);
-			if (frontmatter && frontmatter[this.settings.dateFrontmatterProperty]) {
+			if (frontmatter && this.settings.dateFrontmatterProperty in frontmatter) {
 				const dateStr = frontmatter[this.settings.dateFrontmatterProperty];
-				const date = new Date(dateStr);
-				if (!isNaN(date.getTime())) {
-					return date;
+				if (typeof dateStr === 'string') {
+					const date = new Date(dateStr);
+					if (!isNaN(date.getTime())) {
+						return date;
+					}
 				}
+				// Property doesn't exist or has invalid date - return null to filter out this note
+				return null;
 			}
-			// Property doesn't exist or has invalid date - return null to filter out this note
-			return null;
 		}
 		
 		// Default: extract date from filename

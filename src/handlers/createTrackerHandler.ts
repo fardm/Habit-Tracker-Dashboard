@@ -50,7 +50,7 @@ export async function openTrackerView(app: App, file: TFile): Promise<void> {
 		// Check if the file is already open in a tracker view
 		const existingLeaves = app.workspace.getLeavesOfType(TRACKER_VIEW_TYPE);
 		const existingLeaf = existingLeaves.find(leaf => {
-			const leafFile = (leaf.view as any).file;
+			const leafFile = (leaf.view as { file?: TFile }).file;
 			return leafFile && leafFile.path === file.path;
 		});
 

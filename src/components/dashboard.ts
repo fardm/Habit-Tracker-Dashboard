@@ -22,8 +22,8 @@ export class Dashboard extends HTMLElementComponent {
 	private app: App;
 	private file: TFile;
 	private dataManager: HabitDataManager;
-	private frontmatterReader: FrontmatterDataReader;
-	private dataCache: HabitDataCache;
+	private frontmatterReader: FrontmatterDataReader | undefined;
+	private dataCache: HabitDataCache | undefined;
 	private habits: Habit[] = [];
 	private habitValues: Map<string, boolean | number> = new Map();
 	private currentDate: Date;
@@ -40,8 +40,8 @@ export class Dashboard extends HTMLElementComponent {
 		this.app = app;
 		this.file = file;
 		this.dataManager = new HabitDataManager(app.vault, file);
-		this.frontmatterReader = null as any; // Will be initialized after settings load
-		this.dataCache = null as any; // Will be initialized after settings load
+		this.frontmatterReader = undefined; // Will be initialized after settings load
+		this.dataCache = undefined; // Will be initialized after settings load
 		this.currentDate = new Date(); // Default to today
 		this.currentViewMode = ViewMode.GRID; // Default to grid view
 	}
@@ -202,7 +202,9 @@ export class Dashboard extends HTMLElementComponent {
 			};
 			
 			// Update frontmatter reader with new settings
-			this.frontmatterReader.updateSettings(this.currentSettings);
+			if (this.frontmatterReader) {
+				this.frontmatterReader.updateSettings(this.currentSettings);
+			}
 			
 			const data = await this.dataManager.readTrackerData();
 			data.settings = this.currentSettings;
@@ -247,6 +249,9 @@ export class Dashboard extends HTMLElementComponent {
 			
 			for (const habit of this.habits) {
 				// Use cache for faster lookups
+				if (!this.dataCache) {
+					continue;
+				}
 				const cachedValue = this.dataCache.getHabitValueForDate(
 					habit,
 					this.currentDate
@@ -332,7 +337,9 @@ export class Dashboard extends HTMLElementComponent {
 			this.habits.push(newHabit);
 			
 			// Rebuild cache to include the new habit
-			await this.dataCache.buildCache();
+			if (this.dataCache) {
+				await this.dataCache.buildCache();
+			}
 			
 			await this.loadHabitValues();
 			
@@ -387,7 +394,9 @@ export class Dashboard extends HTMLElementComponent {
 			await this.loadHabits();
 			
 			// Rebuild cache to reflect habit changes
-			await this.dataCache.buildCache();
+			if (this.dataCache) {
+				await this.dataCache.buildCache();
+			}
 			
 			await this.loadHabitValues();
 			
@@ -418,7 +427,9 @@ export class Dashboard extends HTMLElementComponent {
 			this.habits.push(newHabit);
 			
 			// Rebuild cache to include the duplicated habit
-			await this.dataCache.buildCache();
+			if (this.dataCache) {
+				await this.dataCache.buildCache();
+			}
 			
 			await this.loadHabitValues();
 			
@@ -437,7 +448,9 @@ export class Dashboard extends HTMLElementComponent {
 			this.habitValues.delete(habitId);
 			
 			// Rebuild cache to reflect habit deletion
-			await this.dataCache.buildCache();
+			if (this.dataCache) {
+				await this.dataCache.buildCache();
+			}
 			
 			if (this.container) {
 				this.renderHabits(this.container);
@@ -478,7 +491,7 @@ export class Dashboard extends HTMLElementComponent {
 					this.renderHabits(this.container);
 				}
 			}
-		}, habit, this.dataCache);
+		}, habit, this.dataCache!);
 		modal.open();
 	}
 
@@ -589,9 +602,11 @@ export class Dashboard extends HTMLElementComponent {
 		await this.loadUserSettings();
 		
 		// Rebuild cache with updated settings
-		this.dataCache.updateSettings(this.currentSettings);
-		await this.dataCache.buildCache();
-		console.log("[Dashboard] Cache rebuilt after refresh:", this.dataCache.getStats());
+		if (this.dataCache) {
+			this.dataCache.updateSettings(this.currentSettings);
+			await this.dataCache.buildCache();
+			console.log("[Dashboard] Cache rebuilt after refresh:", this.dataCache.getStats());
+		}
 		
 		await this.loadHabitValues();
 		if (this.container) {
