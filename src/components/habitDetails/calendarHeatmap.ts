@@ -260,7 +260,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			radio.checked = this.settings.colorScaleMode === mode;
 
 			radio.addEventListener("change", () => {
-				this.settings.colorScaleMode = mode as ColorScaleMode;
+				this.settings.colorScaleMode = mode;
 				this.notifySettingsChange();
 				this.updateHeatmapContent();
 				this.updateManualFieldsVisibility();

@@ -210,7 +210,7 @@ export class HabitModal extends Modal {
 			radio.name = "visualization";
 			radio.checked = this.formData.visualization === option.value;
 			radio.addEventListener("change", () => {
-				this.formData.visualization = option.value as Visualization;
+				this.formData.visualization = option.value;
 			});
 			radioRow.appendChild(radio);
 
