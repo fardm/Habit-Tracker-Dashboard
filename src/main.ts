@@ -4,7 +4,7 @@ import { CreateTrackerModal } from "./views/createTrackerModal";
 import { createTrackerFile } from "./handlers/createTrackerHandler";
 
 export default class HabitTrackerPlugin extends Plugin {
-	async onload() {
+	onload() {
 		// Register the .tracker file type and custom view
 		registerTrackerFileType(this);
 
@@ -23,7 +23,7 @@ export default class HabitTrackerPlugin extends Plugin {
 		});
 	}
 
-	async onunload() {
+	onunload() {
 		// Clean up tracker-related resources
 		cleanupTrackerFileType(this);
 	}

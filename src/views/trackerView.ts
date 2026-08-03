@@ -31,7 +31,7 @@ export class TrackerView extends ItemView {
 		await super.setState(state, result);
 		
 		// Get the file from the state
-		if (state.file) {
+		if (typeof state.file === "string") {
 			const abstractFile = this.app.vault.getAbstractFileByPath(state.file);
 			if (abstractFile instanceof TFile) {
 				this.file = abstractFile;

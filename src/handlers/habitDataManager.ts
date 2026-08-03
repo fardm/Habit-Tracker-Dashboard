@@ -135,7 +135,7 @@ export class HabitDataManager {
 
 		if (!habit.type) {
 			errors.push("Habit type is required");
-		} else if (!Object.values(HabitType).includes(habit.type)) {
+		} else if (!Object.values(HabitType).includes(habit.type as HabitType)) {
 			errors.push("Invalid habit type");
 		}
 
