@@ -6,74 +6,70 @@
   <img src="img/details-boolean.webp" width="30%" />
 </div>
 
-An interactive Habit Tracker dashboard for Obsidian that visualizes habit data extracted from your daily notes.
+An interactive Habit Tracker dashboard for Obsidian that visualizes habit data from your daily notes.
 
-## About This Plugin
+This is a **dashboard-only** plugin. It reads habit data from your daily notes' frontmatter based on your configured settings and provides visualizations, statistics, and progress tracking.
 
-This plugin is a **dashboard-only** solution. It does not create or store daily habit data by itself. Instead, it extracts habit information from your Obsidian notes based on your configured settings and visualizes the progress.
 
-You add your habit data inside your daily notes' frontmatter, and the plugin reads these notes to display comprehensive visualizations and statistics.
+## Installation (Beta)
 
-## Installation
+This plugin is currently available as a beta release and can be installed using the **BRAT** plugin.
 
-1. Clone this repository
-2. Run `npm install` to install dependencies
-3. Run `npm run dev` to build in development mode
-4. Copy the plugin folder to your Obsidian vault's `.obsidian/plugins/` directory
-5. Enable the plugin in Obsidian Settings > Community Plugins
+1. Install the **BRAT** plugin:
+
+   * [https://community.obsidian.md/plugins/obsidian42-brat](https://community.obsidian.md/plugins/obsidian42-brat)
+2. Click the **BRAT** icon in the left ribbon.
+3. Select **"Plugins: Add a beta plugin for testing (with or without version)"**.
+4. Paste this repository URL into the repository field:
+
+   ```text
+   https://github.com/fardm/Habit-Tracker-Dashboard
+   ```
+5. Select the **latest version** from the version dropdown.
+6. Click **Add Plugin**.
+
+The plugin will be installed and enabled in your Obsidian vault.
 
 ## Usage
 
-### Step 1: Configure Data Source
+### 1. Add Habit Data to Your Daily Notes
 
-Open the Tracker Settings (⚙️ button) to define where your habit data should be extracted from:
+First, record your habits in the frontmatter of your daily notes.
 
-**Data Source:**
-- **Tag mode**: Filter notes by a specific tag (e.g., `#journal`)
-- **Folder mode**: Search only within a specific folder path
-
-**Date Extraction:**
-- **From file name**: Extract dates from daily note filenames (e.g., `2024-01-15.md`)
-- **From frontmatter property**: Extract dates from a custom frontmatter field (e.g., `date: 2024-01-15`)
-
-### Step 2: Create Habits
-
-1. Click the "Add Habit" button on the dashboard
-2. Configure your habit:
-   - **Name**: Display name for the habit
-   - **Emoji**: Visual identifier
-   - **Type**: Boolean (done/not done) or Numeric (with values)
-   - **Frontmatter Field**: The property name used in your daily notes
-   - **Unit**: For numeric habits (e.g., "minutes", "pages")
-   - **Target**: Optional target value for numeric habits
-   - **Completion Condition**: For numeric habits, choose when the habit counts as completed
-   - **Visualization**: Choose how to display progress (Donut, Circle Check, or None)
-   - **Color Theme**: Custom accent color for the habit
-   - **Grace Days**: Number of missed days allowed before streak breaks
-
-3. Add the habit data to your daily notes' frontmatter:
-
-**Example for Boolean Habit:**
 ```yaml
 ---
-reading: true
+exercise: true
+reading: 30
 ---
 ```
 
-**Example for Numeric Habit:**
-```yaml
----
-exercise_minutes: 30
----
-```
+### 2. Configure the Data Source
 
-The plugin will read these daily notes and visualize your progress on the dashboard.
+Open **Tracker Settings (⚙️)** and choose:
 
-### Step 3: Track and View Reports
+- Where your daily notes are located (Tag or Folder)
+- How dates should be extracted (File name or Frontmatter)
 
-- **Daily Dashboard**: See your habits for the current day with progress indicators
-- **Click on a habit**: Opens detailed reports with heatmap, charts, statistics, and streak information
-- **Navigate dates**: Use the date navigator to view past days or future date
+### 3. Create Your Habits
+
+Click **Add Habit** and create a habit that matches the frontmatter field in your daily notes.
+
+For example:
+- **Exercise** → Boolean → `exercise`
+- **Reading** → Numeric → `reading`
+
+You can also customize options such as target value, unit, color, visualization, and streak settings.
+
+### 4. Start Tracking
+
+That's it! The dashboard will automatically read your daily notes and display:
+
+- Daily progress
+- Charts
+- Heatmap calendar
+- Statistics
+- Streaks
+
 
 ## Features
 
@@ -84,71 +80,39 @@ The plugin will read these daily notes and visualize your progress on the dashbo
 - 📈 **Line and Bar Charts**: Track trends and compare values over time with interactive line and bar charts
 - 🔗 **Habit Streak Calculation**: Track current streak, longest streak, and streak history
 - 📊 **Detailed Statistics**: Total, average, highest, lowest, completion rate.
-- 🎨 **Custom Colors**: Personalize each habit with a unique theme color
-- 🌍 **Calendar System Support**: Choose between Gregorian or Solar Hijri (Jalali) calendar for reports
+
 
 ## How It Works
 
-### The Refresh Button
+### Refresh
 
-The Refresh button (🔄) on the dashboard serves an important purpose:
+If you edit your daily notes manually, click **Refresh (🔄)** to re-scan your notes and update the dashboard.
 
-**What problem it solves:**
-The plugin automatically updates when you create, edit, or delete habits through the dashboard. However, if you manually edit your daily notes' frontmatter directly (outside of the plugin), the dashboard won't immediately reflect those changes.
+Use it after:
+- Editing habit values in your notes
+- Changing the data source settings
 
-**When to use it:**
-- After manually adding or updating habit data in your daily notes
-- After changing the data source settings
-- If you notice the dashboard data seems outdated
+### Completion Condition
 
-**What it does:**
-Clicking the Refresh button forces the plugin to re-scan your notes and rebuild the data cache, ensuring the dashboard displays the most up-to-date information from your vault.
+For **numeric habits**, choose when a habit is considered completed:
 
-## Advanced Settings Explanation
-
-### Completion Condition (Numeric Habits)
-
-For numeric habits, the Completion Condition determines when the habit counts as "completed" for streak calculations and statistics. Choose the option that best matches your goal:
-
-- **At least**: The habit is completed when the value meets or exceeds the target.
-  - *Example*: Target = 30 minutes. If you log 30 or more minutes, it counts as completed.
-  - *Best for*: Habits where doing more is always better (exercise, reading, study time)
-
-- **At most**: The habit is completed when the value is at or below the target.
-  - *Example*: Target = 2000 calories. If you log 2000 or fewer calories, it counts as completed.
-  - *Best for*: Habits where staying under a limit is the goal (calories, screen time, spending)
-
-- **Exactly**: The habit is completed only when the value matches the target precisely.
-  - *Example*: Target = 8 glasses. Only logging exactly 8 glasses counts as completed.
-  - *Best for*: Habits with a precise target (medication doses, specific workout repetitions)
+- **At least** (≥): Reach or exceed the target (e.g. 30+ minutes)
+- **At most** (≤): Stay at or below the target (e.g. ≤2000 calories)
+- **Exactly** (=): Match the target exactly
 
 ### Grace Days
 
-Grace Days allow for occasional missed days without breaking your streak. This setting is useful for maintaining motivation while still tracking consistency.
+Allow a streak to continue after a limited number of missed consecutive days.
 
-**How it works:**
-- If you set Grace Days to 1, you can miss 1 consecutive day without your streak breaking
-- If you set Grace Days to 3, you can miss up to 3 consecutive days without your streak breaking
-- Once you exceed the grace day limit, the streak resets
+- **0** = No missed days allowed
+- **1+** = Allow that many missed days before the streak resets
 
-**When to use it:**
-- Set to 0 for strict tracking (no missed days allowed)
-- Set to 1-2 for realistic tracking (allows for occasional off days)
-- Set higher values for flexible tracking during busy periods
+### Calendar
 
-### Report Calendar
+Choose the calendar used in reports:
+- Gregorian
+- Solar Hijri (Jalali)
 
-Choose the calendar system used for habit reports and date displays:
+### Minimum Streak Length
 
-- **Gregorian**: The standard Western calendar (January-December)
-- **Solar Hijri (Jalali)**: The Persian/Iranian calendar system
-
-This setting affects how dates are displayed in the heatmap, streak history, and other date-based visualizations.
-
-### Minimum Streak Length for History
-
-This setting filters which streaks appear in the Streak History section. Only streaks that meet or exceed this length will be shown.
-
-- **Default**: 7 days
-- **Purpose**: Keeps the history focused on meaningful streaks
-- **Adjustment**: Increase to show only longer streaks, decrease to include shorter ones
+Only streaks with at least this many days are shown in **Streak History**.

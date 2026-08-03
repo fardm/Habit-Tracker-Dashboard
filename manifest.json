@@ -1,7 +1,7 @@
 {
   "id": "habit-tracker-dashboard",
   "name": "Habit Tracker Dashboard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minAppVersion": "0.15.0",
   "description": "Dashboard-driven Habit Tracker for Obsidian that reads habit frontmatter from your notes and visualizes progress, streaks, and trends.",
   "author": "Hossein Fardmohammadi",
