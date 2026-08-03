@@ -15,10 +15,8 @@ This is a **dashboard-only** plugin. It reads habit data from your daily notes' 
 
 This plugin is currently available as a beta release and can be installed using the **BRAT** plugin.
 
-1. Install the **BRAT** plugin:
-
-   * [https://community.obsidian.md/plugins/obsidian42-brat](https://community.obsidian.md/plugins/obsidian42-brat)
-2. Click the **BRAT** icon in the left ribbon.
+1. Install the **BRAT** plugin: [https://community.obsidian.md/plugins/obsidian42-brat](https://community.obsidian.md/plugins/obsidian42-brat)
+2. Click the **BRAT** icon in the ribbon.
 3. Select **"Plugins: Add a beta plugin for testing (with or without version)"**.
 4. Paste this repository URL into the repository field:
 
@@ -43,14 +41,20 @@ reading: 30
 ---
 ```
 
-### 2. Configure the Data Source
+### 2. Create a Habit Tracker
+
+Click the plugin icon in the ribbon, or run **"Habit Tracker Dashboard: Create new habit tracker"** from the Command Palette.
+
+Enter a name for your tracker file and click **Create**.
+
+### 3. Configure the Data Source
 
 Open **Tracker Settings (⚙️)** and choose:
 
 - Where your daily notes are located (Tag or Folder)
 - How dates should be extracted (File name or Frontmatter)
 
-### 3. Create Your Habits
+### 4. Create Your Habits
 
 Click **Add Habit** and create a habit that matches the frontmatter field in your daily notes.
 
@@ -60,7 +64,7 @@ For example:
 
 You can also customize options such as target value, unit, color, visualization, and streak settings.
 
-### 4. Start Tracking
+### 5. Start Tracking
 
 That's it! The dashboard will automatically read your daily notes and display:
 
