@@ -19,8 +19,7 @@ export class RefreshButton extends HTMLElementComponent {
 			type: "button"
 		});
 		
-		const iconContainer = createSpan();
-		iconContainer.style.cssText = "vertical-align: middle; margin-right: 4px;";
+		const iconContainer = createSpan({ cls: "habit-tracker-refresh-btn-icon" });
 		setIcon(iconContainer, "refresh-cw");
 		button.appendChild(iconContainer);
 		

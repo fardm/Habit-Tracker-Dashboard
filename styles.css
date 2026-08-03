@@ -102,7 +102,7 @@
 
 .habit-card {
 	position: relative;
-	background-color: var(--background-secondary);
+	background-color: var(--habit-card-bg, var(--background-secondary));
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 8px;
 	padding: 16px 48px 16px 48px;
@@ -186,6 +186,7 @@
 	font-size: 24px;
 	border-radius: 6px;
 	padding: 10px;
+	background-color: var(--habit-emoji-bg, transparent);
 }
 
 .habit-info {
@@ -292,6 +293,19 @@
 	transform: translate(-50%, -50%);
 }
 
+.habit-check-icon svg {
+	color: var(--text-success);
+}
+
+.habit-warning-icon svg {
+	color: var(--text-error);
+}
+
+.habit-boolean-status-icon svg,
+.habit-circle-check-icon svg {
+	color: var(--icon-color, currentColor);
+}
+
 /* ============================================
    BUTTONS SECTION
    ============================================ */
@@ -328,6 +342,11 @@
 
 .habit-tracker-refresh-btn:hover {
 	background-color: var(--background-modifier-hover);
+}
+
+.habit-tracker-refresh-btn-icon {
+	vertical-align: middle;
+	margin-right: 4px;
 }
 
 .habit-tracker-settings-btn {
@@ -485,6 +504,14 @@
 	color: var(--text-error);
 	margin-bottom: 16px;
 	min-height: 20px;
+}
+
+.habit-modal-error {
+	margin-bottom: 4px;
+}
+
+.habit-modal-error:last-child {
+	margin-bottom: 0;
 }
 
 .habit-modal-button-container {

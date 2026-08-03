@@ -39,7 +39,7 @@ export class HabitCard extends HTMLElementComponent {
 		// Apply grid or list styling based on view mode
 		const habitColor = this.props.habit.themeColor;
 		const cardBackground = habitColor ? createTranslucentColor(habitColor, 0.05) : "var(--background-secondary)";
-		card.style.backgroundColor = cardBackground;
+		card.style.setProperty("--habit-card-bg", cardBackground);
 
 		// Hover states are handled by CSS
 
@@ -168,7 +168,7 @@ export class HabitCard extends HTMLElementComponent {
 		});
 		const bgColor = this.props.habit.themeColor || 'var(--interactive-accent)';
 		const emojiBackground = createTranslucentColor(bgColor, 0.20);
-		emoji.style.backgroundColor = emojiBackground;
+		emoji.style.setProperty("--habit-emoji-bg", emojiBackground);
 
 		const habitInfo = createDiv({ cls: "habit-info" });
 
@@ -209,7 +209,7 @@ export class HabitCard extends HTMLElementComponent {
 			// Create vertical layout for icon and text
 			const booleanContainer = createDiv({ cls: "habit-boolean-container" });
 			
-			const iconContainer = createDiv();
+			const iconContainer = createDiv({ cls: "habit-boolean-status-icon" });
 			iconContainer.appendChild(this.createBooleanStatusIcon(completed));
 			
 			const statusText = createDiv({
@@ -323,7 +323,7 @@ export class HabitCard extends HTMLElementComponent {
 					}
 				} else if (visualization === Visualization.CIRCLE_CHECK) {
 					// Circle check visualization for numeric habits
-					const iconContainer = createDiv();
+					const iconContainer = createDiv({ cls: "habit-circle-check-icon" });
 					iconContainer.appendChild(this.createCircleCheckIcon(isCompleted));
 					visualizationContainer.appendChild(iconContainer);
 				}
@@ -344,7 +344,7 @@ export class HabitCard extends HTMLElementComponent {
 					visualizationContainer.appendChild(chartElement);
 				} else if (visualization === Visualization.CIRCLE_CHECK) {
 					// Circle check visualization for numeric habits without target
-					const iconContainer = createDiv();
+					const iconContainer = createDiv({ cls: "habit-circle-check-icon" });
 					iconContainer.appendChild(this.createCircleCheckIcon(value > 0));
 					visualizationContainer.appendChild(iconContainer);
 				}
@@ -370,7 +370,7 @@ export class HabitCard extends HTMLElementComponent {
 		svg.setAttribute("stroke-width", "2");
 		svg.setAttribute("stroke-linecap", "round");
 		svg.setAttribute("stroke-linejoin", "round");
-		svg.style.color = completed ? "var(--text-success)" : "var(--text-muted)";
+		svg.style.setProperty("--icon-color", completed ? "var(--text-success)" : "var(--text-muted)");
 
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle.setAttribute("cx", "12");
@@ -400,7 +400,6 @@ export class HabitCard extends HTMLElementComponent {
 		svg.setAttribute("stroke-width", "3");
 		svg.setAttribute("stroke-linecap", "round");
 		svg.setAttribute("stroke-linejoin", "round");
-		svg.style.color = "var(--text-success)";
 
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("d", "M20 6L9 17l-5-5");
@@ -419,7 +418,6 @@ export class HabitCard extends HTMLElementComponent {
 		svg.setAttribute("stroke-width", "3");
 		svg.setAttribute("stroke-linecap", "round");
 		svg.setAttribute("stroke-linejoin", "round");
-		svg.style.color = "var(--text-error)";
 
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("d", "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z");
@@ -452,7 +450,7 @@ export class HabitCard extends HTMLElementComponent {
 		svg.setAttribute("stroke-width", "2");
 		svg.setAttribute("stroke-linecap", "round");
 		svg.setAttribute("stroke-linejoin", "round");
-		svg.style.color = completed ? "var(--text-success)" : "var(--text-muted)";
+		svg.style.setProperty("--icon-color", completed ? "var(--text-success)" : "var(--text-muted)");
 
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle.setAttribute("cx", "12");

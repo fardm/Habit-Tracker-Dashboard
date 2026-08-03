@@ -276,12 +276,9 @@ export class HabitModal extends Modal {
 				this.onSubmit(this.formData);
 			} else {
 				errorContainer.empty();
-				this.validationErrors.forEach((error, index) => {
+				this.validationErrors.forEach((error) => {
 					const errorEl = errorContainer.createEl("div", { text: error });
 					errorEl.className = "habit-modal-error";
-					if (index < this.validationErrors.length - 1) {
-						errorEl.style.marginBottom = "4px";
-					}
 				});
 			}
 		});
