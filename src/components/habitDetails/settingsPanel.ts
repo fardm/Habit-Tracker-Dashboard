@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { SettingsPanelProps, HabitDetailsSettings, SectionVisibility, ColorTheme } from "../../types/habitDetailsTypes";
+import { SettingsPanelProps, SectionVisibility } from "../../types/habitDetailsTypes";
 import { setIcon } from "obsidian";
 
 /**

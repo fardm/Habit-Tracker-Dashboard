@@ -254,8 +254,8 @@ export class HabitDataCache {
 		const habitId = habit.id;
 
 		// Check if we have cached values for this habit
-		if (this.habitValueCache.has(habitId)) {
-			const cachedValues = this.habitValueCache.get(habitId)!;
+		const cachedValues = this.habitValueCache.get(habitId);
+		if (cachedValues) {
 			for (const [dateStr, value] of cachedValues) {
 				const date = parseLocalISODate(dateStr.split("T")[0]);
 				if ((!startDate || date >= startDate) && (!endDate || date <= endDate)) {
@@ -267,7 +267,6 @@ export class HabitDataCache {
 
 		// Build cache for this habit
 		const habitCache = new Map<string, CachedHabitValue>();
-		let matchCount = 0;
 		
 		for (const [filePath, entry] of this.fileCache) {
 			const frontmatter = entry.frontmatter;
@@ -277,7 +276,6 @@ export class HabitDataCache {
 				const processedValue = this.processValue(rawValue, habit.type);
 				
 				if (processedValue !== null) {
-					matchCount++;
 					const dateStr = toLocalISODate(entry.date);
 					const cachedValue: CachedHabitValue = {
 						date: dateStr,
@@ -314,7 +312,6 @@ export class HabitDataCache {
 	 * Gets habit value for a specific date
 	 */
 	getHabitValueForDate(habit: Habit, date: Date): CachedHabitValue | null {
-		const dateStr = toLocalISODate(date);
 		const startDate = new Date(date);
 		startDate.setHours(0, 0, 0, 0);
 		const endDate = new Date(date);

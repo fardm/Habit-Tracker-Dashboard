@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { StatisticsDashboardProps, HabitStatistics } from "../../types/habitDetailsTypes";
+import { StatisticsDashboardProps } from "../../types/habitDetailsTypes";
 
 /**
  * StatisticsDashboard component for displaying habit statistics

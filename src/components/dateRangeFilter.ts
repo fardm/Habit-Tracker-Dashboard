@@ -1,6 +1,5 @@
 import { HTMLElementComponent } from "./htmlElementComponent";
 import { DateRangeFilter as DateRangeFilterEnum } from "../types/habitTypes";
-import { formatDateRange } from "../utils/dateUtils";
 
 export interface DateRangeFilterProps {
 	currentFilter: DateRangeFilterEnum;

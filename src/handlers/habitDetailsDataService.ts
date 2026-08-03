@@ -1,9 +1,8 @@
 import { App } from "obsidian";
-import { Habit, HabitType, TrackerSettings, CompletionOperator } from "../types/habitTypes";
-import { FrontmatterDataReader, HabitValue } from "./frontmatterDataReader";
-import { DateRangeCalculator } from "./dateRangeCalculator";
+import { Habit, TrackerSettings, CompletionOperator } from "../types/habitTypes";
+import { FrontmatterDataReader } from "./frontmatterDataReader";
 import { 
-	HabitStatistics, 
+	HabitStatistics,
 	HabitStreaks, 
 	StreakEntry, 
 	HabitValueEntry 
@@ -119,7 +118,6 @@ export class HabitDetailsDataService {
 		const streakHistory: StreakEntry[] = [];
 		let currentStreak = 0;
 		let longestStreak = 0;
-		const currentStreakStart: Date | null = null;
 		let tempStreakStart: Date | null = null;
 		let tempStreakLength = 0;
 		let consecutiveMissedDays = 0;
@@ -167,9 +165,9 @@ export class HabitDetailsDataService {
 						tempStreakLength++;
 					} else {
 						// End of streak
-						if (tempStreakLength > 0) {
+						if (tempStreakLength > 0 && tempStreakStart) {
 							streakHistory.push({
-								startDate: tempStreakStart!,
+								startDate: tempStreakStart,
 								endDate: prevDate,
 								length: tempStreakLength
 							});
@@ -194,9 +192,9 @@ export class HabitDetailsDataService {
 						// Check if grace days exceeded
 						if (consecutiveMissedDays > graceDays) {
 							// Break streak
-							if (tempStreakLength > 0) {
+							if (tempStreakLength > 0 && tempStreakStart) {
 								streakHistory.push({
-									startDate: tempStreakStart!,
+									startDate: tempStreakStart,
 									endDate: prevDate,
 									length: tempStreakLength
 								});
@@ -213,9 +211,9 @@ export class HabitDetailsDataService {
 						}
 					} else {
 						// Non-consecutive day, break streak
-						if (tempStreakLength > 0) {
+						if (tempStreakLength > 0 && tempStreakStart) {
 							streakHistory.push({
-								startDate: tempStreakStart!,
+								startDate: tempStreakStart,
 								endDate: prevDate,
 								length: tempStreakLength
 							});
@@ -232,9 +230,9 @@ export class HabitDetailsDataService {
 		}
 
 		// Add final streak if active
-		if (tempStreakLength > 0) {
+		if (tempStreakLength > 0 && tempStreakStart) {
 			streakHistory.push({
-				startDate: tempStreakStart!,
+				startDate: tempStreakStart,
 				endDate: sortedValues[sortedValues.length - 1].date,
 				length: tempStreakLength
 			});

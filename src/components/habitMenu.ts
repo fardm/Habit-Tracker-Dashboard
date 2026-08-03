@@ -57,7 +57,7 @@ export class HabitMenu extends HTMLElementComponent {
 	/**
 	 * Shows the menu at a specific position
 	 */
-	show(buttonRect: DOMRect, container: HTMLElement): void {
+	show(buttonRect: DOMRect): void {
 		// Close any existing menu first
 		const menuManager = MenuManager.getInstance();
 		menuManager.setActiveMenu(this.render());

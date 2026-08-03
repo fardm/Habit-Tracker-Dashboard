@@ -83,7 +83,7 @@ export class HabitCard extends HTMLElementComponent {
 			e.preventDefault();
 			e.stopPropagation();
 			e.stopImmediatePropagation();
-			this.showMenu(e, card);
+			this.showMenu(e);
 		});
 
 		card.appendChild(menuButton);
@@ -123,7 +123,9 @@ export class HabitCard extends HTMLElementComponent {
 			if (this.props.onDragStart) {
 				this.props.onDragStart(this.props.habit.id, e);
 			}
-			e.dataTransfer!.effectAllowed = "move";
+			if (e.dataTransfer) {
+				e.dataTransfer.effectAllowed = "move";
+			}
 			card.classList.add("habit-card-dragging");
 		});
 		card.addEventListener("dragend", () => {
@@ -470,7 +472,7 @@ export class HabitCard extends HTMLElementComponent {
 		return svg;
 	}
 
-	private showMenu(event: MouseEvent, card: HTMLElement): void {
+	private showMenu(event: MouseEvent): void {
 		if (this.menu) return;
 
 		const rect = (event.target as HTMLElement).getBoundingClientRect();
@@ -484,6 +486,6 @@ export class HabitCard extends HTMLElementComponent {
 		});
 
 		this.menu = menu;
-		menu.show(rect, card);
+		menu.show(rect);
 	}
 }

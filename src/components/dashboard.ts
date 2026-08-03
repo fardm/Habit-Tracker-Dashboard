@@ -3,15 +3,14 @@ import { HTMLElementComponent } from "./htmlElementComponent";
 import { AddHabitButton } from "./addHabitButton";
 import { RefreshButton } from "./refreshButton";
 import { SettingsButton } from "./settingsButton";
-import { HabitCard, HabitCardProps } from "./habitCard";
+import { HabitCard } from "./habitCard";
 import { HabitModal, HabitFormData } from "./habitModal";
 import { HabitDataManager } from "../handlers/habitDataManager";
 import { FrontmatterDataReader } from "../handlers/frontmatterDataReader";
-import { DateRangeCalculator } from "../handlers/dateRangeCalculator";
 import { HabitDataCache } from "../handlers/habitDataCache";
 import { DateNavigator } from "./dateNavigator";
 import { ViewModeSwitcher } from "./viewModeSwitcher";
-import { Habit, HabitType, ViewMode, TrackerSettings } from "../types/habitTypes";
+import { Habit, ViewMode, TrackerSettings } from "../types/habitTypes";
 import { HabitDetailsModal } from "./habitDetails/habitDetailsModal";
 import { SettingsModal, SettingsFormData } from "./settingsModal";
 
@@ -496,6 +495,11 @@ export class Dashboard extends HTMLElementComponent {
 		const habit = this.habits.find(h => h.id === habitId);
 		if (!habit) return;
 
+		if (!this.dataCache) {
+			console.error("Data cache not initialized");
+			return;
+		}
+
 		const modal = new HabitDetailsModal(this.app, {
 			habitId: habit.id,
 			habitName: habit.name,
@@ -516,7 +520,7 @@ export class Dashboard extends HTMLElementComponent {
 					console.error("Error reloading habits after modal close:", error);
 				});
 			}
-		}, habit, this.dataCache!);
+		}, habit, this.dataCache);
 		modal.open();
 	}
 
@@ -537,12 +541,16 @@ export class Dashboard extends HTMLElementComponent {
 
 	private handleDragStart(habitId: string, event: DragEvent): void {
 		this.draggedHabitId = habitId;
-		event.dataTransfer!.setData("text/plain", habitId);
+		if (event.dataTransfer) {
+			event.dataTransfer.setData("text/plain", habitId);
+		}
 	}
 
 	private handleDragOver(event: DragEvent): void {
 		event.preventDefault();
-		event.dataTransfer!.dropEffect = "move";
+		if (event.dataTransfer) {
+			event.dataTransfer.dropEffect = "move";
+		}
 
 		// Show drop indicator
 		const target = event.target as HTMLElement;

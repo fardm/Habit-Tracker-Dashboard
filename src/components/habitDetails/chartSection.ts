@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { ChartType, ChartSectionProps, HabitValueEntry } from "../../types/habitDetailsTypes";
+import { ChartType, ChartSectionProps } from "../../types/habitDetailsTypes";
 import { setIcon } from "obsidian";
 import { ReportCalendar } from "../../types/habitTypes";
 import { getCalendarAdapter } from "../../utils/calendarAdapter";
@@ -38,8 +38,6 @@ export class ChartSection extends HTMLElementComponent {
 
 		// Chart type toggle - positioned absolutely
 		const toggleContainer = createDiv({ cls: "chart-toggle-container" });
-
-		const themeColor = this.getThemeColor();
 
 		const lineButton = createEl("button", {
 			cls: this.props.chartType === ChartType.LINE ? "chart-toggle-button chart-toggle-button-active clickable-icon" : "chart-toggle-button clickable-icon",
@@ -373,8 +371,6 @@ export class ChartSection extends HTMLElementComponent {
 
 	private updateToggleButtons(): void {
 		if (!this.toggleButtons) return;
-
-		const themeColor = this.getThemeColor();
 
 		if (this.props.chartType === ChartType.LINE) {
 			this.toggleButtons.line.className = "chart-toggle-button chart-toggle-button-active";

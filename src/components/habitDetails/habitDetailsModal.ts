@@ -1,6 +1,5 @@
 import { App, Modal, setIcon } from "obsidian";
-import { HTMLElementComponent } from "../htmlElementComponent";
-import { HabitDetailsModalProps, ChartType, HabitDetailsSettings, HabitValueEntry, HabitStatistics, HabitStreaks, HeatmapSettings, ColorScaleMode } from "../../types/habitDetailsTypes";
+import { HabitDetailsModalProps, ChartType, HabitDetailsSettings, HabitValueEntry, HeatmapSettings, ColorScaleMode } from "../../types/habitDetailsTypes";
 import { ChartSection } from "./chartSection";
 import { StatisticsDashboard } from "./statisticsDashboard";
 import { StreakSection } from "./streakSection";
@@ -244,9 +243,6 @@ export class HabitDetailsModal extends Modal {
 
 	private async loadHabitData(): Promise<void> {
 		try {
-			// selectedYear is already in the active calendar system (Gregorian or Jalali)
-			const reportCalendar =
-				this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN;
 			const dateRange = DateRangeCalculator.calculateDateRange(
 				this.props.trackerSettings || {},
 				this.selectedYear

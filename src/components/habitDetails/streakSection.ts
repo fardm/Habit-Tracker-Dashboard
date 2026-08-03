@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { StreakSectionProps, HabitStreaks } from "../../types/habitDetailsTypes";
+import { StreakSectionProps } from "../../types/habitDetailsTypes";
 import { getCalendarAdapter } from "../../utils/calendarAdapter";
 
 /**
