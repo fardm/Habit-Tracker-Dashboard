@@ -28,7 +28,7 @@ export class TrackerView extends ItemView {
 	}
 
 	async setState(state: TrackerViewState, result: ViewStateResult): Promise<void> {
-		await super.setState(state, result);
+		await super.setState(state as Record<string, unknown>, result);
 		
 		// Get the file from the state
 		if (typeof state.file === "string") {
