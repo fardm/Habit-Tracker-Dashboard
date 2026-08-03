@@ -421,7 +421,6 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const row = document.createElement("div");
 		row.className = "heatmap-month-labels";
 		row.style.setProperty("--heatmap-width", `${weeksCount * cellSize + Math.max(0, weeksCount - 1) * gap}px`);
-		row.style.width = "var(--heatmap-width)";
 		// Other styles handled by CSS
 
 		for (const label of monthLabels) {
@@ -429,7 +428,6 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			el.className = "heatmap-month-label";
 			el.textContent = label.label;
 			el.style.setProperty("--label-left", `${label.weekIndex * (cellSize + gap)}px`);
-			el.style.left = "var(--label-left)";
 			row.appendChild(el);
 		}
 
@@ -529,7 +527,6 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			const value = valueMap.get(cellData.isoDate) || 0;
 			cell.className = "heatmap-cell";
 			cell.style.setProperty("--cell-bg-color", this.intensityColor(value, themeColor));
-			cell.style.backgroundColor = "var(--cell-bg-color)";
 			cell.title = this.formatTooltip(cellData.isoDate, value, adapter);
 			grid.appendChild(cell);
 		}
@@ -554,7 +551,6 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				const square = document.createElement("div");
 				square.className = "heatmap-legend-square";
 				square.style.setProperty("--legend-bg-color", item.color);
-				square.style.backgroundColor = "var(--legend-bg-color)";
 
 				const label = document.createElement("span");
 				label.textContent = item.label;
@@ -602,7 +598,6 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			const legendItem = document.createElement("div");
 			legendItem.className = "heatmap-legend-color-box";
 			legendItem.style.setProperty("--legend-box-color", item.color);
-			legendItem.style.backgroundColor = "var(--legend-box-color)";
 			legendItem.title = item.label;
 			legend.appendChild(legendItem);
 		});

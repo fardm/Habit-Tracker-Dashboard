@@ -908,12 +908,13 @@
 	font-size: 10px;
 	color: var(--text-muted);
 	line-height: 18px;
+	width: var(--heatmap-width, fit-content);
 }
 
 .heatmap-month-label {
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: var(--label-left, 0);
 	white-space: nowrap;
 	pointer-events: none;
 }
@@ -931,7 +932,7 @@
 	width: 10px;
 	height: 10px;
 	border-radius: 2px;
-	background-color: transparent;
+	background-color: var(--cell-bg-color, transparent);
 	transition: background-color 0.2s;
 }
 
@@ -961,7 +962,7 @@
 	width: 10px;
 	height: 10px;
 	border-radius: 2px;
-	background-color: var(--interactive-accent);
+	background-color: var(--legend-bg-color, var(--interactive-accent));
 	border: 1px solid var(--background-modifier-border);
 	box-sizing: border-box;
 }
@@ -974,6 +975,7 @@
 	width: 10px;
 	height: 10px;
 	border-radius: 2px;
+	background-color: var(--legend-box-color, var(--interactive-accent));
 	border: 1px solid var(--background-modifier-border);
 	box-sizing: border-box;
 }
@@ -1181,6 +1183,7 @@
 .streak-history-chevron {
 	color: var(--text-muted);
 	transition: transform 0.2s;
+	transform: var(--chevron-rotation, -90deg);
 }
 
 .streak-history-chevron-expanded {
@@ -1359,6 +1362,8 @@
 	margin: 0;
 	border: 0;
 	z-index: 1000;
+	left: var(--date-picker-left, 0);
+	top: var(--date-picker-top, 0);
 }
 
 /* ============================================

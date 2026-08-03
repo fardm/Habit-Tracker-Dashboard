@@ -107,8 +107,6 @@ export class DateNavigator {
 		const rect = button.getBoundingClientRect();
 		dateInput.style.setProperty("--date-picker-left", `${rect.left}px`);
 		dateInput.style.setProperty("--date-picker-top", `${rect.bottom}px`);
-		dateInput.style.left = "var(--date-picker-left)";
-		dateInput.style.top = "var(--date-picker-top)";
 		
 		// Format date for input (YYYY-MM-DD)
 		const year = this.currentDate.getFullYear();
