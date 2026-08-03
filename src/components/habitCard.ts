@@ -31,24 +31,22 @@ export class HabitCard extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const card = document.createElement("div");
-		card.className = "habit-card";
-		card.setAttribute("data-habit-id", this.props.habit.id);
+		const card = createDiv({
+			cls: this.props.viewMode === ViewMode.LIST ? "habit-card habit-card-list" : "habit-card",
+			attr: { "data-habit-id": this.props.habit.id }
+		});
 
 		// Apply grid or list styling based on view mode
 		const habitColor = this.props.habit.themeColor;
 		const cardBackground = habitColor ? createTranslucentColor(habitColor, 0.05) : "var(--background-secondary)";
 		card.style.backgroundColor = cardBackground;
 
-		if (this.props.viewMode === ViewMode.LIST) {
-			card.classList.add("habit-card-list");
-		}
-
 		// Hover states are handled by CSS
 
 		// Menu button - positioned at top-right
-		const menuButton = document.createElement("button");
-		menuButton.className = "habit-menu-btn";
+		const menuButton = createEl("button", {
+			cls: "habit-menu-btn"
+		});
 		
 		const menuSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		menuSvg.setAttribute("width", "16");
@@ -91,8 +89,7 @@ export class HabitCard extends HTMLElementComponent {
 		card.appendChild(menuButton);
 
 		// Drag handle - positioned absolutely on the left
-		const dragHandle = document.createElement("div");
-		dragHandle.className = "habit-drag-handle";
+		const dragHandle = createDiv({ cls: "habit-drag-handle" });
 		
 		const dragSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		dragSvg.setAttribute("width", "16");
@@ -163,22 +160,22 @@ export class HabitCard extends HTMLElementComponent {
 		card.appendChild(dragHandle);
 
 		// Left side: Emoji and name
-		const leftSide = document.createElement("div");
-		leftSide.className = "habit-card-left-side";
+		const leftSide = createDiv({ cls: "habit-card-left-side" });
 
-		const emoji = document.createElement("span");
-		emoji.className = "habit-emoji";
-		emoji.textContent = this.props.habit.emoji;
+		const emoji = createSpan({
+			cls: "habit-emoji",
+			text: this.props.habit.emoji
+		});
 		const bgColor = this.props.habit.themeColor || 'var(--interactive-accent)';
 		const emojiBackground = createTranslucentColor(bgColor, 0.20);
 		emoji.style.backgroundColor = emojiBackground;
 
-		const habitInfo = document.createElement("div");
-		habitInfo.className = "habit-info";
+		const habitInfo = createDiv({ cls: "habit-info" });
 
-		const habitName = document.createElement("div");
-		habitName.className = "habit-name";
-		habitName.textContent = this.props.habit.name;
+		const habitName = createDiv({
+			cls: "habit-name",
+			text: this.props.habit.name
+		});
 
 		habitInfo.appendChild(habitName);
 		leftSide.appendChild(emoji);
@@ -201,8 +198,7 @@ export class HabitCard extends HTMLElementComponent {
 	}
 
 	private renderStatusDisplay(): HTMLElement {
-		const statusContainer = document.createElement("div");
-		statusContainer.className = "habit-status";
+		const statusContainer = createDiv({ cls: "habit-status" });
 
 		if (this.props.currentValue === undefined || this.props.currentValue === null) {
 			statusContainer.textContent = "No data";
@@ -211,20 +207,15 @@ export class HabitCard extends HTMLElementComponent {
 			const completed = this.props.currentValue as boolean;
 			
 			// Create vertical layout for icon and text
-			const booleanContainer = document.createElement("div");
-			booleanContainer.className = "habit-boolean-container";
+			const booleanContainer = createDiv({ cls: "habit-boolean-container" });
 			
-			const iconContainer = document.createElement("div");
+			const iconContainer = createDiv();
 			iconContainer.appendChild(this.createBooleanStatusIcon(completed));
 			
-			const statusText = document.createElement("div");
-			statusText.textContent = completed ? "Done" : "Not done";
-			statusText.className = "habit-boolean-status-text";
-			if (completed) {
-				statusText.classList.add("habit-boolean-status-text-done");
-			} else {
-				statusText.classList.add("habit-boolean-status-text-not-done");
-			}
+			const statusText = createDiv({
+				cls: completed ? "habit-boolean-status-text habit-boolean-status-text-done" : "habit-boolean-status-text habit-boolean-status-text-not-done",
+				text: completed ? "Done" : "Not done"
+			});
 			
 			booleanContainer.appendChild(iconContainer);
 			booleanContainer.appendChild(statusText);
@@ -239,16 +230,13 @@ export class HabitCard extends HTMLElementComponent {
 			const completionOperator = this.props.habit.completionRule?.operator || CompletionOperator.AT_LEAST;
 			
 			// Create vertical layout container
-			const verticalContainer = document.createElement("div");
-			verticalContainer.className = "habit-vertical-container";
+			const verticalContainer = createDiv({ cls: "habit-vertical-container" });
 			
 			// Visualization container
-			const visualizationContainer = document.createElement("div");
-			visualizationContainer.className = "habit-visualization-container";
+			const visualizationContainer = createDiv({ cls: "habit-visualization-container" });
 			
 			// Progress text
-			const progressText = document.createElement("div");
-			progressText.className = "habit-progress-text";
+			const progressText = createDiv({ cls: "habit-progress-text" });
 			
 			// Determine completion status based on operator
 			let isCompleted = false;
@@ -310,36 +298,32 @@ export class HabitCard extends HTMLElementComponent {
 					
 					// Add thin ring for exceeded targets (At least)
 					if (isExceeded) {
-						const thinRing = document.createElement("div");
-						thinRing.className = "habit-thin-ring";
+						const thinRing = createDiv({ cls: "habit-thin-ring" });
 						visualizationContainer.appendChild(thinRing);
 					}
 					
 					// Add overflow ring for At most when exceeded
 					if (isAtMostExceeded) {
-						const overflowRing = document.createElement("div");
-						overflowRing.className = "habit-overflow-ring";
+						const overflowRing = createDiv({ cls: "habit-overflow-ring" });
 						visualizationContainer.appendChild(overflowRing);
 					}
 					
 					// Add checkmark icon for At least when completed
 					if (completionOperator === CompletionOperator.AT_LEAST && isCompleted) {
-						const checkIcon = document.createElement("div");
+						const checkIcon = createDiv({ cls: "habit-check-icon" });
 						checkIcon.appendChild(this.createCheckIcon());
-						checkIcon.className = "habit-check-icon";
 						visualizationContainer.appendChild(checkIcon);
 					}
 					
 					// Add warning icon for At most when exceeded
 					if (isAtMostExceeded) {
-						const warningIcon = document.createElement("div");
+						const warningIcon = createDiv({ cls: "habit-warning-icon" });
 						warningIcon.appendChild(this.createWarningIcon());
-						warningIcon.className = "habit-warning-icon";
 						visualizationContainer.appendChild(warningIcon);
 					}
 				} else if (visualization === Visualization.CIRCLE_CHECK) {
 					// Circle check visualization for numeric habits
-					const iconContainer = document.createElement("div");
+					const iconContainer = createDiv();
 					iconContainer.appendChild(this.createCircleCheckIcon(isCompleted));
 					visualizationContainer.appendChild(iconContainer);
 				}
@@ -360,7 +344,7 @@ export class HabitCard extends HTMLElementComponent {
 					visualizationContainer.appendChild(chartElement);
 				} else if (visualization === Visualization.CIRCLE_CHECK) {
 					// Circle check visualization for numeric habits without target
-					const iconContainer = document.createElement("div");
+					const iconContainer = createDiv();
 					iconContainer.appendChild(this.createCircleCheckIcon(value > 0));
 					visualizationContainer.appendChild(iconContainer);
 				}

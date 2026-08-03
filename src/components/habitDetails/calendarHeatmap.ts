@@ -121,24 +121,25 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const container = document.createElement("div");
-		container.className = "calendar-heatmap";
+		const container = createDiv({ cls: "calendar-heatmap" });
 		// Container styling is handled by CSS
 
 		// Header with title
-		const header = document.createElement("div");
-		header.className = "calendar-heatmap-header";
+		const header = createDiv({ cls: "calendar-heatmap-header" });
 
-		const title = document.createElement("h3");
-		title.textContent = `Activity Heatmap`;
-		title.className = "calendar-heatmap-title";
+		const title = createEl("h3", {
+			cls: "calendar-heatmap-title",
+			text: "Activity Heatmap"
+		});
 		header.appendChild(title);
 		container.appendChild(header);
 
 		// Menu button - positioned absolutely
-		const menuButton = document.createElement("button");
-		menuButton.type = "button";
-		menuButton.title = "Heatmap Settings";
+		const menuButton = createEl("button", {
+			cls: "calendar-heatmap-menu-button",
+			type: "button",
+			attr: { title: "Heatmap Settings" }
+		});
 		menuButton.innerHTML = `
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<circle cx="12" cy="12" r="1"></circle>
@@ -146,7 +147,6 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				<circle cx="12" cy="19" r="1"></circle>
 			</svg>
 		`;
-		menuButton.className = "calendar-heatmap-menu-button";
 		// Hover states are handled by CSS
 
 		menuButton.addEventListener("click", (e) => {
@@ -162,8 +162,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		container.appendChild(menuDropdown);
 
 		// Create heatmap container
-		this.heatmapContainer = document.createElement("div");
-		this.heatmapContainer.className = "heatmap-container";
+		this.heatmapContainer = createDiv({ cls: "heatmap-container" });
 		// Heatmap container styling is handled by CSS
 
 		this.updateHeatmapContent();
@@ -182,28 +181,32 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 	private createHeader(): HTMLElement {
 		// Header is now created inline in render()
-		return document.createElement("div");
+		return createDiv();
 	}
 
 	private createSettingsMenu(): HTMLElement {
-		const menu = document.createElement("div");
-		menu.className = "heatmap-settings-menu";
-		menu.id = "heatmap-settings-menu";
+		const menu = createDiv({
+			cls: "heatmap-settings-menu",
+			attr: { id: "heatmap-settings-menu" }
+		});
 		// Menu styling is handled by CSS
 
 		// Week start day setting
-		const weekStartLabel = document.createElement("label");
-		weekStartLabel.textContent = "Week start day";
-		weekStartLabel.className = "heatmap-settings-label";
+		const weekStartLabel = createEl("label", {
+			cls: "heatmap-settings-label",
+			text: "Week start day"
+		});
 		menu.appendChild(weekStartLabel);
 
-		const weekStartSelect = document.createElement("select");
-		weekStartSelect.className = "heatmap-settings-select";
+		const weekStartSelect = createEl("select", {
+			cls: "heatmap-settings-select"
+		});
 
 		[WeekStartDay.SUNDAY, WeekStartDay.MONDAY, WeekStartDay.SATURDAY].forEach(day => {
-			const option = document.createElement("option");
-			option.value = String(day);
-			option.textContent = day === WeekStartDay.SUNDAY ? "Sunday" : day === WeekStartDay.MONDAY ? "Monday" : "Saturday";
+			const option = createEl("option", {
+				value: String(day),
+				text: day === WeekStartDay.SUNDAY ? "Sunday" : day === WeekStartDay.MONDAY ? "Monday" : "Saturday"
+			});
 			option.selected = this.settings.weekStartDay === day;
 			weekStartSelect.appendChild(option);
 		});
@@ -217,17 +220,18 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		menu.appendChild(weekStartSelect);
 
 		// Month labels setting
-		const monthLabelsContainer = document.createElement("div");
-		monthLabelsContainer.className = "heatmap-settings-row";
+		const monthLabelsContainer = createDiv({ cls: "heatmap-settings-row" });
 
-		const monthLabelsLabel = document.createElement("label");
-		monthLabelsLabel.textContent = "Show month labels";
-		monthLabelsLabel.className = "heatmap-settings-label-inline";
+		const monthLabelsLabel = createEl("label", {
+			cls: "heatmap-settings-label-inline",
+			text: "Show month labels"
+		});
 
-		const monthLabelsToggle = document.createElement("input");
-		monthLabelsToggle.type = "checkbox";
+		const monthLabelsToggle = createEl("input", {
+			cls: "heatmap-settings-checkbox",
+			type: "checkbox"
+		});
 		monthLabelsToggle.checked = this.settings.showMonthLabels ?? false;
-		monthLabelsToggle.className = "heatmap-settings-checkbox";
 
 		monthLabelsToggle.addEventListener("change", () => {
 			this.settings.showMonthLabels = monthLabelsToggle.checked;
@@ -240,24 +244,24 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		menu.appendChild(monthLabelsContainer);
 
 		// Color scale mode setting
-		const colorScaleLabel = document.createElement("label");
-		colorScaleLabel.textContent = "Color scale mode";
-		colorScaleLabel.className = "heatmap-settings-label";
+		const colorScaleLabel = createEl("label", {
+			cls: "heatmap-settings-label",
+			text: "Color scale mode"
+		});
 		menu.appendChild(colorScaleLabel);
 
-		const colorScaleContainer = document.createElement("div");
-		colorScaleContainer.className = "heatmap-settings-column";
+		const colorScaleContainer = createDiv({ cls: "heatmap-settings-column" });
 
 		[ColorScaleMode.AUTOMATIC, ColorScaleMode.MANUAL].forEach(mode => {
-			const radioContainer = document.createElement("div");
-			radioContainer.className = "heatmap-settings-radio-row";
+			const radioContainer = createDiv({ cls: "heatmap-settings-radio-row" });
 
-			const radio = document.createElement("input");
-			radio.type = "radio";
+			const radio = createEl("input", {
+				cls: "heatmap-settings-radio",
+				type: "radio",
+				value: mode
+			});
 			radio.name = "colorScaleMode";
-			radio.value = mode;
 			radio.checked = this.settings.colorScaleMode === mode;
-			radio.className = "heatmap-settings-radio";
 
 			radio.addEventListener("change", () => {
 				this.settings.colorScaleMode = mode as ColorScaleMode;
@@ -266,9 +270,10 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				this.updateManualFieldsVisibility();
 			});
 
-			const label = document.createElement("label");
-			label.textContent = mode === ColorScaleMode.AUTOMATIC ? "Automatic" : "Manual";
-			label.className = "heatmap-settings-radio-label";
+			const label = createEl("label", {
+				cls: "heatmap-settings-radio-label",
+				text: mode === ColorScaleMode.AUTOMATIC ? "Automatic" : "Manual"
+			});
 
 			radioContainer.appendChild(radio);
 			radioContainer.appendChild(label);
@@ -278,25 +283,27 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		menu.appendChild(colorScaleContainer);
 
 		// Manual scale fields (shown only when manual mode is selected)
-		const manualFieldsContainer = document.createElement("div");
-		manualFieldsContainer.id = "manual-scale-fields";
-		manualFieldsContainer.className = "heatmap-settings-manual-fields";
+		const manualFieldsContainer = createDiv({
+			cls: "heatmap-settings-manual-fields",
+			attr: { id: "manual-scale-fields" }
+		});
 		if (this.settings.colorScaleMode !== ColorScaleMode.MANUAL) {
 			manualFieldsContainer.classList.add("hidden");
 		}
 
 		// Minimum value field
-		const minFieldContainer = document.createElement("div");
-		minFieldContainer.className = "heatmap-settings-field-group";
+		const minFieldContainer = createDiv({ cls: "heatmap-settings-field-group" });
 
-		const minLabel = document.createElement("label");
-		minLabel.textContent = "Minimum value";
-		minLabel.className = "heatmap-settings-field-label";
+		const minLabel = createEl("label", {
+			cls: "heatmap-settings-field-label",
+			text: "Minimum value"
+		});
 
-		const minInput = document.createElement("input");
-		minInput.type = "number";
-		minInput.value = String(this.settings.colorScaleMin ?? 0);
-		minInput.className = "heatmap-settings-input";
+		const minInput = createEl("input", {
+			cls: "heatmap-settings-input",
+			type: "number",
+			value: String(this.settings.colorScaleMin ?? 0)
+		});
 
 		minInput.addEventListener("change", () => {
 			this.settings.colorScaleMin = parseFloat(minInput.value) || 0;
@@ -309,17 +316,18 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		manualFieldsContainer.appendChild(minFieldContainer);
 
 		// Maximum value field
-		const maxFieldContainer = document.createElement("div");
-		maxFieldContainer.className = "heatmap-settings-field-group";
+		const maxFieldContainer = createDiv({ cls: "heatmap-settings-field-group" });
 
-		const maxLabel = document.createElement("label");
-		maxLabel.textContent = "Maximum value";
-		maxLabel.className = "heatmap-settings-field-label";
+		const maxLabel = createEl("label", {
+			cls: "heatmap-settings-field-label",
+			text: "Maximum value"
+		});
 
-		const maxInput = document.createElement("input");
-		maxInput.type = "number";
-		maxInput.value = String(this.settings.colorScaleMax ?? 60);
-		maxInput.className = "heatmap-settings-input";
+		const maxInput = createEl("input", {
+			cls: "heatmap-settings-input",
+			type: "number",
+			value: String(this.settings.colorScaleMax ?? 60)
+		});
 
 		maxInput.addEventListener("change", () => {
 			this.settings.colorScaleMax = parseFloat(maxInput.value) || 60;

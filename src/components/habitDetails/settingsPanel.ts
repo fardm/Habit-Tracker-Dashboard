@@ -14,14 +14,15 @@ export class SettingsPanel extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const container = document.createElement("div");
-		container.className = "settings-panel";
+		const container = createDiv({ cls: "settings-panel" });
 		// Container styling is handled by CSS
 
 		// Settings button
-		const settingsButton = document.createElement("button");
-		settingsButton.type = "button";
-		settingsButton.title = "View Settings";
+		const settingsButton = createEl("button", {
+			cls: "settings-panel-button",
+			type: "button",
+			attr: { title: "View Settings" }
+		});
 		
 		// Eye icon SVG
 		settingsButton.innerHTML = `
@@ -30,8 +31,6 @@ export class SettingsPanel extends HTMLElementComponent {
 				<circle cx="12" cy="12" r="3"></circle>
 			</svg>
 		`;
-		
-		settingsButton.className = "settings-panel-button";
 		// Hover states are handled by CSS
 
 		settingsButton.addEventListener("click", (e) => {
@@ -43,15 +42,17 @@ export class SettingsPanel extends HTMLElementComponent {
 		container.appendChild(settingsButton);
 
 		// Settings dropdown panel
-		const panel = document.createElement("div");
-		panel.className = "settings-dropdown";
-		panel.id = "settings-dropdown";
+		const panel = createDiv({
+			cls: "settings-dropdown",
+			attr: { id: "settings-dropdown" }
+		});
 		// Panel styling is handled by CSS
 
 		// Section visibility settings
-		const sectionTitle = document.createElement("h4");
-		sectionTitle.textContent = "Section Visibility";
-		sectionTitle.className = "settings-panel-section-title";
+		const sectionTitle = createEl("h4", {
+			cls: "settings-panel-section-title",
+			text: "Section Visibility"
+		});
 		panel.appendChild(sectionTitle);
 
 		const sectionToggles = this.createSectionToggles();
@@ -71,8 +72,7 @@ export class SettingsPanel extends HTMLElementComponent {
 	}
 
 	private createSectionToggles(): HTMLElement {
-		const container = document.createElement("div");
-		container.className = "settings-panel-toggles";
+		const container = createDiv({ cls: "settings-panel-toggles" });
 
 		const sections: { key: keyof SectionVisibility; label: string }[] = [
 			{ key: "showHeatmap", label: "Activity Heatmap" },
@@ -82,18 +82,19 @@ export class SettingsPanel extends HTMLElementComponent {
 		];
 
 		sections.forEach(section => {
-			const toggleRow = document.createElement("div");
-			toggleRow.className = "settings-panel-toggle-row";
+			const toggleRow = createDiv({ cls: "settings-panel-toggle-row" });
 
-			const label = document.createElement("label");
-			label.textContent = section.label;
-			label.className = "settings-panel-toggle-label";
+			const label = createEl("label", {
+				cls: "settings-panel-toggle-label",
+				text: section.label
+			});
 			toggleRow.appendChild(label);
 
-			const toggle = document.createElement("input");
-			toggle.type = "checkbox";
+			const toggle = createEl("input", {
+				cls: "settings-panel-toggle-checkbox",
+				type: "checkbox"
+			});
 			toggle.checked = this.props.settings.sectionVisibility[section.key];
-			toggle.className = "settings-panel-toggle-checkbox";
 
 			toggle.addEventListener("change", () => {
 				const newSettings = { ...this.props.settings };

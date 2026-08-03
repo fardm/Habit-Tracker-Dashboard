@@ -21,8 +21,7 @@ export class HabitMenu extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const menu = document.createElement("div");
-		menu.className = "habit-menu";
+		const menu = createDiv({ cls: "habit-menu" });
 
 		const menuItems = [
 			{ label: "Edit Habit", action: this.props.onEdit },
@@ -31,13 +30,10 @@ export class HabitMenu extends HTMLElementComponent {
 		];
 
 		menuItems.forEach(item => {
-			const menuItem = document.createElement("div");
-			menuItem.className = "habit-menu-item";
-			menuItem.textContent = item.label;
-
-			if (item.isDestructive) {
-				menuItem.classList.add("habit-menu-item-destructive");
-			}
+			const menuItem = createDiv({
+				cls: item.isDestructive ? "habit-menu-item habit-menu-item-destructive" : "habit-menu-item",
+				text: item.label
+			});
 
 			menuItem.addEventListener("click", (e) => {
 				e.stopPropagation();

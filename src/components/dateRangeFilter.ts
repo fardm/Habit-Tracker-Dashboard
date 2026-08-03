@@ -19,23 +19,24 @@ export class DateRangeFilter extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const container = document.createElement("div");
-		container.className = "date-range-filter";
+		const container = createDiv({ cls: "date-range-filter" });
 		container.style.cssText = `
 			display: inline-block;
 			margin-right: 12px;
 		`;
 
-		const label = document.createElement("label");
-		label.textContent = "Date Range:";
+		const label = createEl("label", {
+			text: "Date Range:"
+		});
 		label.style.cssText = `
 			font-size: 12px;
 			color: var(--text-muted);
 			margin-right: 8px;
 		`;
 
-		const select = document.createElement("select");
-		select.className = "date-range-select";
+		const select = createEl("select", {
+			cls: "date-range-select"
+		});
 		select.style.cssText = `
 			padding: 6px 12px;
 			border-radius: 4px;
@@ -58,9 +59,10 @@ export class DateRangeFilter extends HTMLElementComponent {
 		];
 
 		options.forEach(option => {
-			const optionElement = document.createElement("option");
-			optionElement.value = option.value;
-			optionElement.textContent = option.label;
+			const optionElement = createEl("option", {
+				value: option.value,
+				text: option.label
+			});
 			if (option.value === this.props.currentFilter) {
 				optionElement.selected = true;
 			}

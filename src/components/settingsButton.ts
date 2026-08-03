@@ -13,10 +13,11 @@ export class SettingsButton extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const button = document.createElement("button");
-		button.className = "habit-tracker-settings-btn";
-		button.type = "button";
-		button.title = "Settings";
+		const button = createEl("button", {
+			cls: "habit-tracker-settings-btn settings-button",
+			type: "button",
+			attr: { title: "Settings" }
+		});
 
 		// Settings icon SVG
 		button.innerHTML = `
@@ -25,8 +26,6 @@ export class SettingsButton extends HTMLElementComponent {
 				<circle cx="12" cy="12" r="3"></circle>
 			</svg>
 		`;
-
-		button.classList.add("settings-button");
 
 		button.addEventListener("click", (e) => {
 			e.preventDefault();

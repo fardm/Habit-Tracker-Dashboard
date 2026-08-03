@@ -47,19 +47,16 @@ export class Dashboard extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const dashboard = document.createElement("div");
-		dashboard.className = "habit-tracker-dashboard";
+		const dashboard = createDiv({ cls: "habit-tracker-dashboard" });
 		
 		// Dashboard styling is handled by CSS
 
 		// Controls row
-		const controlsRow = document.createElement("div");
-		controlsRow.className = "dashboard-controls";
+		const controlsRow = createDiv({ cls: "dashboard-controls" });
 		// Controls row styling is handled by CSS
 
 		// Left side: Settings button, Add Habit button and Refresh button
-		const leftControls = document.createElement("div");
-		leftControls.className = "dashboard-left-controls";
+		const leftControls = createDiv({ cls: "dashboard-left-controls" });
 		
 		const settingsButton = new SettingsButton(() => {
 			this.showSettingsModal();
@@ -77,8 +74,7 @@ export class Dashboard extends HTMLElementComponent {
 		leftControls.appendChild(refreshButton.render());
 
 		// Center: Date navigator
-		const centerControls = document.createElement("div");
-		centerControls.className = "dashboard-center-controls";
+		const centerControls = createDiv({ cls: "dashboard-center-controls" });
 		
 		this.dateNavigator = new DateNavigator(this.currentDate, (date) => {
 			this.handleDateChange(date);
@@ -86,8 +82,7 @@ export class Dashboard extends HTMLElementComponent {
 		centerControls.appendChild(this.dateNavigator.render());
 
 		// Right side: View mode switcher
-		const rightControls = document.createElement("div");
-		rightControls.className = "dashboard-right-controls";
+		const rightControls = createDiv({ cls: "dashboard-right-controls" });
 		// Right controls styling is handled by CSS
 		
 		this.viewModeSwitcher = new ViewModeSwitcher({
@@ -105,8 +100,7 @@ export class Dashboard extends HTMLElementComponent {
 		// Mobile-specific styles are handled by CSS in styles.css
 
 		// Habits container
-		const habitsContainer = document.createElement("div");
-		habitsContainer.className = "habits-container";
+		const habitsContainer = createDiv({ cls: "habits-container" });
 		// Habits container styling is handled by CSS
 
 		// Apply grid or list layout based on view mode
@@ -270,9 +264,10 @@ export class Dashboard extends HTMLElementComponent {
 		container.empty();
 
 		if (this.habits.length === 0) {
-			const emptyState = document.createElement("div");
-			emptyState.className = "habit-dashboard-empty-state";
-			emptyState.textContent = "No habits yet. Click 'Add Habit' to create your first habit!";
+			const emptyState = createDiv({
+				cls: "habit-dashboard-empty-state",
+				text: "No habits yet. Click 'Add Habit' to create your first habit!"
+			});
 			container.appendChild(emptyState);
 			return;
 		}
@@ -562,8 +557,7 @@ export class Dashboard extends HTMLElementComponent {
 
 		if (!this.container) return;
 
-		const indicator = document.createElement("div");
-		indicator.className = "drop-indicator";
+		const indicator = createDiv({ cls: "drop-indicator" });
 
 		// Insert indicator before the target card
 		targetCard.parentNode?.insertBefore(indicator, targetCard);

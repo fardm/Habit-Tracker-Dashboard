@@ -17,18 +17,17 @@ export class StatisticsDashboard extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const container = document.createElement("div");
-		container.className = "statistics-dashboard";
+		const container = createDiv({ cls: "statistics-dashboard" });
 		// Container styling is handled by CSS
 
-		const title = document.createElement("h3");
-		title.textContent = "Statistics";
-		title.className = "statistics-title";
+		const title = createEl("h3", {
+			cls: "statistics-title",
+			text: "Statistics"
+		});
 		container.appendChild(title);
 
 		// Statistics grid
-		const grid = document.createElement("div");
-		grid.className = "statistics-grid";
+		const grid = createDiv({ cls: "statistics-grid" });
 
 		// Stat items
 		const stats = this.getStatItems();
@@ -62,22 +61,24 @@ export class StatisticsDashboard extends HTMLElementComponent {
 	}
 
 	private createStatItem(stat: { label: string; value: string; icon: string }): HTMLElement {
-		const item = document.createElement("div");
-		item.className = "statistics-item";
+		const item = createDiv({ cls: "statistics-item" });
 
-		const icon = document.createElement("div");
-		icon.textContent = stat.icon;
-		icon.className = "statistics-icon";
+		const icon = createDiv({
+			cls: "statistics-icon",
+			text: stat.icon
+		});
 		item.appendChild(icon);
 
-		const value = document.createElement("div");
-		value.textContent = stat.value;
-		value.className = "statistics-value";
+		const value = createDiv({
+			cls: "statistics-value",
+			text: stat.value
+		});
 		item.appendChild(value);
 
-		const label = document.createElement("div");
-		label.textContent = stat.label;
-		label.className = "statistics-label";
+		const label = createDiv({
+			cls: "statistics-label",
+			text: stat.label
+		});
 		item.appendChild(label);
 
 		return item;

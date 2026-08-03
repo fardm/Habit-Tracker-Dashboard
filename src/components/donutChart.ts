@@ -9,8 +9,7 @@ export class DonutChart {
 	constructor(size: number = 32, strokeWidth: number = 3) {
 		this.size = size;
 		this.strokeWidth = strokeWidth;
-		this.container = document.createElement("div");
-		this.container.className = "habit-donut-chart";
+		this.container = createDiv({ cls: "habit-donut-chart" });
 		this.container.style.width = `${size}px`;
 		this.container.style.height = `${size}px`;
 	}

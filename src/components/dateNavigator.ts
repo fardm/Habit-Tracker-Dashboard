@@ -12,39 +12,41 @@ export class DateNavigator {
 	}
 
 	render(): HTMLElement {
-		const navigator = document.createElement("div");
-		navigator.className = "date-navigator";
+		const navigator = createDiv({ cls: "date-navigator" });
 
 		// Left arrow button
-		const leftButton = document.createElement("button");
+		const leftButton = createEl("button", {
+			cls: "date-navigator-button"
+		});
 		leftButton.innerHTML = `
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<polyline points="15 18 9 12 15 6"></polyline>
 			</svg>
 		`;
-		leftButton.className = "date-navigator-button";
 		// Hover states are handled by CSS
 		leftButton.addEventListener("click", () => {
 			this.previousDay();
 		});
 
 		// Date display
-		const dateDisplay = document.createElement("button");
-		dateDisplay.textContent = this.formatDate(this.currentDate);
-		dateDisplay.className = "date-navigator-display";
+		const dateDisplay = createEl("button", {
+			cls: "date-navigator-display",
+			text: this.formatDate(this.currentDate)
+		});
 		// Hover states are handled by CSS
 		dateDisplay.addEventListener("click", (e) => {
 			this.openDatePicker(e, dateDisplay);
 		});
 
 		// Right arrow button
-		const rightButton = document.createElement("button");
+		const rightButton = createEl("button", {
+			cls: "date-navigator-button"
+		});
 		rightButton.innerHTML = `
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<polyline points="9 18 15 12 9 6"></polyline>
 			</svg>
 		`;
-		rightButton.className = "date-navigator-button";
 		// Hover states are handled by CSS
 		rightButton.addEventListener("click", () => {
 			this.nextDay();
@@ -100,9 +102,10 @@ export class DateNavigator {
 
 	private openDatePicker(event: MouseEvent, button: HTMLElement): void {
 		// Create a hidden date input positioned directly below the button
-		const dateInput = document.createElement("input");
-		dateInput.type = "date";
-		dateInput.className = "date-picker-hidden-input";
+		const dateInput = createEl("input", {
+			cls: "date-picker-hidden-input",
+			type: "date"
+		});
 		
 		const rect = button.getBoundingClientRect();
 		dateInput.style.setProperty("--date-picker-left", `${rect.left}px`);

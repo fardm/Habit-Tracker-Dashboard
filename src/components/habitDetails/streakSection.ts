@@ -26,18 +26,17 @@ export class StreakSection extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const container = document.createElement("div");
-		container.className = "streak-section";
+		const container = createDiv({ cls: "streak-section" });
 		// Container styling is handled by CSS
 
-		const title = document.createElement("h3");
-		title.textContent = "Streaks";
-		title.className = "streak-title";
+		const title = createEl("h3", {
+			cls: "streak-title",
+			text: "Streaks"
+		});
 		container.appendChild(title);
 
 		// Streak cards grid
-		const grid = document.createElement("div");
-		grid.className = "streak-grid";
+		const grid = createDiv({ cls: "streak-grid" });
 
 		// Current streak card
 		const currentStreakCard = this.createStreakCard(
@@ -62,21 +61,19 @@ export class StreakSection extends HTMLElementComponent {
 		const filteredHistory = this.props.streaks.streakHistory.filter(streak => streak.length >= minimumLength);
 		
 		if (filteredHistory.length > 0) {
-			const historySection = document.createElement("div");
-			historySection.className = "streak-history-section";
+			const historySection = createDiv({ cls: "streak-history-section" });
 
 			// Collapsible header
-			const historyHeader = document.createElement("div");
-			historyHeader.className = "streak-history-header";
+			const historyHeader = createDiv({ cls: "streak-history-header" });
 
-			const historyTitle = document.createElement("h4");
-			historyTitle.textContent = "Streak History";
-			historyTitle.className = "streak-history-title";
+			const historyTitle = createEl("h4", {
+				cls: "streak-history-title",
+				text: "Streak History"
+			});
 			historyHeader.appendChild(historyTitle);
 
 			// Chevron icon
-			const chevron = document.createElement("div");
-			chevron.className = "streak-history-chevron";
+			const chevron = createDiv({ cls: "streak-history-chevron" });
 			chevron.style.setProperty("--chevron-rotation", this.isExpanded ? '0deg' : '-90deg');
 			
 			const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -98,14 +95,12 @@ export class StreakSection extends HTMLElementComponent {
 			historySection.appendChild(historyHeader);
 
 			// Collapsible content
-			const historyContent = document.createElement("div");
-			historyContent.className = "streak-history-content";
+			const historyContent = createDiv({ cls: "streak-history-content" });
 			if (!this.isExpanded) {
 				historyContent.classList.add("hidden");
 			}
 
-			const historyList = document.createElement("div");
-			historyList.className = "streak-history-list";
+			const historyList = createDiv({ cls: "streak-history-list" });
 
 			filteredHistory.forEach(streak => {
 				const historyItem = this.createHistoryItem(streak);
@@ -135,42 +130,45 @@ export class StreakSection extends HTMLElementComponent {
 	}
 
 	private createStreakCard(icon: string, label: string, valueText: string): HTMLElement {
-		const card = document.createElement("div");
-		card.className = "streak-card";
+		const card = createDiv({ cls: "streak-card" });
 
-		const iconEl = document.createElement("div");
-		iconEl.textContent = icon;
-		iconEl.className = "streak-card-icon";
+		const iconEl = createDiv({
+			cls: "streak-card-icon",
+			text: icon
+		});
 		card.appendChild(iconEl);
 
-		const valueEl = document.createElement("div");
-		valueEl.textContent = valueText;
-		valueEl.className = "streak-card-value";
+		const valueEl = createDiv({
+			cls: "streak-card-value",
+			text: valueText
+		});
 		card.appendChild(valueEl);
 
-		const labelEl = document.createElement("div");
-		labelEl.textContent = label;
-		labelEl.className = "streak-card-label";
+		const labelEl = createDiv({
+			cls: "streak-card-label",
+			text: label
+		});
 		card.appendChild(labelEl);
 
 		return card;
 	}
 
 	private createHistoryItem(streak: { startDate: Date; endDate: Date; length: number }): HTMLElement {
-		const item = document.createElement("div");
-		item.className = "streak-history-item";
+		const item = createDiv({ cls: "streak-history-item" });
 
-		const dateRange = document.createElement("span");
+		const dateRange = createSpan({
+			cls: "streak-history-date"
+		});
 		const adapter = getCalendarAdapter(this.props.reportCalendar);
 		const startDate = adapter.formatDisplayDate(streak.startDate);
 		const endDate = adapter.formatDisplayDate(streak.endDate);
 		dateRange.textContent = `${startDate} - ${endDate}`;
-		dateRange.className = "streak-history-date";
 		item.appendChild(dateRange);
 
-		const length = document.createElement("span");
-		length.textContent = this.formatStreakText(streak.length);
-		length.className = "streak-history-length";
+		const length = createSpan({
+			cls: "streak-history-length",
+			text: this.formatStreakText(streak.length)
+		});
 		item.appendChild(length);
 
 		return item;

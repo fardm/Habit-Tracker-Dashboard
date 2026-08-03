@@ -13,10 +13,11 @@ export class AddHabitButton extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const button = document.createElement("button");
-		button.className = "habit-tracker-add-habit-btn";
-		button.innerHTML = "+ Add Habit";
-		button.type = "button";
+		const button = createEl("button", {
+			cls: "habit-tracker-add-habit-btn",
+			text: "+ Add Habit",
+			type: "button"
+		});
 		// Hover states are handled by CSS
 
 		// Add click handler

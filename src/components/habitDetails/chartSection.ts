@@ -22,37 +22,40 @@ export class ChartSection extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const container = document.createElement("div");
-		container.className = "chart-section";
+		const container = createDiv({ cls: "chart-section" });
 		// Container styling is handled by CSS
 
 		// Header with title
-		const header = document.createElement("div");
-		header.className = "chart-header";
+		const header = createDiv({ cls: "chart-header" });
 
-		const title = document.createElement("h3");
-		title.textContent = "Progress";
-		title.className = "chart-title";
+		const title = createEl("h3", {
+			cls: "chart-title",
+			text: "Progress"
+		});
 		header.appendChild(title);
 		container.appendChild(header);
 
 		// Chart type toggle - positioned absolutely
-		const toggleContainer = document.createElement("div");
-		toggleContainer.className = "chart-toggle-container";
+		const toggleContainer = createDiv({ cls: "chart-toggle-container" });
 
-		const lineButton = document.createElement("button");
-		lineButton.type = "button";
+		const themeColor = this.getThemeColor();
+
+		const lineButton = createEl("button", {
+			cls: this.props.chartType === ChartType.LINE ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button",
+			type: "button",
+			attr: { title: "Line Chart" }
+		});
 		lineButton.innerHTML = `
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
 			</svg>
 		`;
-		lineButton.title = "Line Chart";
-		const themeColor = this.getThemeColor();
-		lineButton.className = this.props.chartType === ChartType.LINE ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button";
 
-		const barButton = document.createElement("button");
-		barButton.type = "button";
+		const barButton = createEl("button", {
+			cls: this.props.chartType === ChartType.BAR ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button",
+			type: "button",
+			attr: { title: "Bar Chart" }
+		});
 		barButton.innerHTML = `
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<line x1="12" y1="20" x2="12" y2="10"></line>
@@ -60,8 +63,6 @@ export class ChartSection extends HTMLElementComponent {
 				<line x1="6" y1="20" x2="6" y2="16"></line>
 			</svg>
 		`;
-		barButton.title = "Bar Chart";
-		barButton.className = this.props.chartType === ChartType.BAR ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button";
 
 		lineButton.addEventListener("click", (e) => {
 			e.preventDefault();
@@ -87,8 +88,7 @@ export class ChartSection extends HTMLElementComponent {
 		container.appendChild(toggleContainer);
 
 		// Chart container
-		this.chartContainer = document.createElement("div");
-		this.chartContainer.className = "chart-container";
+		this.chartContainer = createDiv({ cls: "chart-container" });
 		// Chart container styling is handled by CSS
 
 		if (typeof ResizeObserver !== "undefined") {

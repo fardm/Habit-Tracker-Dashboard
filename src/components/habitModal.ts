@@ -203,10 +203,11 @@ export class HabitModal extends Modal {
 			const radioRow = radioContainer.createDiv();
 			radioRow.className = "visualization-radio-row";
 
-			const radio = document.createElement("input");
-			radio.type = "radio";
+			const radio = createEl("input", {
+				type: "radio",
+				value: option.value
+			});
 			radio.name = "visualization";
-			radio.value = option.value;
 			radio.checked = this.formData.visualization === option.value;
 			radio.addEventListener("change", () => {
 				this.formData.visualization = option.value as Visualization;

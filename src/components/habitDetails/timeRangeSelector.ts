@@ -14,13 +14,13 @@ export class TimeRangeSelector extends HTMLElementComponent {
 	}
 
 	render(): HTMLElement {
-		const container = document.createElement("div");
-		container.className = "time-range-selector";
+		const container = createDiv({ cls: "time-range-selector" });
 		// Container styling is handled by CSS
 
-		const label = document.createElement("span");
-		label.textContent = "Time Range:";
-		label.className = "time-range-label";
+		const label = createSpan({
+			cls: "time-range-label",
+			text: "Time Range:"
+		});
 		container.appendChild(label);
 
 		const ranges: { value: TimeRange; label: string }[] = [
@@ -32,9 +32,10 @@ export class TimeRangeSelector extends HTMLElementComponent {
 		];
 
 		ranges.forEach(range => {
-			const button = document.createElement("button");
-			button.textContent = range.label;
-			button.className = this.props.currentRange === range.value ? "time-range-button time-range-button-active" : "time-range-button";
+			const button = createEl("button", {
+				cls: this.props.currentRange === range.value ? "time-range-button time-range-button-active" : "time-range-button",
+				text: range.label
+			});
 
 			button.addEventListener("click", () => {
 				this.props.onRangeChange(range.value);
