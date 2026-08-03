@@ -605,7 +605,6 @@ export class Dashboard extends HTMLElementComponent {
 		if (this.dataCache) {
 			this.dataCache.updateSettings(this.currentSettings);
 			await this.dataCache.buildCache();
-			console.log("[Dashboard] Cache rebuilt after refresh:", this.dataCache.getStats());
 		}
 		
 		await this.loadHabitValues();

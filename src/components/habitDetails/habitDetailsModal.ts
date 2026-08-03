@@ -248,18 +248,10 @@ export class HabitDetailsModal extends Modal {
 				this.selectedYear
 			);
 
-			console.log(
-				`[HabitDetailsModal] Loading data for year ${this.selectedYear} (${reportCalendar}), date range: ${dateRange.startDate.toISOString()} to ${dateRange.endDate.toISOString()}`
-			);
-
 			const cachedValues = this.dataCache.getHabitValues(
 				this.habit,
 				dateRange.startDate,
 				dateRange.endDate
-			);
-
-			console.log(
-				`[HabitDetailsModal] Loaded ${cachedValues.length} values from cache for ${this.habit.name}`
 			);
 
 			// Parse ISO habit dates as local midnight so heatmap keys stay Gregorian YYYY-MM-DD
