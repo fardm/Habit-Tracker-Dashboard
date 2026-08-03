@@ -91,7 +91,11 @@ export class Dashboard extends HTMLElementComponent {
 		
 		this.viewModeSwitcher = new ViewModeSwitcher({
 			currentMode: this.currentViewMode,
-			onModeChange: (mode) => this.handleViewModeChange(mode)
+			onModeChange: (mode) => {
+				void this.handleViewModeChange(mode).catch(error => {
+					console.error("Error handling view mode change:", error);
+				});
+			}
 		});
 		rightControls.appendChild(this.viewModeSwitcher.render());
 
@@ -291,7 +295,11 @@ export class Dashboard extends HTMLElementComponent {
 				viewMode: effectiveViewMode,
 				onEdit: (habitId) => this.handleEditHabit(habitId),
 				onDuplicate: (habitId) => this.handleDuplicateHabit(habitId),
-				onDelete: (habitId) => this.handleDeleteHabit(habitId),
+				onDelete: (habitId) => {
+					void this.handleDeleteHabit(habitId).catch(error => {
+						console.error("Error deleting habit:", error);
+					});
+				},
 				onClick: (habitId) => this.handleHabitClick(habitId),
 				onDragStart: (habitId, event) => this.handleDragStart(habitId, event),
 				onDragOver: (event) => this.handleDragOver(event),
@@ -487,13 +495,16 @@ export class Dashboard extends HTMLElementComponent {
 			target: habit.target,
 			trackerSettings: this.currentSettings,
 			trackerFilePath: this.file.path,
-			onClose: async () => {
+			onClose: () => {
 				modal.close();
 				// Reload habits to pick up any theme color changes
-				await this.loadHabits();
-				if (this.container) {
-					this.renderHabits(this.container);
-				}
+				void this.loadHabits().then(() => {
+					if (this.container) {
+						this.renderHabits(this.container);
+					}
+				}).catch(error => {
+					console.error("Error reloading habits after modal close:", error);
+				});
 			}
 		}, habit, this.dataCache!);
 		modal.open();
