@@ -404,9 +404,9 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		for (const label of monthLabels) {
 			const el = document.createElement("span");
+			el.className = "heatmap-month-label";
 			el.textContent = label.label;
 			el.style.left = `${label.weekIndex * (cellSize + gap)}px`;
-			// Other styles handled by CSS
 			row.appendChild(el);
 		}
 

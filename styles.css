@@ -131,11 +131,11 @@
 
 .habit-menu-btn {
 	position: absolute;
-	top: 50%;
-	right: 16px;
+	top: 25%;
+	right: 10px;
 	transform: translateY(-50%);
-	background: none;
-	box-shadow: none;
+	background: none !important;
+	box-shadow: none !important;
 	border: none;
 	color: var(--text-muted);
 	font-size: 20px;
@@ -148,7 +148,8 @@
 
 .habit-menu-btn:hover {
 	color: var(--text-normal);
-	background-color: var(--background-modifier-hover);
+	background-color: var(--interactive-normal) !important;
+	
 }
 
 .habit-drag-handle {
@@ -593,30 +594,40 @@
 	margin-bottom: 24px;
 }
 
-.habit-details-year-nav-container {
-	display: inline-flex;
+
+.year-nav-container {
+	display: flex;
 	align-items: center;
+	justify-self: center;
 	gap: 12px;
 }
 
-.habit-details-year-nav-button {
+.year-nav-display {
+	background: var(--background-secondary);
+	padding: 4px 10px;
+	border-radius: 6px;
+	border: 1px solid var(--background-modifier-border);
+
+}
+
+.year-nav-button {
 	color: var(--text-muted);
 	cursor: pointer;
 	font-size: 16px;
 	line-height: 1;
-	background: var(--background-secondary);
+	background: var(--background-secondary) !important;
 	padding: 6px 8px;
 	border-radius: 6px;
 	border: 1px solid var(--background-modifier-border);
 	transition: all 0.15s ease;
 }
 
-.habit-details-year-nav-button:hover {
+.year-nav-button:hover {
 	color: var(--text-normal);
 	background: var(--background-modifier-hover);
 }
 
-.habit-details-year-nav-button:active {
+.year-nav-button:active {
 	transform: scale(0.95);
 }
 
@@ -666,11 +677,12 @@
 
 .calendar-heatmap-menu-button {
 	position: absolute;
-	top: 20px;
-	right: 20px;
+	top: 15px;
+	right: 10px;
 	padding: 6px 8px;
-	background-color: var(--background-secondary);
-	border: 1px solid var(--background-modifier-border);
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
 	border-radius: 6px;
 	cursor: pointer;
 	transition: all 0.2s;
@@ -682,7 +694,7 @@
 
 .calendar-heatmap-menu-button:hover {
 	color: var(--text-normal);
-	background-color: var(--background-modifier-hover);
+	background-color: var(--background-secondary) !important;
 }
 
 .heatmap-settings-menu {
@@ -826,16 +838,17 @@
 
 .heatmap-month-labels {
 	position: relative;
-	height: 14px;
-	margin-bottom: 2px;
+	height: 18px;
+	margin-bottom: 4px;
 	font-size: 10px;
 	color: var(--text-muted);
-	line-height: 14px;
+	line-height: 18px;
 }
 
 .heatmap-month-label {
 	position: absolute;
 	top: 0;
+	left: 0;
 	white-space: nowrap;
 	pointer-events: none;
 }
