@@ -8,13 +8,14 @@ export function getDateRange(filter: DateRangeFilter, customStartDate?: Date, cu
 	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	
 	switch (filter) {
-		case DateRangeFilter.YESTERDAY:
+		case DateRangeFilter.YESTERDAY: {
 			const yesterday = new Date(today);
 			yesterday.setDate(today.getDate() - 1);
 			return {
 				start: yesterday,
 				end: today
 			};
+		}
 		
 		case DateRangeFilter.TODAY:
 			return {
@@ -22,7 +23,7 @@ export function getDateRange(filter: DateRangeFilter, customStartDate?: Date, cu
 				end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
 			};
 		
-		case DateRangeFilter.THIS_WEEK:
+		case DateRangeFilter.THIS_WEEK: {
 			const dayOfWeek = today.getDay();
 			const startOfWeek = new Date(today);
 			startOfWeek.setDate(today.getDate() - dayOfWeek);
@@ -30,38 +31,43 @@ export function getDateRange(filter: DateRangeFilter, customStartDate?: Date, cu
 				start: startOfWeek,
 				end: new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000)
 			};
+		}
 		
-		case DateRangeFilter.THIS_MONTH:
+		case DateRangeFilter.THIS_MONTH: {
 			const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 			const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 			return {
 				start: startOfMonth,
 				end: new Date(endOfMonth.getTime() + 24 * 60 * 60 * 1000)
 			};
+		}
 		
-		case DateRangeFilter.LAST_30_DAYS:
+		case DateRangeFilter.LAST_30_DAYS: {
 			const thirtyDaysAgo = new Date(today);
 			thirtyDaysAgo.setDate(today.getDate() - 30);
 			return {
 				start: thirtyDaysAgo,
 				end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
 			};
+		}
 		
-		case DateRangeFilter.LAST_90_DAYS:
+		case DateRangeFilter.LAST_90_DAYS: {
 			const ninetyDaysAgo = new Date(today);
 			ninetyDaysAgo.setDate(today.getDate() - 90);
 			return {
 				start: ninetyDaysAgo,
 				end: new Date(today.getTime() + 24 * 60 * 60 * 1000)
 			};
+		}
 		
-		case DateRangeFilter.THIS_YEAR:
+		case DateRangeFilter.THIS_YEAR: {
 			const startOfYear = new Date(today.getFullYear(), 0, 1);
 			const endOfYear = new Date(today.getFullYear() + 1, 0, 0);
 			return {
 				start: startOfYear,
 				end: endOfYear
 			};
+		}
 		
 		case DateRangeFilter.CUSTOM:
 			if (customStartDate && customEndDate) {
