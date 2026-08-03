@@ -37,7 +37,7 @@ export function registerTrackerFileType(plugin: Plugin): void {
 function handleTrackerFileOpen(plugin: Plugin, file: TFile): void {
 	// Use setTimeout to run after Obsidian has created the new leaf
 	// This allows us to detect if a duplicate was created and close it
-	setTimeout(() => {
+	window.setTimeout(() => {
 		const leaves = plugin.app.workspace.getLeavesOfType(TRACKER_VIEW_TYPE);
 		const matchingLeaves = leaves.filter(leaf => {
 			const leafFile = (leaf.view as { file?: TFile }).file;

@@ -128,7 +128,7 @@ export class DateNavigator {
 		
 		dateInput.addEventListener("blur", () => {
 			// Remove input when focus is lost (after a small delay to allow selection)
-			setTimeout(() => {
+			window.setTimeout(() => {
 				if (document.body.contains(dateInput)) {
 					document.body.removeChild(dateInput);
 				}

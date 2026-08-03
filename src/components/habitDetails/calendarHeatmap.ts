@@ -359,7 +359,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			} else {
 				menu.classList.remove("heatmap-settings-menu-visible");
 				// Wait for transition to complete before hiding
-				setTimeout(() => {
+				window.setTimeout(() => {
 					if (!this.isMenuOpen) {
 						menu.classList.remove("visible");
 						menu.classList.add("hidden");

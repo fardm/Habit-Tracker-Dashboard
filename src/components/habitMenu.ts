@@ -118,7 +118,7 @@ export class HabitMenu extends HTMLElementComponent {
 		};
 
 		// Add event listeners
-		setTimeout(() => {
+		window.setTimeout(() => {
 			document.addEventListener("click", closeMenu);
 			document.addEventListener("keydown", closeOnEscape);
 		}, 10);
