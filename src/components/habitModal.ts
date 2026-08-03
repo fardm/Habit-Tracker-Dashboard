@@ -292,9 +292,11 @@ export class HabitModal extends Modal {
 	private updateNumericSettingsVisibility(): void {
 		if (this.numericSettingsContainer) {
 			if (this.formData.type === HabitType.NUMERIC) {
-				this.numericSettingsContainer.style.display = "block";
+				this.numericSettingsContainer.classList.remove("hidden");
+				this.numericSettingsContainer.classList.add("visible");
 			} else {
-				this.numericSettingsContainer.style.display = "none";
+				this.numericSettingsContainer.classList.remove("visible");
+				this.numericSettingsContainer.classList.add("hidden");
 			}
 		}
 	}

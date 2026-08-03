@@ -82,7 +82,8 @@ export class StreakSection extends HTMLElementComponent {
 				</svg>
 			`;
 			chevron.className = "streak-history-chevron";
-			chevron.style.transform = this.isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
+			chevron.style.setProperty("--chevron-rotation", this.isExpanded ? '0deg' : '-90deg');
+			chevron.style.transform = "var(--chevron-rotation)";
 			historyHeader.appendChild(chevron);
 
 			historySection.appendChild(historyHeader);
@@ -91,7 +92,7 @@ export class StreakSection extends HTMLElementComponent {
 			const historyContent = document.createElement("div");
 			historyContent.className = "streak-history-content";
 			if (!this.isExpanded) {
-				historyContent.style.display = "none";
+				historyContent.classList.add("hidden");
 			}
 
 			const historyList = document.createElement("div");
@@ -108,8 +109,15 @@ export class StreakSection extends HTMLElementComponent {
 			// Toggle functionality
 			historyHeader.addEventListener("click", () => {
 				this.isExpanded = !this.isExpanded;
-				chevron.style.transform = this.isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
-				historyContent.style.display = this.isExpanded ? 'block' : 'none';
+				chevron.style.setProperty("--chevron-rotation", this.isExpanded ? '0deg' : '-90deg');
+				chevron.style.transform = "var(--chevron-rotation)";
+				if (this.isExpanded) {
+					historyContent.classList.remove("hidden");
+					historyContent.classList.add("visible");
+				} else {
+					historyContent.classList.remove("visible");
+					historyContent.classList.add("hidden");
+				}
 			});
 
 			container.appendChild(historySection);

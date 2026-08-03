@@ -1345,7 +1345,38 @@
 	margin-top: 16px;
 }
 
-/* Mobile Modal Styles */
+/* ============================================
+   DATE PICKER INPUT STYLES
+   ============================================ */
+
+.date-picker-hidden-input {
+	position: fixed;
+	opacity: 0.01;
+	pointer-events: auto;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	z-index: 1000;
+}
+
+/* ============================================
+   UTILITY CLASSES FOR DISPLAY STATES
+   ============================================ */
+
+.hidden {
+	display: none !important;
+}
+
+.visible {
+	display: block !important;
+}
+
+/* ============================================
+   MOBILE MODAL STYLES
+   ============================================ */
+
 @media (max-width: 768px) {
 	.modal-content {
 		padding: 16px !important;

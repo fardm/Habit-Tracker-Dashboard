@@ -282,7 +282,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		manualFieldsContainer.id = "manual-scale-fields";
 		manualFieldsContainer.className = "heatmap-settings-manual-fields";
 		if (this.settings.colorScaleMode !== ColorScaleMode.MANUAL) {
-			manualFieldsContainer.style.display = "none";
+			manualFieldsContainer.classList.add("hidden");
 		}
 
 		// Minimum value field
@@ -335,9 +335,9 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		// Hide color scale settings for boolean habits
 		if (this.props.habitType === "boolean") {
-			colorScaleLabel.style.display = "none";
-			colorScaleContainer.style.display = "none";
-			manualFieldsContainer.style.display = "none";
+			colorScaleLabel.classList.add("hidden");
+			colorScaleContainer.classList.add("hidden");
+			manualFieldsContainer.classList.add("hidden");
 		}
 
 		return menu;
@@ -347,7 +347,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const menu = document.getElementById("heatmap-settings-menu");
 		if (menu) {
 			if (this.isMenuOpen) {
-				menu.style.display = "block";
+				menu.classList.remove("hidden");
+				menu.classList.add("visible");
 				// Trigger reflow to enable transition
 				menu.offsetHeight;
 				menu.classList.add("heatmap-settings-menu-visible");
@@ -356,7 +357,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				// Wait for transition to complete before hiding
 				setTimeout(() => {
 					if (!this.isMenuOpen) {
-						menu.style.display = "none";
+						menu.classList.remove("visible");
+						menu.classList.add("hidden");
 					}
 				}, 200);
 			}
@@ -366,7 +368,13 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	private updateManualFieldsVisibility(): void {
 		const manualFields = document.getElementById("manual-scale-fields");
 		if (manualFields) {
-			manualFields.style.display = this.settings.colorScaleMode === ColorScaleMode.MANUAL ? "block" : "none";
+			if (this.settings.colorScaleMode === ColorScaleMode.MANUAL) {
+				manualFields.classList.remove("hidden");
+				manualFields.classList.add("visible");
+			} else {
+				manualFields.classList.remove("visible");
+				manualFields.classList.add("hidden");
+			}
 		}
 	}
 
@@ -412,14 +420,16 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const gap = 2;
 		const row = document.createElement("div");
 		row.className = "heatmap-month-labels";
-		row.style.width = `${weeksCount * cellSize + Math.max(0, weeksCount - 1) * gap}px`;
+		row.style.setProperty("--heatmap-width", `${weeksCount * cellSize + Math.max(0, weeksCount - 1) * gap}px`);
+		row.style.width = "var(--heatmap-width)";
 		// Other styles handled by CSS
 
 		for (const label of monthLabels) {
 			const el = document.createElement("span");
 			el.className = "heatmap-month-label";
 			el.textContent = label.label;
-			el.style.left = `${label.weekIndex * (cellSize + gap)}px`;
+			el.style.setProperty("--label-left", `${label.weekIndex * (cellSize + gap)}px`);
+			el.style.left = "var(--label-left)";
 			row.appendChild(el);
 		}
 
@@ -518,7 +528,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 			const value = valueMap.get(cellData.isoDate) || 0;
 			cell.className = "heatmap-cell";
-			cell.style.backgroundColor = this.intensityColor(value, themeColor);
+			cell.style.setProperty("--cell-bg-color", this.intensityColor(value, themeColor));
+			cell.style.backgroundColor = "var(--cell-bg-color)";
 			cell.title = this.formatTooltip(cellData.isoDate, value, adapter);
 			grid.appendChild(cell);
 		}
@@ -542,7 +553,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 				const square = document.createElement("div");
 				square.className = "heatmap-legend-square";
-				square.style.backgroundColor = item.color;
+				square.style.setProperty("--legend-bg-color", item.color);
+				square.style.backgroundColor = "var(--legend-bg-color)";
 
 				const label = document.createElement("span");
 				label.textContent = item.label;
@@ -589,7 +601,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		legendColors.forEach((item) => {
 			const legendItem = document.createElement("div");
 			legendItem.className = "heatmap-legend-color-box";
-			legendItem.style.backgroundColor = item.color;
+			legendItem.style.setProperty("--legend-box-color", item.color);
+			legendItem.style.backgroundColor = "var(--legend-box-color)";
 			legendItem.title = item.label;
 			legend.appendChild(legendItem);
 		});

@@ -102,19 +102,13 @@ export class DateNavigator {
 		// Create a hidden date input positioned directly below the button
 		const dateInput = document.createElement("input");
 		dateInput.type = "date";
-		dateInput.style.position = "fixed";
-		dateInput.style.opacity = "0.01";
-		dateInput.style.pointerEvents = "auto";
-		dateInput.style.width = "1px";
-		dateInput.style.height = "1px";
-		dateInput.style.padding = "0";
-		dateInput.style.margin = "0";
-		dateInput.style.border = "0";
-		dateInput.style.zIndex = "1000";
+		dateInput.className = "date-picker-hidden-input";
 		
 		const rect = button.getBoundingClientRect();
-		dateInput.style.left = `${rect.left}px`;
-		dateInput.style.top = `${rect.bottom}px`;
+		dateInput.style.setProperty("--date-picker-left", `${rect.left}px`);
+		dateInput.style.setProperty("--date-picker-top", `${rect.bottom}px`);
+		dateInput.style.left = "var(--date-picker-left)";
+		dateInput.style.top = "var(--date-picker-top)";
 		
 		// Format date for input (YYYY-MM-DD)
 		const year = this.currentDate.getFullYear();
