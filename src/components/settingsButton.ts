@@ -26,25 +26,7 @@ export class SettingsButton extends HTMLElementComponent {
 			</svg>
 		`;
 
-		button.style.cssText = `
-			padding: 8px 12px;
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 6px;
-			cursor: pointer;
-			transition: all 0.2s;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		`;
-
-		button.addEventListener("mouseenter", () => {
-			button.style.backgroundColor = "var(--background-modifier-hover)";
-		});
-
-		button.addEventListener("mouseleave", () => {
-			button.style.backgroundColor = "var(--background-secondary)";
-		});
+		button.classList.add("settings-button");
 
 		button.addEventListener("click", (e) => {
 			e.preventDefault();

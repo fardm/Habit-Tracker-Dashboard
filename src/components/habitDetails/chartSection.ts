@@ -24,72 +24,31 @@ export class ChartSection extends HTMLElementComponent {
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "chart-section";
-		container.style.cssText = `
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 8px;
-			padding: 20px;
-			margin-bottom: 20px;
-		`;
+		// Container styling is handled by CSS
 
 		// Header with title and chart type toggle
 		const header = document.createElement("div");
-		header.style.cssText = `
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 16px;
-		`;
+		header.className = "chart-header";
 
 		const title = document.createElement("h3");
 		title.textContent = "Progress";
-		title.style.cssText = `
-			margin: 0;
-			font-size: 16px;
-			font-weight: 600;
-			color: var(--text-normal);
-		`;
+		title.className = "chart-title";
 		header.appendChild(title);
 
 		// Chart type toggle
 		const toggleContainer = document.createElement("div");
-		toggleContainer.style.cssText = `
-			display: flex;
-			background-color: var(--background-primary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 6px;
-			padding: 2px;
-			gap: 2px;
-		`;
+		toggleContainer.className = "chart-toggle-container";
 
 		const lineButton = document.createElement("button");
 		lineButton.innerHTML = "📈";
 		lineButton.title = "Line Chart";
 		const themeColor = this.getThemeColor();
-		lineButton.style.cssText = `
-			padding: 6px 12px;
-			border: none;
-			background-color: ${this.props.chartType === ChartType.LINE ? themeColor : 'transparent'};
-			color: ${this.props.chartType === ChartType.LINE ? 'var(--text-on-accent)' : 'var(--text-muted)'};
-			border-radius: 4px;
-			cursor: pointer;
-			font-size: 14px;
-			transition: all 0.2s;
-		`;
+		lineButton.className = this.props.chartType === ChartType.LINE ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button";
 
 		const barButton = document.createElement("button");
 		barButton.innerHTML = "📊";
 		barButton.title = "Bar Chart";
-		barButton.style.cssText = `
-			padding: 6px 12px;
-			border: none;
-			background-color: ${this.props.chartType === ChartType.BAR ? themeColor : 'transparent'};
-			color: ${this.props.chartType === ChartType.BAR ? 'var(--text-on-accent)' : 'var(--text-muted)'};
-			border-radius: 4px;
-			cursor: pointer;
-			font-size: 14px;
-			transition: all 0.2s;
-		`;
+		barButton.className = this.props.chartType === ChartType.BAR ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button";
 
 		lineButton.addEventListener("click", () => {
 			this.props.onChartTypeChange(ChartType.LINE);
@@ -112,16 +71,7 @@ export class ChartSection extends HTMLElementComponent {
 		// Chart container
 		this.chartContainer = document.createElement("div");
 		this.chartContainer.className = "chart-container";
-		this.chartContainer.style.cssText = `
-			width: 100%;
-			height: 300px;
-			display: block;
-			background-color: var(--background-primary);
-			border-radius: 6px;
-			position: relative;
-			box-sizing: border-box;
-			overflow: hidden;
-		`;
+		// Chart container styling is handled by CSS
 
 		if (typeof ResizeObserver !== "undefined") {
 			this.resizeObserver?.disconnect();
@@ -144,11 +94,7 @@ export class ChartSection extends HTMLElementComponent {
 		if (this.props.data.length === 0) {
 			const noData = document.createElement("div");
 			noData.textContent = "No data available";
-			noData.style.cssText = `
-				color: var(--text-muted);
-				font-size: 14px;
-				padding: 16px;
-			`;
+			noData.className = "chart-no-data";
 			this.chartContainer.appendChild(noData);
 			return;
 		}
@@ -256,7 +202,7 @@ export class ChartSection extends HTMLElementComponent {
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", width.toString());
 		svg.setAttribute("height", height.toString());
-		svg.style.cssText = "width: 100%; height: 100%;";
+		svg.setAttribute("class", "chart-svg");
 
 		const points = this.getAggregatedPoints();
 		const { start, end } = this.getDateRange(points);
@@ -339,7 +285,7 @@ export class ChartSection extends HTMLElementComponent {
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", width.toString());
 		svg.setAttribute("height", height.toString());
-		svg.style.cssText = "width: 100%; height: 100%;";
+		svg.setAttribute("class", "chart-svg");
 
 		const points = this.getAggregatedPoints();
 		const { start, end } = this.getDateRange(points);
@@ -424,47 +370,11 @@ export class ChartSection extends HTMLElementComponent {
 		const themeColor = this.getThemeColor();
 
 		if (this.props.chartType === ChartType.LINE) {
-			this.toggleButtons.line.style.cssText = `
-				padding: 6px 12px;
-				border: none;
-				background-color: ${themeColor};
-				color: var(--text-on-accent);
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 14px;
-				transition: all 0.2s;
-			`;
-			this.toggleButtons.bar.style.cssText = `
-				padding: 6px 12px;
-				border: none;
-				background-color: transparent;
-				color: var(--text-muted);
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 14px;
-				transition: all 0.2s;
-			`;
+			this.toggleButtons.line.className = "chart-toggle-button chart-toggle-button-active";
+			this.toggleButtons.bar.className = "chart-toggle-button";
 		} else {
-			this.toggleButtons.bar.style.cssText = `
-				padding: 6px 12px;
-				border: none;
-				background-color: ${themeColor};
-				color: var(--text-on-accent);
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 14px;
-				transition: all 0.2s;
-			`;
-			this.toggleButtons.line.style.cssText = `
-				padding: 6px 12px;
-				border: none;
-				background-color: transparent;
-				color: var(--text-muted);
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 14px;
-				transition: all 0.2s;
-			`;
+			this.toggleButtons.bar.className = "chart-toggle-button chart-toggle-button-active";
+			this.toggleButtons.line.className = "chart-toggle-button";
 		}
 	}
 }

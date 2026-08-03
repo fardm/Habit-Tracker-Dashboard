@@ -50,32 +50,16 @@ export class Dashboard extends HTMLElementComponent {
 		const dashboard = document.createElement("div");
 		dashboard.className = "habit-tracker-dashboard";
 		
-		// Dashboard styling
-		dashboard.style.cssText = `
-			padding: 20px;
-			max-width: 1200px;
-			margin: 0 auto;
-		`;
+		// Dashboard styling is handled by CSS
 
 		// Controls row
 		const controlsRow = document.createElement("div");
 		controlsRow.className = "dashboard-controls";
-		controlsRow.style.cssText = `
-			display: grid;
-			grid-template-columns: 1fr auto 1fr;
-			align-items: center;
-			margin-bottom: 20px;
-			gap: 16px;
-		`;
+		// Controls row styling is handled by CSS
 
 		// Left side: Settings button, Add Habit button and Refresh button
 		const leftControls = document.createElement("div");
-		leftControls.style.cssText = `
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			justify-self: start;
-		`;
+		leftControls.className = "dashboard-left-controls";
 		
 		const settingsButton = new SettingsButton(() => {
 			this.showSettingsModal();
@@ -94,11 +78,7 @@ export class Dashboard extends HTMLElementComponent {
 
 		// Center: Date navigator
 		const centerControls = document.createElement("div");
-		centerControls.style.cssText = `
-			display: flex;
-			align-items: center;
-			justify-self: center;
-		`;
+		centerControls.className = "dashboard-center-controls";
 		
 		this.dateNavigator = new DateNavigator(this.currentDate, (date) => {
 			this.handleDateChange(date);
@@ -108,11 +88,7 @@ export class Dashboard extends HTMLElementComponent {
 		// Right side: View mode switcher
 		const rightControls = document.createElement("div");
 		rightControls.className = "dashboard-right-controls";
-		rightControls.style.cssText = `
-			display: flex;
-			align-items: center;
-			justify-self: end;
-		`;
+		// Right controls styling is handled by CSS
 		
 		this.viewModeSwitcher = new ViewModeSwitcher({
 			currentMode: this.currentViewMode,
@@ -126,37 +102,12 @@ export class Dashboard extends HTMLElementComponent {
 
 		dashboard.appendChild(controlsRow);
 
-		// Mobile-specific styles
-		const mobileStyle = document.createElement("style");
-		mobileStyle.textContent = `
-			@media (max-width: 768px) {
-				.habit-tracker-dashboard {
-					padding: 12px !important;
-					max-width: 100% !important;
-				}
-				
-				.dashboard-controls {
-					grid-template-columns: 1fr !important;
-					gap: 12px !important;
-				}
-				
-				.dashboard-right-controls {
-					display: none !important;
-				}
-				
-				.dashboard-controls > div:nth-child(2) {
-					justify-self: center !important;
-				}
-			}
-		`;
-		dashboard.appendChild(mobileStyle);
+		// Mobile-specific styles are handled by CSS in styles.css
 
 		// Habits container
 		const habitsContainer = document.createElement("div");
 		habitsContainer.className = "habits-container";
-		habitsContainer.style.cssText = `
-			margin-top: 16px;
-		`;
+		// Habits container styling is handled by CSS
 
 		// Apply grid or list layout based on view mode
 		this.updateContainerLayout(habitsContainer);
@@ -178,29 +129,9 @@ export class Dashboard extends HTMLElementComponent {
 		const effectiveViewMode = this.isMobile() ? ViewMode.LIST : this.currentViewMode;
 
 		if (effectiveViewMode === ViewMode.GRID) {
-			container.style.cssText = `
-				margin-top: 16px;
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				gap: 16px;
-			`;
-			// Add responsive breakpoint for smaller screens
-			const style = document.createElement("style");
-			style.textContent = `
-				@media (max-width: 768px) {
-					.habits-container {
-						grid-template-columns: 1fr !important;
-					}
-				}
-			`;
-			container.appendChild(style);
+			container.className = "habits-container habits-container-grid";
 		} else {
-			container.style.cssText = `
-				margin-top: 16px;
-				display: flex;
-				flex-direction: column;
-				gap: 12px;
-			`;
+			container.className = "habits-container habits-container-list";
 		}
 	}
 
@@ -340,15 +271,8 @@ export class Dashboard extends HTMLElementComponent {
 
 		if (this.habits.length === 0) {
 			const emptyState = document.createElement("div");
-			emptyState.className = "empty-state";
+			emptyState.className = "habit-dashboard-empty-state";
 			emptyState.textContent = "No habits yet. Click 'Add Habit' to create your first habit!";
-			emptyState.style.cssText = `
-				text-align: center;
-				padding: 40px 20px;
-				color: var(--text-muted);
-				font-style: italic;
-				pointer-events: none;
-			`;
 			container.appendChild(emptyState);
 			return;
 		}
@@ -640,13 +564,6 @@ export class Dashboard extends HTMLElementComponent {
 
 		const indicator = document.createElement("div");
 		indicator.className = "drop-indicator";
-		indicator.style.cssText = `
-			height: 3px;
-			background-color: var(--interactive-accent);
-			border-radius: 2px;
-			margin: 4px 0;
-			transition: all 0.2s ease;
-		`;
 
 		// Insert indicator before the target card
 		targetCard.parentNode?.insertBefore(indicator, targetCard);

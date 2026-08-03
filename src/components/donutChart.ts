@@ -10,11 +10,9 @@ export class DonutChart {
 		this.size = size;
 		this.strokeWidth = strokeWidth;
 		this.container = document.createElement("div");
-		this.container.style.cssText = `
-			display: inline-block;
-			width: ${size}px;
-			height: ${size}px;
-		`;
+		this.container.className = "habit-donut-chart";
+		this.container.style.width = `${size}px`;
+		this.container.style.height = `${size}px`;
 	}
 
 	/**
@@ -31,9 +29,7 @@ export class DonutChart {
 		svg.setAttribute("width", this.size.toString());
 		svg.setAttribute("height", this.size.toString());
 		svg.setAttribute("viewBox", `0 0 ${this.size} ${this.size}`);
-		svg.style.cssText = `
-			transform: rotate(-90deg);
-		`;
+		svg.setAttribute("class", "habit-donut-svg");
 
 		// Background circle
 		const backgroundCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -43,6 +39,7 @@ export class DonutChart {
 		backgroundCircle.setAttribute("fill", "none");
 		backgroundCircle.setAttribute("stroke", "var(--background-modifier-border)");
 		backgroundCircle.setAttribute("stroke-width", this.strokeWidth.toString());
+		backgroundCircle.setAttribute("class", "habit-donut-background-circle");
 
 		// Progress circle
 		const progressCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -55,19 +52,7 @@ export class DonutChart {
 		progressCircle.setAttribute("stroke-linecap", "round");
 		progressCircle.setAttribute("stroke-dasharray", circumference.toString());
 		progressCircle.setAttribute("stroke-dashoffset", strokeDashoffset.toString());
-		
-		// Use thin ring style when exceeded
-		if (isExceeded) {
-			progressCircle.setAttribute("stroke-width", "2");
-			progressCircle.style.cssText = `
-				transition: stroke-dashoffset 0.3s ease;
-				opacity: 0.7;
-			`;
-		} else {
-			progressCircle.style.cssText = `
-				transition: stroke-dashoffset 0.3s ease;
-			`;
-		}
+		progressCircle.setAttribute("class", isExceeded ? "habit-donut-progress-circle-exceeded" : "habit-donut-progress-circle");
 
 		svg.appendChild(backgroundCircle);
 		svg.appendChild(progressCircle);

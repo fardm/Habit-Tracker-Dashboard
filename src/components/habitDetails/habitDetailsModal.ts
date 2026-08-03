@@ -51,24 +51,15 @@ export class HabitDetailsModal extends Modal {
 		const { contentEl, modalEl } = this;
 		contentEl.empty();
 
-		// Override modal width with higher priority CSS
-		modalEl.style.cssText = `
-			width: 850px !important;
-			max-width: 95vw !important;
-		`;
+		// Modal width is handled by CSS
 
-		// Set modal container styles - let parent modal handle scrolling
-		contentEl.style.cssText = `
-			width: 100%;
-		`;
+		// Modal container width is handled by CSS
 
 		// Modal container - no overflow, let parent handle scrolling
 		this.contentContainer = contentEl.createDiv({
 			cls: "habit-details-modal"
 		});
-		this.contentContainer.style.cssText = `
-			padding: 24px;
-		`;
+		// Padding is handled by CSS
 
 		await this.loadSettingsFromStorage();
 
@@ -88,39 +79,21 @@ export class HabitDetailsModal extends Modal {
 		const header = this.contentContainer.createDiv({
 			cls: "habit-details-header"
 		});
-		header.style.cssText = `
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 24px;
-			padding-bottom: 16px;
-			border-bottom: 1px solid var(--background-modifier-border);
-		`;
+		// Header styling is handled by CSS
 
 		// Habit info
 		const habitInfo = header.createDiv();
-		habitInfo.style.cssText = `
-			display: flex;
-			align-items: center;
-			gap: 12px;
-		`;
+		habitInfo.className = "habit-details-info";
 
 		const emoji = habitInfo.createSpan({
 			text: this.props.habitEmoji
 		});
-		emoji.style.cssText = `
-			font-size: 32px;
-		`;
+		emoji.className = "habit-details-emoji";
 
 		const habitName = habitInfo.createEl("h2", {
 			text: this.props.habitName
 		});
-		habitName.style.cssText = `
-			margin: 0;
-			font-size: 24px;
-			font-weight: 600;
-			color: var(--text-normal);
-		`;
+		habitName.className = "habit-details-name";
 
 		// Settings panel
 		const settingsPanel = new SettingsPanel({
@@ -140,84 +113,29 @@ export class HabitDetailsModal extends Modal {
 		this.yearNavigationContainer.empty();
 
 		const navContainer = this.yearNavigationContainer.createDiv();
-		navContainer.style.cssText = `
-			display: inline-flex;
-			align-items: center;
-			gap: 12px;
-		`;
+		navContainer.className = "year-nav-container";
 
 		// Previous year button
 		const prevButton = navContainer.createEl("button", {
 			text: "‹"
 		});
-		prevButton.style.cssText = `
-			color: var(--text-muted);
-			cursor: pointer;
-			font-size: 16px;
-			line-height: 1;
-			background: var(--background-secondary);
-			padding: 6px 8px;
-			border-radius: 6px;
-			border: 1px solid var(--background-modifier-border);
-			transition: all 0.15s ease;
-		`;
+		prevButton.className = "year-nav-button";
 		prevButton.onclick = () => this.handleYearChange(-1);
-		prevButton.onmouseover = () => {
-			prevButton.style.color = "var(--text-normal)";
-			prevButton.style.background = "var(--background-modifier-hover)";
-		};
-		prevButton.onmouseout = () => {
-			prevButton.style.color = "var(--text-muted)";
-			prevButton.style.background = "transparent";
-		};
-		prevButton.onmousedown = () => prevButton.style.transform = "scale(0.95)";
-		prevButton.onmouseup = () => prevButton.style.transform = "scale(1)";
+		// Hover states are handled by CSS
 
 		// Year display
 		const yearDisplay = navContainer.createEl("span", {
 			text: this.selectedYear.toString()
 		});
-		yearDisplay.style.cssText = `
-			font-size: 16px;
-			font-weight: 600;
-			color: var(--text-normal);
-			min-width: 50px;
-			text-align: center;
-			user-select: none;
-			background: var(--background-secondary);
-			padding: 6px 12px;
-			border-radius: 6px;
-			border: 1px solid var(--background-modifier-border);
-		`;
+		yearDisplay.className = "year-nav-display";
 
 		// Next year button
 		const nextButton = navContainer.createEl("button", {
 			text: "›"
 		});
-		nextButton.style.cssText = `
-			color: var(--text-muted);
-			cursor: pointer;
-			font-size: 16px;
-			line-height: 1;
-
-			background: var(--background-secondary);
-			padding: 6px 8px;
-			border-radius: 6px;
-			border: 1px solid var(--background-modifier-border);
-
-			transition: all 0.15s ease;
-		`;
+		nextButton.className = "year-nav-button";
 		nextButton.onclick = () => this.handleYearChange(1);
-		nextButton.onmouseover = () => {
-			nextButton.style.color = "var(--text-normal)";
-			nextButton.style.background = "var(--background-modifier-hover)";
-		};
-		nextButton.onmouseout = () => {
-			nextButton.style.color = "var(--text-muted)";
-			nextButton.style.background = "transparent";
-		};
-		nextButton.onmousedown = () => nextButton.style.transform = "scale(0.95)";
-		nextButton.onmouseup = () => nextButton.style.transform = "scale(1)";
+		// Hover states are handled by CSS
 	}
 
 	private handleYearChange(delta: number): void {
@@ -237,11 +155,7 @@ export class HabitDetailsModal extends Modal {
 		this.yearNavigationContainer = this.contentContainer.createDiv({
 			cls: "content-section"
 		});
-		this.yearNavigationContainer.style.cssText = `
-			display: flex;
-			justify-content: center;
-			margin-bottom: 24px;
-		`;
+		// Year navigation styling is handled by CSS
 		this.renderYearNavigation();
 
 		// Calendar Heatmap

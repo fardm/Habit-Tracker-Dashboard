@@ -17,28 +17,7 @@ export class AddHabitButton extends HTMLElementComponent {
 		button.className = "habit-tracker-add-habit-btn";
 		button.innerHTML = "+ Add Habit";
 		button.type = "button";
-
-		// Minimal modern styling
-		button.style.cssText = `
-			background-color: var(--interactive-accent);
-			color: var(--text-on-accent);
-			border: none;
-			padding: 6px 12px;
-			border-radius: 4px;
-			cursor: pointer;
-			font-size: 13px;
-			font-weight: 500;
-			transition: background-color 0.2s;
-			line-height: 1;
-		`;
-
-		button.addEventListener("mouseenter", () => {
-			button.style.backgroundColor = "var(--interactive-accent-hover)";
-		});
-
-		button.addEventListener("mouseleave", () => {
-			button.style.backgroundColor = "var(--interactive-accent)";
-		});
+		// Hover states are handled by CSS
 
 		// Add click handler
 		button.addEventListener("click", (e) => {

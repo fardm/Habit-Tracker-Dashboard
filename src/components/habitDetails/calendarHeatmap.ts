@@ -123,14 +123,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "calendar-heatmap";
-		container.style.cssText = `
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 8px;
-			padding: 20px;
-			margin-bottom: 20px;
-			position: relative;
-		`;
+		// Container styling is handled by CSS
 
 		// Header with title and menu button
 		const header = this.createHeader();
@@ -139,12 +132,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		// Create heatmap container
 		this.heatmapContainer = document.createElement("div");
 		this.heatmapContainer.className = "heatmap-container";
-		this.heatmapContainer.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 4px;
-			align-items: center;
-		`;
+		// Heatmap container styling is handled by CSS
 
 		this.updateHeatmapContent();
 		container.appendChild(this.heatmapContainer);
@@ -162,12 +150,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 	private createHeader(): HTMLElement {
 		const header = document.createElement("div");
-		header.style.cssText = `
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 16px;
-		`;
+		header.className = "heatmap-header";
 
 		const adapter = getCalendarAdapter(
 			this.props.reportCalendar || ReportCalendar.GREGORIAN
@@ -176,12 +159,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		const title = document.createElement("h3");
 		title.textContent = `Activity Heatmap`;
-		title.style.cssText = `
-			margin: 0;
-			font-size: 16px;
-			font-weight: 600;
-			color: var(--text-normal);
-		`;
+		title.className = "heatmap-title";
 		header.appendChild(title);
 
 		// Menu button
@@ -195,25 +173,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				<circle cx="12" cy="19" r="1"></circle>
 			</svg>
 		`;
-		menuButton.style.cssText = `
-			padding: 6px 8px;
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 6px;
-			cursor: pointer;
-			transition: all 0.2s;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		`;
-
-		menuButton.addEventListener("mouseenter", () => {
-			menuButton.style.backgroundColor = "var(--background-modifier-hover)";
-		});
-
-		menuButton.addEventListener("mouseleave", () => {
-			menuButton.style.backgroundColor = "var(--background-secondary)";
-		});
+		menuButton.className = "heatmap-menu-button";
+		// Hover states are handled by CSS
 
 		menuButton.addEventListener("click", (e) => {
 			e.stopPropagation();
@@ -234,43 +195,16 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const menu = document.createElement("div");
 		menu.className = "heatmap-settings-menu";
 		menu.id = "heatmap-settings-menu";
-		menu.style.cssText = `
-			position: absolute;
-			top: 50px;
-			right: 20px;
-			width: 280px;
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 8px;
-			padding: 16px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-			z-index: 1000;
-			display: none;
-		`;
+		// Menu styling is handled by CSS
 
 		// Week start day setting
 		const weekStartLabel = document.createElement("label");
 		weekStartLabel.textContent = "Week start day";
-		weekStartLabel.style.cssText = `
-			display: block;
-			font-size: 13px;
-			font-weight: 600;
-			color: var(--text-normal);
-			margin-bottom: 8px;
-		`;
+		weekStartLabel.className = "heatmap-settings-label";
 		menu.appendChild(weekStartLabel);
 
 		const weekStartSelect = document.createElement("select");
-		weekStartSelect.style.cssText = `
-			width: 100%;
-			padding: 6px 8px;
-			margin-bottom: 16px;
-			background-color: var(--background-primary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 4px;
-			color: var(--text-normal);
-			font-size: 13px;
-		`;
+		weekStartSelect.className = "heatmap-settings-select";
 
 		[WeekStartDay.SUNDAY, WeekStartDay.MONDAY, WeekStartDay.SATURDAY].forEach(day => {
 			const option = document.createElement("option");
@@ -290,28 +224,16 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		// Month labels setting
 		const monthLabelsContainer = document.createElement("div");
-		monthLabelsContainer.style.cssText = `
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 16px;
-		`;
+		monthLabelsContainer.className = "heatmap-settings-row";
 
 		const monthLabelsLabel = document.createElement("label");
 		monthLabelsLabel.textContent = "Show month labels";
-		monthLabelsLabel.style.cssText = `
-			font-size: 13px;
-			color: var(--text-normal);
-		`;
+		monthLabelsLabel.className = "heatmap-settings-label-inline";
 
 		const monthLabelsToggle = document.createElement("input");
 		monthLabelsToggle.type = "checkbox";
 		monthLabelsToggle.checked = this.settings.showMonthLabels ?? false;
-		monthLabelsToggle.style.cssText = `
-			width: 16px;
-			height: 16px;
-			cursor: pointer;
-		`;
+		monthLabelsToggle.className = "heatmap-settings-checkbox";
 
 		monthLabelsToggle.addEventListener("change", () => {
 			this.settings.showMonthLabels = monthLabelsToggle.checked;
@@ -326,41 +248,22 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		// Color scale mode setting
 		const colorScaleLabel = document.createElement("label");
 		colorScaleLabel.textContent = "Color scale mode";
-		colorScaleLabel.style.cssText = `
-			display: block;
-			font-size: 13px;
-			font-weight: 600;
-			color: var(--text-normal);
-			margin-bottom: 8px;
-		`;
+		colorScaleLabel.className = "heatmap-settings-label";
 		menu.appendChild(colorScaleLabel);
 
 		const colorScaleContainer = document.createElement("div");
-		colorScaleContainer.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			margin-bottom: 16px;
-		`;
+		colorScaleContainer.className = "heatmap-settings-column";
 
 		[ColorScaleMode.AUTOMATIC, ColorScaleMode.MANUAL].forEach(mode => {
 			const radioContainer = document.createElement("div");
-			radioContainer.style.cssText = `
-				display: flex;
-				align-items: center;
-				gap: 8px;
-			`;
+			radioContainer.className = "heatmap-settings-radio-row";
 
 			const radio = document.createElement("input");
 			radio.type = "radio";
 			radio.name = "colorScaleMode";
 			radio.value = mode;
 			radio.checked = this.settings.colorScaleMode === mode;
-			radio.style.cssText = `
-				width: 16px;
-				height: 16px;
-				cursor: pointer;
-			`;
+			radio.className = "heatmap-settings-radio";
 
 			radio.addEventListener("change", () => {
 				this.settings.colorScaleMode = mode as ColorScaleMode;
@@ -371,11 +274,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 			const label = document.createElement("label");
 			label.textContent = mode === ColorScaleMode.AUTOMATIC ? "Automatic" : "Manual";
-			label.style.cssText = `
-				font-size: 13px;
-				color: var(--text-normal);
-				cursor: pointer;
-			`;
+			label.className = "heatmap-settings-radio-label";
 
 			radioContainer.appendChild(radio);
 			radioContainer.appendChild(label);
@@ -387,38 +286,23 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		// Manual scale fields (shown only when manual mode is selected)
 		const manualFieldsContainer = document.createElement("div");
 		manualFieldsContainer.id = "manual-scale-fields";
-		manualFieldsContainer.style.cssText = `
-			display: ${this.settings.colorScaleMode === ColorScaleMode.MANUAL ? "block" : "none"};
-			flex-direction: column;
-			gap: 12px;
-		`;
+		manualFieldsContainer.className = "heatmap-settings-manual-fields";
+		if (this.settings.colorScaleMode !== ColorScaleMode.MANUAL) {
+			manualFieldsContainer.style.display = "none";
+		}
 
 		// Minimum value field
 		const minFieldContainer = document.createElement("div");
-		minFieldContainer.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 4px;
-		`;
+		minFieldContainer.className = "heatmap-settings-field-group";
 
 		const minLabel = document.createElement("label");
 		minLabel.textContent = "Minimum value";
-		minLabel.style.cssText = `
-			font-size: 13px;
-			color: var(--text-normal);
-		`;
+		minLabel.className = "heatmap-settings-label-inline";
 
 		const minInput = document.createElement("input");
 		minInput.type = "number";
 		minInput.value = String(this.settings.colorScaleMin ?? 0);
-		minInput.style.cssText = `
-			padding: 6px 8px;
-			background-color: var(--background-primary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 4px;
-			color: var(--text-normal);
-			font-size: 13px;
-		`;
+		minInput.className = "heatmap-settings-input";
 
 		minInput.addEventListener("change", () => {
 			this.settings.colorScaleMin = parseFloat(minInput.value) || 0;
@@ -432,30 +316,16 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		// Maximum value field
 		const maxFieldContainer = document.createElement("div");
-		maxFieldContainer.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 4px;
-		`;
+		maxFieldContainer.className = "heatmap-settings-field-group";
 
 		const maxLabel = document.createElement("label");
 		maxLabel.textContent = "Maximum value";
-		maxLabel.style.cssText = `
-			font-size: 13px;
-			color: var(--text-normal);
-		`;
+		maxLabel.className = "heatmap-settings-label-inline";
 
 		const maxInput = document.createElement("input");
 		maxInput.type = "number";
 		maxInput.value = String(this.settings.colorScaleMax ?? 60);
-		maxInput.style.cssText = `
-			padding: 6px 8px;
-			background-color: var(--background-primary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 4px;
-			color: var(--text-normal);
-			font-size: 13px;
-		`;
+		maxInput.className = "heatmap-settings-input";
 
 		maxInput.addEventListener("change", () => {
 			this.settings.colorScaleMax = parseFloat(maxInput.value) || 60;
@@ -506,14 +376,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const layout = adapter.buildYearHeatmapLayout(year, weekStartDay);
 
 		this.gridBlock = document.createElement("div");
-		this.gridBlock.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 2px;
-			width: fit-content;
-			max-width: 100%;
-			overflow-x: auto;
-		`;
+		this.gridBlock.className = "heatmap-grid-block";
 
 		if (this.settings.showMonthLabels) {
 			this.gridBlock.appendChild(
@@ -542,26 +405,14 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const gap = 2;
 		const row = document.createElement("div");
 		row.className = "heatmap-month-labels";
-		row.style.cssText = `
-			position: relative;
-			height: 14px;
-			width: ${weeksCount * cellSize + Math.max(0, weeksCount - 1) * gap}px;
-			margin-bottom: 2px;
-			font-size: 10px;
-			color: var(--text-muted);
-			line-height: 14px;
-		`;
+		row.style.width = `${weeksCount * cellSize + Math.max(0, weeksCount - 1) * gap}px`;
+		// Other styles handled by CSS
 
 		for (const label of monthLabels) {
 			const el = document.createElement("span");
 			el.textContent = label.label;
-			el.style.cssText = `
-				position: absolute;
-				left: ${label.weekIndex * (cellSize + gap)}px;
-				top: 0;
-				white-space: nowrap;
-				pointer-events: none;
-			`;
+			el.style.left = `${label.weekIndex * (cellSize + gap)}px`;
+			// Other styles handled by CSS
 			row.appendChild(el);
 		}
 
@@ -645,14 +496,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const themeColor = this.getThemeColor();
 
 		const grid = document.createElement("div");
-		grid.style.cssText = `
-			display: grid;
-			grid-template-rows: repeat(7, 10px);
-			grid-auto-flow: column;
-			grid-auto-columns: 10px;
-			gap: 2px;
-			width: fit-content;
-		`;
+		grid.className = "heatmap-grid";
 		grid.setAttribute("data-weeks", String(weeksCount));
 		grid.setAttribute("data-week-start", String(this.getWeekStartDay()));
 
@@ -660,24 +504,14 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			const cell = document.createElement("div");
 
 			if (cellData.isEmpty || !cellData.isoDate) {
-				cell.style.cssText = `
-					width: 10px;
-					height: 10px;
-					border-radius: 2px;
-					background-color: transparent;
-				`;
+				cell.className = "heatmap-cell heatmap-cell-empty";
 				grid.appendChild(cell);
 				continue;
 			}
 
 			const value = valueMap.get(cellData.isoDate) || 0;
-			cell.style.cssText = `
-				width: 10px;
-				height: 10px;
-				border-radius: 2px;
-				background-color: ${this.intensityColor(value, themeColor)};
-				transition: background-color 0.2s;
-			`;
+			cell.className = "heatmap-cell";
+			cell.style.backgroundColor = this.intensityColor(value, themeColor);
 			cell.title = this.formatTooltip(cellData.isoDate, value, adapter);
 			grid.appendChild(cell);
 		}
@@ -687,17 +521,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 	private createLegend(): HTMLElement {
 		const legend = document.createElement("div");
-		legend.style.cssText = `
-			display: flex;
-			align-items: center;
-			justify-content: flex-end;
-			gap: 8px;
-			margin-top: 8px;
-			font-size: 11px;
-			color: var(--text-muted);
-			width: 100%;
-			flex-wrap: wrap;
-		`;
+		legend.className = "heatmap-legend";
 
 		if (this.props.habitType === "boolean") {
 			const legendItems = [
@@ -707,21 +531,11 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 			legendItems.forEach((item) => {
 				const legendItem = document.createElement("div");
-				legendItem.style.cssText = `
-					display: flex;
-					align-items: center;
-					gap: 4px;
-				`;
+				legendItem.className = "heatmap-legend-item";
 
 				const square = document.createElement("div");
-				square.style.cssText = `
-					width: 10px;
-					height: 10px;
-					border-radius: 2px;
-					background-color: ${item.color};
-					border: 1px solid var(--background-modifier-border);
-					box-sizing: border-box;
-				`;
+				square.className = "heatmap-legend-square";
+				square.style.backgroundColor = item.color;
 
 				const label = document.createElement("span");
 				label.textContent = item.label;
@@ -767,12 +581,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		legendColors.forEach((item) => {
 			const legendItem = document.createElement("div");
-			legendItem.style.cssText = `
-				width: 10px;
-				height: 10px;
-				border-radius: 2px;
-				background-color: ${item.color};
-			`;
+			legendItem.className = "heatmap-legend-color-box";
+			legendItem.style.backgroundColor = item.color;
 			legendItem.title = item.label;
 			legend.appendChild(legendItem);
 		});

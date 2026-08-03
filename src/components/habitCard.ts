@@ -34,83 +34,23 @@ export class HabitCard extends HTMLElementComponent {
 		const card = document.createElement("div");
 		card.className = "habit-card";
 		card.setAttribute("data-habit-id", this.props.habit.id);
-		card.style.position = "relative";
 
 		// Apply grid or list styling based on view mode
 		const habitColor = this.props.habit.themeColor;
 		const cardBackground = habitColor ? createTranslucentColor(habitColor, 0.05) : "var(--background-secondary)";
+		card.style.backgroundColor = cardBackground;
 
-		if (this.props.viewMode === ViewMode.GRID) {
-			card.style.cssText = `
-				background-color: ${cardBackground};
-				border: 1px solid var(--background-modifier-border);
-				border-radius: 8px;
-				padding: 16px 40px 16px 40px;
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				justify-content: space-between;
-				gap: 12px;
-				transition: border-color 0.2s, box-shadow 0.2s;
-				min-height: 90px;
-				position: relative;
-				cursor: pointer;
-			`;
-		} else {
-			card.style.cssText = `
-				background-color: ${cardBackground};
-				border: 1px solid var(--background-modifier-border);
-				border-radius: 8px;
-				padding: 16px 40px 16px 40px;
-				margin-bottom: 12px;
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				transition: border-color 0.2s, box-shadow 0.2s;
-				min-height: 90px;
-				position: relative;
-			`;
+		if (this.props.viewMode === ViewMode.LIST) {
+			card.classList.add("habit-card-list");
 		}
 
-		card.addEventListener("mouseenter", () => {
-			card.style.borderColor = "var(--interactive-accent)";
-			card.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
-		});
-
-		card.addEventListener("mouseleave", () => {
-			card.style.borderColor = "var(--background-modifier-border)";
-			card.style.boxShadow = "none";
-		});
+		// Hover states are handled by CSS
 
 		// Menu button - positioned at top-right
 		const menuButton = document.createElement("button");
 		menuButton.className = "habit-menu-btn";
 		menuButton.innerHTML = "⋮";
-		menuButton.style.cssText = `
-			position: absolute;
-			top: 8px;
-			right: 8px;
-			background: none;
-			box-shadow: none;
-			border: none;
-			color: var(--text-muted);
-			font-size: 20px;
-			cursor: pointer;
-			padding: 4px;
-			border-radius: 4px;
-			transition: color 0.2s, background-color 0.2s;
-			z-index: 10;
-		`;
-
-		menuButton.addEventListener("mouseenter", () => {
-			menuButton.style.color = "var(--text-normal)";
-			menuButton.style.backgroundColor = "var(--background-modifier-hover)";
-		});
-
-		menuButton.addEventListener("mouseleave", () => {
-			menuButton.style.color = "var(--text-muted)";
-			menuButton.style.backgroundColor = "transparent";
-		});
+		// Hover states are handled by CSS
 
 		menuButton.addEventListener("click", (e) => {
 			e.preventDefault();
@@ -125,33 +65,7 @@ export class HabitCard extends HTMLElementComponent {
 		const dragHandle = document.createElement("div");
 		dragHandle.className = "habit-drag-handle";
 		dragHandle.innerHTML = "⋮⋮";
-		dragHandle.style.cssText = `
-			position: absolute;
-			left: 8px;
-			top: 50%;
-			transform: translateY(-50%);
-			cursor: grab;
-			color: var(--text-muted);
-			font-size: 16px;
-			line-height: 1;
-			letter-spacing: -2px;
-			padding: 4px;
-			user-select: none;
-			transition: color 0.2s;
-			z-index: 5;
-		`;
-		dragHandle.addEventListener("mouseenter", () => {
-			dragHandle.style.color = "var(--text-normal)";
-		});
-		dragHandle.addEventListener("mouseleave", () => {
-			dragHandle.style.color = "var(--text-muted)";
-		});
-		dragHandle.addEventListener("mousedown", () => {
-			dragHandle.style.cursor = "grabbing";
-		});
-		dragHandle.addEventListener("mouseup", () => {
-			dragHandle.style.cursor = "grab";
-		});
+		// Hover and active states are handled by CSS
 
 		// Make card draggable
 		card.setAttribute("draggable", "true");
@@ -160,10 +74,10 @@ export class HabitCard extends HTMLElementComponent {
 				this.props.onDragStart(this.props.habit.id, e);
 			}
 			e.dataTransfer!.effectAllowed = "move";
-			card.style.opacity = "0.5";
+			card.classList.add("habit-card-dragging");
 		});
 		card.addEventListener("dragend", () => {
-			card.style.opacity = "1";
+			card.classList.remove("habit-card-dragging");
 			if (this.props.onDragEnd) {
 				this.props.onDragEnd();
 			}
@@ -197,38 +111,21 @@ export class HabitCard extends HTMLElementComponent {
 
 		// Left side: Emoji and name
 		const leftSide = document.createElement("div");
-		leftSide.style.cssText = `
-			display: flex;
-			align-items: center;
-			gap: 12px;
-		`;
+		leftSide.className = "habit-card-left-side";
 
 		const emoji = document.createElement("span");
 		emoji.className = "habit-emoji";
 		emoji.textContent = this.props.habit.emoji;
 		const bgColor = this.props.habit.themeColor || 'var(--interactive-accent)';
 		const emojiBackground = createTranslucentColor(bgColor, 0.20);
-		emoji.style.cssText = `
-			font-size: 24px;
-			border-radius: 6px;
-			padding: 10px;
-			background-color: ${emojiBackground};
-		`;
+		emoji.style.backgroundColor = emojiBackground;
 
 		const habitInfo = document.createElement("div");
-		habitInfo.style.cssText = `
-			display: flex;
-			flex-direction: column;
-		`;
+		habitInfo.className = "habit-info";
 
 		const habitName = document.createElement("div");
 		habitName.className = "habit-name";
 		habitName.textContent = this.props.habit.name;
-		habitName.style.cssText = `
-			font-weight: 500;
-			font-size: 14px;
-			color: var(--text-normal);
-		`;
 
 		habitInfo.appendChild(habitName);
 		leftSide.appendChild(emoji);
@@ -256,11 +153,7 @@ export class HabitCard extends HTMLElementComponent {
 
 		if (this.props.currentValue === undefined || this.props.currentValue === null) {
 			statusContainer.textContent = "No data";
-			statusContainer.style.cssText = `
-				font-size: 12px;
-				color: var(--text-muted);
-				font-style: italic;
-			`;
+			statusContainer.className = "habit-status-no-data";
 		} else if (this.props.habit.type === "boolean") {
 			const completed = this.props.currentValue as boolean;
 			// Use SVG icons for better appearance
@@ -269,35 +162,25 @@ export class HabitCard extends HTMLElementComponent {
 			
 			// Create vertical layout for icon and text
 			const booleanContainer = document.createElement("div");
-			booleanContainer.style.cssText = `
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 4px;
-			`;
+			booleanContainer.className = "habit-boolean-container";
 			
 			const iconContainer = document.createElement("div");
 			iconContainer.innerHTML = completed ? checkIcon : dashedIcon;
 			
 			const statusText = document.createElement("div");
 			statusText.textContent = completed ? "Done" : "Not done";
-			statusText.style.cssText = `
-				font-size: 11px;
-				color: ${completed ? 'var(--text-success)' : 'var(--text-muted)'};
-				font-weight: 500;
-			`;
+			statusText.className = "habit-boolean-status-text";
+			if (completed) {
+				statusText.classList.add("habit-boolean-status-text-done");
+			} else {
+				statusText.classList.add("habit-boolean-status-text-not-done");
+			}
 			
 			booleanContainer.appendChild(iconContainer);
 			booleanContainer.appendChild(statusText);
 			statusContainer.appendChild(booleanContainer);
 			
-			statusContainer.style.cssText = `
-				font-size: 12px;
-				color: var(--text-normal);
-				font-weight: 500;
-				display: flex;
-				align-items: center;
-			`;
+			statusContainer.className = "habit-status";
 		} else {
 			const value = this.props.currentValue as number;
 			const target = this.props.habit.target;
@@ -307,29 +190,15 @@ export class HabitCard extends HTMLElementComponent {
 			
 			// Create vertical layout container
 			const verticalContainer = document.createElement("div");
-			verticalContainer.style.cssText = `
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 8px;
-			`;
+			verticalContainer.className = "habit-vertical-container";
 			
 			// Visualization container
 			const visualizationContainer = document.createElement("div");
-			visualizationContainer.style.cssText = `
-				display: flex;
-				justify-content: center;
-				align-items: center;
-			`;
+			visualizationContainer.className = "habit-visualization-container";
 			
 			// Progress text
 			const progressText = document.createElement("div");
-			progressText.style.cssText = `
-				font-size: 12px;
-				color: var(--text-normal);
-				font-weight: 500;
-				text-align: center;
-			`;
+			progressText.className = "habit-progress-text";
 			
 			// Determine completion status based on operator
 			let isCompleted = false;
@@ -392,36 +261,14 @@ export class HabitCard extends HTMLElementComponent {
 					// Add thin ring for exceeded targets (At least)
 					if (isExceeded) {
 						const thinRing = document.createElement("div");
-						thinRing.style.cssText = `
-							position: absolute;
-							width: 40px;
-							height: 40px;
-							border: 2px solid var(--text-success);
-							border-radius: 50%;
-							opacity: 0.4;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%);
-						`;
-						visualizationContainer.style.position = "relative";
+						thinRing.className = "habit-thin-ring";
 						visualizationContainer.appendChild(thinRing);
 					}
 					
 					// Add overflow ring for At most when exceeded
 					if (isAtMostExceeded) {
 						const overflowRing = document.createElement("div");
-						overflowRing.style.cssText = `
-							position: absolute;
-							width: 40px;
-							height: 40px;
-							border: 2px solid var(--text-error);
-							border-radius: 50%;
-							opacity: 0.4;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%);
-						`;
-						visualizationContainer.style.position = "relative";
+						overflowRing.className = "habit-overflow-ring";
 						visualizationContainer.appendChild(overflowRing);
 					}
 					
@@ -429,13 +276,7 @@ export class HabitCard extends HTMLElementComponent {
 					if (completionOperator === CompletionOperator.AT_LEAST && isCompleted) {
 						const checkIcon = document.createElement("div");
 						checkIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><path d="M20 6L9 17l-5-5"></path></svg>`;
-						checkIcon.style.cssText = `
-							position: absolute;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%);
-						`;
-						visualizationContainer.style.position = "relative";
+						checkIcon.className = "habit-check-icon";
 						visualizationContainer.appendChild(checkIcon);
 					}
 					
@@ -443,13 +284,7 @@ export class HabitCard extends HTMLElementComponent {
 					if (isAtMostExceeded) {
 						const warningIcon = document.createElement("div");
 						warningIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-error);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
-						warningIcon.style.cssText = `
-							position: absolute;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%);
-						`;
-						visualizationContainer.style.position = "relative";
+						warningIcon.className = "habit-warning-icon";
 						visualizationContainer.appendChild(warningIcon);
 					}
 				} else if (visualization === Visualization.CIRCLE_CHECK) {

@@ -19,31 +19,16 @@ export class StatisticsDashboard extends HTMLElementComponent {
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "statistics-dashboard";
-		container.style.cssText = `
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 8px;
-			padding: 20px;
-			margin-bottom: 20px;
-		`;
+		// Container styling is handled by CSS
 
 		const title = document.createElement("h3");
 		title.textContent = "Statistics";
-		title.style.cssText = `
-			margin: 0 0 16px 0;
-			font-size: 16px;
-			font-weight: 600;
-			color: var(--text-normal);
-		`;
+		title.className = "statistics-title";
 		container.appendChild(title);
 
 		// Statistics grid
 		const grid = document.createElement("div");
-		grid.style.cssText = `
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-			gap: 16px;
-		`;
+		grid.className = "statistics-grid";
 
 		// Stat items
 		const stats = this.getStatItems();
@@ -78,38 +63,21 @@ export class StatisticsDashboard extends HTMLElementComponent {
 
 	private createStatItem(stat: { label: string; value: string; icon: string }): HTMLElement {
 		const item = document.createElement("div");
-		item.style.cssText = `
-			background-color: var(--background-primary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 6px;
-			padding: 12px;
-			text-align: center;
-		`;
+		item.className = "statistics-item";
 
 		const icon = document.createElement("div");
 		icon.textContent = stat.icon;
-		icon.style.cssText = `
-			font-size: 24px;
-			margin-bottom: 8px;
-		`;
+		icon.className = "statistics-icon";
 		item.appendChild(icon);
 
 		const value = document.createElement("div");
 		value.textContent = stat.value;
-		value.style.cssText = `
-			font-size: 20px;
-			font-weight: 600;
-			color: var(--text-normal);
-			margin-bottom: 4px;
-		`;
+		value.className = "statistics-value";
 		item.appendChild(value);
 
 		const label = document.createElement("div");
 		label.textContent = stat.label;
-		label.style.cssText = `
-			font-size: 12px;
-			color: var(--text-muted);
-		`;
+		label.className = "statistics-label";
 		item.appendChild(label);
 
 		return item;

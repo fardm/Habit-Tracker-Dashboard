@@ -108,14 +108,8 @@ export class SettingsModal extends Modal {
 
 		// Buttons
 		const buttonContainer = contentEl.createDiv({
-			cls: "setting-item-control"
+			cls: "settings-modal-button-container"
 		});
-		buttonContainer.style.cssText = `
-			display: flex;
-			justify-content: flex-end;
-			gap: 12px;
-			margin-top: 16px;
-		`;
 
 		const cancelButton = buttonContainer.createEl("button", {
 			text: "Cancel",

@@ -17,28 +17,7 @@ export class RefreshButton extends HTMLElementComponent {
 		button.className = "habit-tracker-refresh-btn";
 		button.innerHTML = "↻ Refresh";
 		button.type = "button";
-
-		// Minimal modern styling
-		button.style.cssText = `
-			background-color: var(--background-modifier-border);
-			color: var(--text-normal);
-			border: none;
-			padding: 6px 12px;
-			border-radius: 4px;
-			cursor: pointer;
-			font-size: 13px;
-			font-weight: 500;
-			transition: background-color 0.2s;
-			line-height: 1;
-		`;
-
-		button.addEventListener("mouseenter", () => {
-			button.style.backgroundColor = "var(--background-modifier-hover)";
-		});
-
-		button.addEventListener("mouseleave", () => {
-			button.style.backgroundColor = "var(--background-modifier-border)";
-		});
+		// Hover states are handled by CSS
 
 		// Add click handler
 		button.addEventListener("click", (e) => {

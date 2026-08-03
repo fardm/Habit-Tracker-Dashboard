@@ -14,34 +14,12 @@ export class DateNavigator {
 	render(): HTMLElement {
 		const navigator = document.createElement("div");
 		navigator.className = "date-navigator";
-		navigator.style.cssText = `
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			padding: 0;
-		`;
 
 		// Left arrow button
 		const leftButton = document.createElement("button");
 		leftButton.innerHTML = "<";
-		leftButton.style.cssText = `
-			color: var(--text-muted);
-			font-size: 16px;
-			cursor: pointer;
-			padding: 4px 6px;
-			transition: color 0.2s;
-			line-height: 1;
-
-			background: var(--background-secondary);
-			border-radius: 6px;
-			border: 1px solid var(--background-modifier-border);
-		`;
-		leftButton.addEventListener("mouseenter", () => {
-			leftButton.style.color = "var(--text-normal)";
-		});
-		leftButton.addEventListener("mouseleave", () => {
-			leftButton.style.color = "var(--text-muted)";
-		});
+		leftButton.className = "date-navigator-button";
+		// Hover states are handled by CSS
 		leftButton.addEventListener("click", () => {
 			this.previousDay();
 		});
@@ -49,26 +27,8 @@ export class DateNavigator {
 		// Date display
 		const dateDisplay = document.createElement("button");
 		dateDisplay.textContent = this.formatDate(this.currentDate);
-		dateDisplay.style.cssText = `
-			background: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 4px;
-			color: var(--text-normal);
-			font-size: 13px;
-			font-weight: 500;
-			cursor: pointer;
-			padding: 4px 8px;
-			transition: color 0.2s;
-			min-width: 80px;
-			text-align: center;
-			line-height: 1;
-		`;
-		dateDisplay.addEventListener("mouseenter", () => {
-			dateDisplay.style.color = "var(--interactive-accent)";
-		});
-		dateDisplay.addEventListener("mouseleave", () => {
-			dateDisplay.style.color = "var(--text-normal)";
-		});
+		dateDisplay.className = "date-navigator-display";
+		// Hover states are handled by CSS
 		dateDisplay.addEventListener("click", (e) => {
 			this.openDatePicker(e, dateDisplay);
 		});
@@ -76,24 +36,8 @@ export class DateNavigator {
 		// Right arrow button
 		const rightButton = document.createElement("button");
 		rightButton.innerHTML = ">";
-		rightButton.style.cssText = `
-			color: var(--text-muted);
-			font-size: 16px;
-			cursor: pointer;
-			padding: 4px 6px;
-			transition: color 0.2s;
-			line-height: 1;
-
-			background: var(--background-secondary);
-			border-radius: 6px;
-			border: 1px solid var(--background-modifier-border);
-		`;
-		rightButton.addEventListener("mouseenter", () => {
-			rightButton.style.color = "var(--text-normal)";
-		});
-		rightButton.addEventListener("mouseleave", () => {
-			rightButton.style.color = "var(--text-muted)";
-		});
+		rightButton.className = "date-navigator-button";
+		// Hover states are handled by CSS
 		rightButton.addEventListener("click", () => {
 			this.nextDay();
 		});
@@ -150,17 +94,15 @@ export class DateNavigator {
 		// Create a hidden date input positioned directly below the button
 		const dateInput = document.createElement("input");
 		dateInput.type = "date";
-		dateInput.style.cssText = `
-			position: fixed;
-			opacity: 0.01;
-			pointer-events: auto;
-			width: 1px;
-			height: 1px;
-			padding: 0;
-			margin: 0;
-			border: 0;
-			z-index: 1000;
-		`;
+		dateInput.style.position = "fixed";
+		dateInput.style.opacity = "0.01";
+		dateInput.style.pointerEvents = "auto";
+		dateInput.style.width = "1px";
+		dateInput.style.height = "1px";
+		dateInput.style.padding = "0";
+		dateInput.style.margin = "0";
+		dateInput.style.border = "0";
+		dateInput.style.zIndex = "1000";
 		
 		const rect = button.getBoundingClientRect();
 		dateInput.style.left = `${rect.left}px`;

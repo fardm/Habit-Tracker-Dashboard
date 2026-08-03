@@ -16,9 +16,7 @@ export class SettingsPanel extends HTMLElementComponent {
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "settings-panel";
-		container.style.cssText = `
-			position: relative;
-		`;
+		// Container styling is handled by CSS
 
 		// Settings button
 		const settingsButton = document.createElement("button");
@@ -33,25 +31,8 @@ export class SettingsPanel extends HTMLElementComponent {
 			</svg>
 		`;
 		
-		settingsButton.style.cssText = `
-			padding: 8px 12px;
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 6px;
-			cursor: pointer;
-			transition: all 0.2s;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		`;
-
-		settingsButton.addEventListener("mouseenter", () => {
-			settingsButton.style.backgroundColor = "var(--background-modifier-hover)";
-		});
-
-		settingsButton.addEventListener("mouseleave", () => {
-			settingsButton.style.backgroundColor = "var(--background-secondary)";
-		});
+		settingsButton.className = "settings-panel-button";
+		// Hover states are handled by CSS
 
 		settingsButton.addEventListener("click", (e) => {
 			e.stopPropagation();
@@ -65,29 +46,12 @@ export class SettingsPanel extends HTMLElementComponent {
 		const panel = document.createElement("div");
 		panel.className = "settings-dropdown";
 		panel.id = "settings-dropdown";
-		panel.style.cssText = `
-			position: absolute;
-			top: calc(100% + 8px);
-			right: 0;
-			width: 300px;
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 8px;
-			padding: 16px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-			z-index: 1000;
-			display: none;
-		`;
+		// Panel styling is handled by CSS
 
 		// Section visibility settings
 		const sectionTitle = document.createElement("h4");
 		sectionTitle.textContent = "Section Visibility";
-		sectionTitle.style.cssText = `
-			margin: 0 0 12px 0;
-			font-size: 14px;
-			font-weight: 600;
-			color: var(--text-normal);
-		`;
+		sectionTitle.className = "settings-panel-section-title";
 		panel.appendChild(sectionTitle);
 
 		const sectionToggles = this.createSectionToggles();
@@ -108,11 +72,7 @@ export class SettingsPanel extends HTMLElementComponent {
 
 	private createSectionToggles(): HTMLElement {
 		const container = document.createElement("div");
-		container.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-		`;
+		container.className = "settings-panel-toggles";
 
 		const sections: { key: keyof SectionVisibility; label: string }[] = [
 			{ key: "showHeatmap", label: "Activity Heatmap" },
@@ -123,28 +83,17 @@ export class SettingsPanel extends HTMLElementComponent {
 
 		sections.forEach(section => {
 			const toggleRow = document.createElement("div");
-			toggleRow.style.cssText = `
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			`;
+			toggleRow.className = "settings-panel-toggle-row";
 
 			const label = document.createElement("label");
 			label.textContent = section.label;
-			label.style.cssText = `
-				font-size: 13px;
-				color: var(--text-normal);
-			`;
+			label.className = "settings-panel-toggle-label";
 			toggleRow.appendChild(label);
 
 			const toggle = document.createElement("input");
 			toggle.type = "checkbox";
 			toggle.checked = this.props.settings.sectionVisibility[section.key];
-			toggle.style.cssText = `
-				width: 16px;
-				height: 16px;
-				cursor: pointer;
-			`;
+			toggle.className = "settings-panel-toggle-checkbox";
 
 			toggle.addEventListener("change", () => {
 				const newSettings = { ...this.props.settings };

@@ -16,20 +16,11 @@ export class TimeRangeSelector extends HTMLElementComponent {
 	render(): HTMLElement {
 		const container = document.createElement("div");
 		container.className = "time-range-selector";
-		container.style.cssText = `
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			flex-wrap: wrap;
-		`;
+		// Container styling is handled by CSS
 
 		const label = document.createElement("span");
 		label.textContent = "Time Range:";
-		label.style.cssText = `
-			font-size: 14px;
-			color: var(--text-muted);
-			font-weight: 500;
-		`;
+		label.className = "time-range-label";
 		container.appendChild(label);
 
 		const ranges: { value: TimeRange; label: string }[] = [
@@ -43,29 +34,7 @@ export class TimeRangeSelector extends HTMLElementComponent {
 		ranges.forEach(range => {
 			const button = document.createElement("button");
 			button.textContent = range.label;
-			button.style.cssText = `
-				padding: 6px 12px;
-				border: 1px solid var(--background-modifier-border);
-				background-color: var(--background-secondary);
-				color: var(--text-normal);
-				border-radius: 6px;
-				cursor: pointer;
-				font-size: 13px;
-				transition: all 0.2s;
-			`;
-
-			if (this.props.currentRange === range.value) {
-				button.style.cssText = `
-					padding: 6px 12px;
-					border: 1px solid var(--interactive-accent);
-					background-color: var(--interactive-accent);
-					color: var(--text-on-accent);
-					border-radius: 6px;
-					cursor: pointer;
-					font-size: 13px;
-					transition: all 0.2s;
-				`;
-			}
+			button.className = this.props.currentRange === range.value ? "time-range-button time-range-button-active" : "time-range-button";
 
 			button.addEventListener("click", () => {
 				this.props.onRangeChange(range.value);
@@ -82,27 +51,9 @@ export class TimeRangeSelector extends HTMLElementComponent {
 	private updateButtonStates(): void {
 		this.buttons.forEach((button, range) => {
 			if (this.props.currentRange === range) {
-				button.style.cssText = `
-					padding: 6px 12px;
-					border: 1px solid var(--interactive-accent);
-					background-color: var(--interactive-accent);
-					color: var(--text-on-accent);
-					border-radius: 6px;
-					cursor: pointer;
-					font-size: 13px;
-					transition: all 0.2s;
-				`;
+				button.className = "time-range-button time-range-button-active";
 			} else {
-				button.style.cssText = `
-					padding: 6px 12px;
-					border: 1px solid var(--background-modifier-border);
-					background-color: var(--background-secondary);
-					color: var(--text-normal);
-					border-radius: 6px;
-					cursor: pointer;
-					font-size: 13px;
-					transition: all 0.2s;
-				`;
+				button.className = "time-range-button";
 			}
 		});
 	}

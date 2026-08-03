@@ -23,16 +23,6 @@ export class HabitMenu extends HTMLElementComponent {
 	render(): HTMLElement {
 		const menu = document.createElement("div");
 		menu.className = "habit-menu";
-		menu.style.cssText = `
-			position: fixed;
-			background-color: var(--background-secondary);
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 4px;
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-			z-index: 10000;
-			min-width: 150px;
-			padding: 4px 0;
-		`;
 
 		const menuItems = [
 			{ label: "Edit Habit", action: this.props.onEdit },
@@ -44,21 +34,10 @@ export class HabitMenu extends HTMLElementComponent {
 			const menuItem = document.createElement("div");
 			menuItem.className = "habit-menu-item";
 			menuItem.textContent = item.label;
-			menuItem.style.cssText = `
-				padding: 8px 16px;
-				cursor: pointer;
-				font-size: 13px;
-				color: ${item.isDestructive ? 'var(--text-error)' : 'var(--text-normal)'};
-				transition: background-color 0.2s;
-			`;
 
-			menuItem.addEventListener("mouseenter", () => {
-				menuItem.style.backgroundColor = "var(--background-modifier-hover)";
-			});
-
-			menuItem.addEventListener("mouseleave", () => {
-				menuItem.style.backgroundColor = "transparent";
-			});
+			if (item.isDestructive) {
+				menuItem.classList.add("habit-menu-item-destructive");
+			}
 
 			menuItem.addEventListener("click", (e) => {
 				e.stopPropagation();

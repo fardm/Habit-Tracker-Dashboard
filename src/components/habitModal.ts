@@ -52,16 +52,7 @@ export class HabitModal extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 
-		// Mobile-specific styles for reduced padding
-		const mobileStyle = document.createElement("style");
-		mobileStyle.textContent = `
-			@media (max-width: 768px) {
-				.modal-content {
-					padding: 16px !important;
-				}
-			}
-		`;
-		contentEl.appendChild(mobileStyle);
+		// Mobile-specific styles are handled by CSS in styles.css
 
 		contentEl.createEl("h2", { text: this.isEditMode ? "Edit Habit" : "Create New Habit" });
 
@@ -135,28 +126,15 @@ export class HabitModal extends Modal {
 		this.numericSettingsContainer = contentEl.createDiv({
 			cls: "numeric-settings-container"
 		});
-		this.numericSettingsContainer.style.cssText = `
-			margin-top: 16px;
-			margin-bottom: 16px;
-		`;
+		// Numeric settings container styling is handled by CSS
 
 		const numericSettingsTitle = this.numericSettingsContainer.createEl("h3", {
 			text: "Numeric Settings"
 		});
-		numericSettingsTitle.style.cssText = `
-			margin: 0 0 12px 0;
-			font-size: 14px;
-			font-weight: 500;
-			color: var(--text-normal);
-		`;
+		numericSettingsTitle.className = "numeric-settings-title";
 
 		this.numericSettingsContent = this.numericSettingsContainer.createDiv();
-		this.numericSettingsContent.style.cssText = `
-			padding: 12px;
-			background-color: var(--background-secondary);
-			border-radius: 4px;
-			border: 1px solid var(--background-modifier-border);
-		`;
+		this.numericSettingsContent.className = "numeric-settings-content";
 
 		// Unit field
 		new Setting(this.numericSettingsContent)
@@ -203,42 +181,24 @@ export class HabitModal extends Modal {
 		const visualizationSetting = this.numericSettingsContent.createDiv({
 			cls: "setting-item-full-width"
 		});
-		visualizationSetting.style.cssText = `
-			padding: 18px 0px;
-			border-top: 1px solid var(--background-modifier-border);
-			display: flex;
-			flex-direction: column;
-			gap: 6px;
-		`;
+		visualizationSetting.className = "setting-item-full-width";
 
 		const visualizationName = visualizationSetting.createDiv({
 			text: "Visualization"
 		});
-		visualizationName.style.cssText = `
-			font-weight: var(--font-small);
-			font-size: var(--font-ui-small);
-			color: var(--text-normal);
-		`;
+		visualizationName.className = "setting-item-name";
 
 		const visualizationDesc = visualizationSetting.createDiv({
 			text: "Choose how to display progress for this habit"
 		});
-		visualizationDesc.style.cssText = `
-			font-size: var(--font-ui-smaller);
-			color: var(--text-muted);
-			line-height: var(--line-height-tight);
-		`;
+		visualizationDesc.className = "setting-item-description";
 
 		this.visualizationContainer = visualizationSetting.createDiv({
 			cls: "visualization-container"
 		});
 
 		const radioContainer = this.visualizationContainer.createDiv();
-		radioContainer.style.cssText = `
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-		`;
+		radioContainer.className = "visualization-container";
 
 		const visualizationOptions = [
 			{ value: Visualization.DONUT, label: "Donut" },
@@ -248,11 +208,7 @@ export class HabitModal extends Modal {
 
 		visualizationOptions.forEach(option => {
 			const radioRow = radioContainer.createDiv();
-			radioRow.style.cssText = `
-				display: flex;
-				align-items: center;
-				gap: 8px;
-			`;
+			radioRow.className = "visualization-radio-row";
 
 			const radio = document.createElement("input");
 			radio.type = "radio";
@@ -267,11 +223,7 @@ export class HabitModal extends Modal {
 			const label = radioRow.createEl("label", {
 				text: option.label
 			});
-			label.style.cssText = `
-				cursor: pointer;
-				color: var(--text-normal);
-				font-size: var(--font-ui-small);
-			`;
+			label.className = "visualization-radio-label";
 		});
 
 		// Color Theme (shown for both habit types)
@@ -304,22 +256,13 @@ export class HabitModal extends Modal {
 		const errorContainer = contentEl.createDiv({
 			cls: "habit-modal-errors"
 		});
-		errorContainer.style.cssText = `
-			color: var(--text-error);
-			margin-bottom: 16px;
-			min-height: 20px;
-		`;
+		errorContainer.className = "habit-modal-errors";
 
 		// Buttons
 		const buttonContainer = contentEl.createDiv({
 			cls: "setting-item-control"
 		});
-		buttonContainer.style.cssText = `
-			display: flex;
-			justify-content: flex-end;
-			gap: 12px;
-			margin-top: 16px;
-		`;
+		buttonContainer.className = "habit-modal-button-container";
 
 		const cancelButton = buttonContainer.createEl("button", {
 			text: "Cancel",
