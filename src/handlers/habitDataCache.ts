@@ -183,7 +183,7 @@ export class HabitDataCache {
 		
 		// Check frontmatter directly via metadata cache
 		if (fileCache && fileCache.frontmatter) {
-			const frontmatterTags = fileCache.frontmatter.tags;
+			const frontmatterTags = fileCache.frontmatter.tags as unknown;
 			if (frontmatterTags) {
 				const tags = Array.isArray(frontmatterTags) ? frontmatterTags : [frontmatterTags];
 				const uniqueTags = [...new Set(tags)];
@@ -273,7 +273,7 @@ export class HabitDataCache {
 			const frontmatter = entry.frontmatter;
 			
 			if (frontmatter && habit.frontmatterField in frontmatter) {
-				const rawValue = frontmatter[habit.frontmatterField];
+				const rawValue = frontmatter[habit.frontmatterField] as unknown;
 				const processedValue = this.processValue(rawValue, habit.type);
 				
 				if (processedValue !== null) {

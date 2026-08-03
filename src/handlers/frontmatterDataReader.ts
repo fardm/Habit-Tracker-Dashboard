@@ -83,7 +83,7 @@ export class FrontmatterDataReader {
 				
 				// Check if the habit field exists in frontmatter
 				if (frontmatter && habit.frontmatterField in frontmatter) {
-					const rawValue = frontmatter[habit.frontmatterField];
+					const rawValue = frontmatter[habit.frontmatterField] as unknown;
 					const processedValue = this.processValue(rawValue, habit.type);
 					
 					if (processedValue !== null) {
@@ -187,7 +187,7 @@ export class FrontmatterDataReader {
 		
 		// Check frontmatter directly via metadata cache
 		if (fileCache && fileCache.frontmatter) {
-			const frontmatterTags = fileCache.frontmatter.tags;
+			const frontmatterTags = fileCache.frontmatter.tags as unknown;
 			if (frontmatterTags) {
 				const tags = Array.isArray(frontmatterTags) ? frontmatterTags : [frontmatterTags];
 				const uniqueTags = [...new Set(tags)];
@@ -217,7 +217,7 @@ export class FrontmatterDataReader {
 			
 			const frontmatter = this.parseFrontmatter(content);
 			if (frontmatter && this.settings.dateFrontmatterProperty in frontmatter) {
-				const dateStr = frontmatter[this.settings.dateFrontmatterProperty];
+				const dateStr = frontmatter[this.settings.dateFrontmatterProperty] as unknown;
 				if (typeof dateStr === 'string') {
 					const date = new Date(dateStr);
 					if (!isNaN(date.getTime())) {
