@@ -6,6 +6,7 @@ export class MenuManager {
 	private activeMenu?: HTMLElement;
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	// Empty constructor required for singleton pattern - initialization handled in getInstance()
 	private constructor() {}
 
 	static getInstance(): MenuManager {

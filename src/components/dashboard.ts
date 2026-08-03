@@ -69,7 +69,9 @@ export class Dashboard extends HTMLElementComponent {
 		leftControls.appendChild(addHabitButton.render());
 
 		const refreshButton = new RefreshButton(() => {
-			this.refresh();
+			void this.refresh().catch(error => {
+				console.error("Error refreshing dashboard:", error);
+			});
 		});
 		leftControls.appendChild(refreshButton.render());
 
@@ -77,7 +79,9 @@ export class Dashboard extends HTMLElementComponent {
 		const centerControls = createDiv({ cls: "dashboard-center-controls" });
 		
 		this.dateNavigator = new DateNavigator(this.currentDate, (date) => {
-			this.handleDateChange(date);
+			void this.handleDateChange(date).catch(error => {
+				console.error("Error handling date change:", error);
+			});
 		});
 		centerControls.appendChild(this.dateNavigator.render());
 

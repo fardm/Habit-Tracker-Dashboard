@@ -33,7 +33,9 @@ export default class HabitTrackerPlugin extends Plugin {
 	 */
 	showCreateTrackerModal() {
 		new CreateTrackerModal(this.app, (fileName) => {
-			createTrackerFile(this.app, fileName);
+			void createTrackerFile(this.app, fileName).catch(error => {
+				console.error("Error creating tracker file:", error);
+			});
 		}).open();
 	}
 }

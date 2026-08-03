@@ -69,7 +69,9 @@ export class HabitDetailsModal extends Modal {
 		this.renderContentSections();
 
 		// Initial data load (placeholder)
-		this.loadHabitData();
+		void this.loadHabitData().catch(error => {
+			console.error("Error loading habit data:", error);
+		});
 	}
 
 	private renderHeader(): void {
@@ -138,7 +140,9 @@ export class HabitDetailsModal extends Modal {
 	private handleYearChange(delta: number): void {
 		this.selectedYear += delta;
 		this.renderYearNavigation();
-		this.loadHabitData();
+		void this.loadHabitData().catch(error => {
+			console.error("Error loading habit data:", error);
+		});
 	}
 
 	private renderContentSections(): void {
