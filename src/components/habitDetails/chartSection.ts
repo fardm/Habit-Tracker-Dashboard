@@ -41,18 +41,22 @@ export class ChartSection extends HTMLElementComponent {
 		toggleContainer.className = "chart-toggle-container";
 
 		const lineButton = document.createElement("button");
+		lineButton.type = "button";
 		lineButton.innerHTML = "📈";
 		lineButton.title = "Line Chart";
 		const themeColor = this.getThemeColor();
 		lineButton.className = this.props.chartType === ChartType.LINE ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button";
 
 		const barButton = document.createElement("button");
+		barButton.type = "button";
 		barButton.innerHTML = "📊";
 		barButton.title = "Bar Chart";
 		barButton.className = this.props.chartType === ChartType.BAR ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button";
 
 		lineButton.addEventListener("click", (e) => {
 			e.preventDefault();
+			e.stopPropagation();
+			lineButton.blur();
 			this.props.onChartTypeChange(ChartType.LINE);
 			this.updateToggleButtons();
 			this.renderChart();
@@ -60,6 +64,8 @@ export class ChartSection extends HTMLElementComponent {
 
 		barButton.addEventListener("click", (e) => {
 			e.preventDefault();
+			e.stopPropagation();
+			barButton.blur();
 			this.props.onChartTypeChange(ChartType.BAR);
 			this.updateToggleButtons();
 			this.renderChart();

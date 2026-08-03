@@ -291,7 +291,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		const minLabel = document.createElement("label");
 		minLabel.textContent = "Minimum value";
-		minLabel.className = "heatmap-settings-label-inline";
+		minLabel.className = "heatmap-settings-field-label";
 
 		const minInput = document.createElement("input");
 		minInput.type = "number";
@@ -314,7 +314,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		const maxLabel = document.createElement("label");
 		maxLabel.textContent = "Maximum value";
-		maxLabel.className = "heatmap-settings-label-inline";
+		maxLabel.className = "heatmap-settings-field-label";
 
 		const maxInput = document.createElement("input");
 		maxInput.type = "number";
@@ -346,7 +346,20 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	private toggleMenu(): void {
 		const menu = document.getElementById("heatmap-settings-menu");
 		if (menu) {
-			menu.style.display = this.isMenuOpen ? "block" : "none";
+			if (this.isMenuOpen) {
+				menu.style.display = "block";
+				// Trigger reflow to enable transition
+				menu.offsetHeight;
+				menu.classList.add("heatmap-settings-menu-visible");
+			} else {
+				menu.classList.remove("heatmap-settings-menu-visible");
+				// Wait for transition to complete before hiding
+				setTimeout(() => {
+					if (!this.isMenuOpen) {
+						menu.style.display = "none";
+					}
+				}, 200);
+			}
 		}
 	}
 
