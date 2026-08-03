@@ -125,9 +125,41 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		container.className = "calendar-heatmap";
 		// Container styling is handled by CSS
 
-		// Header with title and menu button
-		const header = this.createHeader();
+		// Header with title
+		const header = document.createElement("div");
+		header.className = "calendar-heatmap-header";
+
+		const title = document.createElement("h3");
+		title.textContent = `Activity Heatmap`;
+		title.className = "calendar-heatmap-title";
+		header.appendChild(title);
 		container.appendChild(header);
+
+		// Menu button - positioned absolutely
+		const menuButton = document.createElement("button");
+		menuButton.type = "button";
+		menuButton.title = "Heatmap Settings";
+		menuButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="12" cy="12" r="1"></circle>
+				<circle cx="12" cy="5" r="1"></circle>
+				<circle cx="12" cy="19" r="1"></circle>
+			</svg>
+		`;
+		menuButton.className = "calendar-heatmap-menu-button";
+		// Hover states are handled by CSS
+
+		menuButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			this.isMenuOpen = !this.isMenuOpen;
+			this.toggleMenu();
+		});
+
+		container.appendChild(menuButton);
+
+		// Settings dropdown
+		const menuDropdown = this.createSettingsMenu();
+		container.appendChild(menuDropdown);
 
 		// Create heatmap container
 		this.heatmapContainer = document.createElement("div");
@@ -149,46 +181,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	}
 
 	private createHeader(): HTMLElement {
-		const header = document.createElement("div");
-		header.className = "heatmap-header";
-
-		const adapter = getCalendarAdapter(
-			this.props.reportCalendar || ReportCalendar.GREGORIAN
-		);
-		const year = this.props.year ?? adapter.getCurrentYear();
-
-		const title = document.createElement("h3");
-		title.textContent = `Activity Heatmap`;
-		title.className = "heatmap-title";
-		header.appendChild(title);
-
-		// Menu button
-		const menuButton = document.createElement("button");
-		menuButton.type = "button";
-		menuButton.title = "Heatmap Settings";
-		menuButton.innerHTML = `
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<circle cx="12" cy="12" r="1"></circle>
-				<circle cx="12" cy="5" r="1"></circle>
-				<circle cx="12" cy="19" r="1"></circle>
-			</svg>
-		`;
-		menuButton.className = "heatmap-menu-button";
-		// Hover states are handled by CSS
-
-		menuButton.addEventListener("click", (e) => {
-			e.stopPropagation();
-			this.isMenuOpen = !this.isMenuOpen;
-			this.toggleMenu();
-		});
-
-		header.appendChild(menuButton);
-
-		// Settings dropdown
-		const menuDropdown = this.createSettingsMenu();
-		header.appendChild(menuDropdown);
-
-		return header;
+		// Header is now created inline in render()
+		return document.createElement("div");
 	}
 
 	private createSettingsMenu(): HTMLElement {

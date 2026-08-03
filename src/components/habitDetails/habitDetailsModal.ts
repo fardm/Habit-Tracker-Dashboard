@@ -51,9 +51,8 @@ export class HabitDetailsModal extends Modal {
 		const { contentEl, modalEl } = this;
 		contentEl.empty();
 
-		// Modal width is handled by CSS
-
-		// Modal container width is handled by CSS
+		// Add class to modal container for width styling
+		modalEl.addClass("habit-details-modal-container");
 
 		// Modal container - no overflow, let parent handle scrolling
 		this.contentContainer = contentEl.createDiv({

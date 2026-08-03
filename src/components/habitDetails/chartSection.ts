@@ -26,7 +26,7 @@ export class ChartSection extends HTMLElementComponent {
 		container.className = "chart-section";
 		// Container styling is handled by CSS
 
-		// Header with title and chart type toggle
+		// Header with title
 		const header = document.createElement("div");
 		header.className = "chart-header";
 
@@ -34,8 +34,9 @@ export class ChartSection extends HTMLElementComponent {
 		title.textContent = "Progress";
 		title.className = "chart-title";
 		header.appendChild(title);
+		container.appendChild(header);
 
-		// Chart type toggle
+		// Chart type toggle - positioned absolutely
 		const toggleContainer = document.createElement("div");
 		toggleContainer.className = "chart-toggle-container";
 
@@ -50,13 +51,15 @@ export class ChartSection extends HTMLElementComponent {
 		barButton.title = "Bar Chart";
 		barButton.className = this.props.chartType === ChartType.BAR ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button";
 
-		lineButton.addEventListener("click", () => {
+		lineButton.addEventListener("click", (e) => {
+			e.preventDefault();
 			this.props.onChartTypeChange(ChartType.LINE);
 			this.updateToggleButtons();
 			this.renderChart();
 		});
 
-		barButton.addEventListener("click", () => {
+		barButton.addEventListener("click", (e) => {
+			e.preventDefault();
 			this.props.onChartTypeChange(ChartType.BAR);
 			this.updateToggleButtons();
 			this.renderChart();
@@ -65,8 +68,7 @@ export class ChartSection extends HTMLElementComponent {
 		this.toggleButtons = { line: lineButton, bar: barButton };
 		toggleContainer.appendChild(lineButton);
 		toggleContainer.appendChild(barButton);
-		header.appendChild(toggleContainer);
-		container.appendChild(header);
+		container.appendChild(toggleContainer);
 
 		// Chart container
 		this.chartContainer = document.createElement("div");
