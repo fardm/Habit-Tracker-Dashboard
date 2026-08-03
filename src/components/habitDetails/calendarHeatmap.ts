@@ -354,7 +354,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				menu.classList.remove("hidden");
 				menu.classList.add("visible");
 				// Trigger reflow to enable transition
-				menu.offsetHeight;
+				void menu.offsetHeight;
 				menu.classList.add("heatmap-settings-menu-visible");
 			} else {
 				menu.classList.remove("heatmap-settings-menu-visible");
