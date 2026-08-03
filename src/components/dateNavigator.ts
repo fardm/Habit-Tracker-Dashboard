@@ -102,8 +102,10 @@ export class DateNavigator {
 		});
 		
 		const rect = button.getBoundingClientRect();
-		dateInput.style.setProperty("--date-picker-left", `${rect.left}px`);
-		dateInput.style.setProperty("--date-picker-top", `${rect.bottom}px`);
+		dateInput.style.left = `${rect.left}px`;
+		dateInput.style.top = `${rect.bottom}px`;
+		dateInput.style.width = `${rect.width}px`;
+		dateInput.style.height = `${rect.height}px`;
 		
 		// Format date for input (YYYY-MM-DD)
 		const year = this.currentDate.getFullYear();
@@ -123,7 +125,9 @@ export class DateNavigator {
 				const selectedDate = new Date(target.value);
 				this.setDate(selectedDate);
 			}
-			document.body.removeChild(dateInput);
+			if (document.body.contains(dateInput)) {
+				document.body.removeChild(dateInput);
+			}
 		});
 		
 		dateInput.addEventListener("blur", () => {
@@ -136,7 +140,9 @@ export class DateNavigator {
 		});
 		
 		dateInput.addEventListener("cancel", () => {
-			document.body.removeChild(dateInput);
+			if (document.body.contains(dateInput)) {
+				document.body.removeChild(dateInput);
+			}
 		});
 	}
 

@@ -1381,16 +1381,12 @@
 
 .date-picker-hidden-input {
 	position: fixed;
-	opacity: 0.01;
+	opacity: 0;
 	pointer-events: auto;
-	width: 1px;
-	height: 1px;
 	padding: 0;
 	margin: 0;
-	border: 0;
+	border: none;
 	z-index: 1000;
-	left: var(--date-picker-left, 0);
-	top: var(--date-picker-top, 0);
 }
 
 /* ============================================
