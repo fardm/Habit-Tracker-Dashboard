@@ -303,7 +303,11 @@ export class Dashboard extends HTMLElementComponent {
 				onClick: (habitId) => this.handleHabitClick(habitId),
 				onDragStart: (habitId, event) => this.handleDragStart(habitId, event),
 				onDragOver: (event) => this.handleDragOver(event),
-				onDrop: (habitId, event) => this.handleDrop(habitId, event),
+				onDrop: (habitId, event) => {
+					void this.handleDrop(habitId, event).catch(error => {
+						console.error("Error handling drop:", error);
+					});
+				},
 				onDragEnd: () => this.handleDragEnd()
 			});
 			container.appendChild(habitCard.render());
@@ -313,8 +317,10 @@ export class Dashboard extends HTMLElementComponent {
 	private showAddHabitModal(): void {
 		const modal = new HabitModal(
 			this.app,
-			async (formData: HabitFormData) => {
-				await this.handleAddHabit(formData);
+			(formData: HabitFormData) => {
+				void this.handleAddHabit(formData).catch(error => {
+					console.error("Error adding habit:", error);
+				});
 			}
 		);
 		modal.open();
@@ -323,8 +329,10 @@ export class Dashboard extends HTMLElementComponent {
 	private showSettingsModal(): void {
 		const modal = new SettingsModal(
 			this.app,
-			async (formData: SettingsFormData) => {
-				await this.handleSaveSettings(formData);
+			(formData: SettingsFormData) => {
+				void this.handleSaveSettings(formData).catch(error => {
+					console.error("Error saving settings:", error);
+				});
 			},
 			this.currentSettings
 		);
@@ -369,8 +377,10 @@ export class Dashboard extends HTMLElementComponent {
 
 		const modal = new HabitModal(
 			this.app,
-			async (formData: HabitFormData) => {
-				await this.handleUpdateHabit(habitId, formData);
+			(formData: HabitFormData) => {
+				void this.handleUpdateHabit(habitId, formData).catch(error => {
+					console.error("Error updating habit:", error);
+				});
 			},
 			{
 				name: habit.name,
