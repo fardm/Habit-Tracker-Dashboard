@@ -83,13 +83,6 @@ export class HabitModal extends Modal {
 					})
 					.setValue(this.formData.emoji)
 					.then((inputEl) => {
-						const style = document.createElement("style");
-						style.textContent = `
-							.habit-modal-emoji-input::placeholder {
-								opacity: 0.7;
-							}
-						`;
-						contentEl.appendChild(style);
 						inputEl.inputEl.addClass("habit-modal-emoji-input");
 					})
 			);
