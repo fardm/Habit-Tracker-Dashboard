@@ -1,5 +1,11 @@
 # Obsidian Habit Tracker Plugin
 
+<div align="center">
+  <img src="img/dashboard.webp" width="30%" />
+  <img src="img/details-numeric.webp" width="30%" />
+  <img src="img/details-boolean.webp" width="30%" />
+</div>
+
 An interactive Habit Tracker dashboard for Obsidian that visualizes habit data extracted from your daily notes.
 
 ## About This Plugin
