@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "./htmlElementComponent";
-import { Habit, ViewMode, Visualization, CompletionOperator } from "../types/habitTypes";
+import { Habit, ViewMode, Visualization, CompletionOperator, HabitType } from "../types/habitTypes";
 import { HabitMenu } from "./habitMenu";
 import { DonutChart } from "./donutChart";
 import { createTranslucentColor } from "../utils/colorUtils";
@@ -203,7 +203,7 @@ export class HabitCard extends HTMLElementComponent {
 		if (this.props.currentValue === undefined || this.props.currentValue === null) {
 			statusContainer.textContent = "No data";
 			statusContainer.className = "habit-status-no-data";
-		} else if (this.props.habit.type === "boolean") {
+		} else if (this.props.habit.type === HabitType.BOOLEAN) {
 			const completed = this.props.currentValue as boolean;
 			
 			// Create vertical layout for icon and text
