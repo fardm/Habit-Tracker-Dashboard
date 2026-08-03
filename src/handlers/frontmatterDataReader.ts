@@ -46,36 +46,21 @@ export class FrontmatterDataReader {
 		let markdownFiles: TFile[];
 		
 		if (this.settings.dataSourceType === DataSourceType.FOLDER && this.settings.dataSourceValue) {
-			// Folder mode: search only in specified folder
-			const folderPath = this.settings.dataSourceValue;
-			const folder = this.app.vault.getAbstractFileByPath(folderPath);
-			
-			if (!folder || !('children' in folder)) {
-				// Folder doesn't exist or is invalid, return empty results
-				return [];
-			}
-			
-			// Get all markdown files in the folder
-			markdownFiles = this.app.vault.getMarkdownFiles().filter(file => 
-				file.path.startsWith(folderPath + '/') || file.path === folderPath
-			);
+			// Folder mode: only process files inside the configured folder path
+			markdownFiles = this.getFilesFromFolder(this.settings.dataSourceValue);
 		} else if (this.settings.dataSourceType === DataSourceType.TAG && this.settings.dataSourceValue) {
-			// Tag mode: search all files but filter by tag
-			markdownFiles = this.app.vault.getMarkdownFiles();
+			// Tag mode: enumerate vault files and filter by tag using metadataCache
+			// Full enumeration is required for tag-based tracking to discover matching files
+			markdownFiles = await this.getFilesByTag(this.settings.dataSourceValue);
 		} else {
 			// No valid settings configured, return empty results
 			return [];
 		}
 		
+		// Process only the filtered files - no unnecessary vault data is collected
 		for (const file of markdownFiles) {
 			try {
-				// Tag filtering: skip files that don't have the required tag
-				if (this.settings.dataSourceType === DataSourceType.TAG && this.settings.dataSourceValue) {
-					const hasTag = await this.fileHasTag(file, this.settings.dataSourceValue);
-					if (!hasTag) continue;
-				}
-				
-				// Read file content
+				// Read file content (only for files that passed the filter)
 				const content = await this.app.vault.read(file);
 				
 				const fileDate = this.extractDateFromPath(file.path, content);
@@ -108,8 +93,6 @@ export class FrontmatterDataReader {
 							filePath: file.path
 						});
 					}
-				} else {
-					// Habit field not found in frontmatter
 				}
 			} catch (error) {
 				console.error(`Error reading file ${file.path}:`, error);
@@ -123,6 +106,54 @@ export class FrontmatterDataReader {
 	}
 
 	/**
+	 * Gets markdown files from a specific folder path.
+	 * This function avoids scanning unrelated vault files by only processing
+	 * files inside the configured folder path.
+	 * 
+	 * @param folderPath - The folder path to search within
+	 * @returns Array of markdown files in the folder
+	 */
+	private getFilesFromFolder(folderPath: string): TFile[] {
+		const folder = this.app.vault.getAbstractFileByPath(folderPath);
+		
+		if (!folder || !('children' in folder)) {
+			// Folder doesn't exist or is invalid, return empty results
+			return [];
+		}
+		
+		// Get all markdown files in the folder (including subfolders)
+		return this.app.vault.getMarkdownFiles().filter(file => 
+			file.path.startsWith(folderPath + '/') || file.path === folderPath
+		);
+	}
+
+	/**
+	 * Gets markdown files that have a specific tag.
+	 * This function enumerates all vault files (required for tag-based tracking)
+	 * but uses Obsidian's metadataCache to filter files before reading content.
+	 * Only files that match the configured tag are returned, avoiding unnecessary
+	 * vault.read() calls.
+	 * 
+	 * @param tag - The tag to search for (with or without #)
+	 * @returns Array of markdown files with the specified tag
+	 */
+	private async getFilesByTag(tag: string): Promise<TFile[]> {
+		const allFiles = this.app.vault.getMarkdownFiles();
+		const matchingFiles: TFile[] = [];
+		
+		for (const file of allFiles) {
+			// Use metadataCache to check tags before reading file content
+			// This avoids unnecessary vault.read() calls for non-matching files
+			const hasTag = this.fileHasTagUsingCache(file, tag);
+			if (hasTag) {
+				matchingFiles.push(file);
+			}
+		}
+		
+		return matchingFiles;
+	}
+
+	/**
 	 * Gets the latest value for a habit
 	 */
 	async getLatestHabitValue(habit: Habit, startDate?: Date, endDate?: Date): Promise<HabitValue | null> {
@@ -131,15 +162,19 @@ export class FrontmatterDataReader {
 	}
 
 	/**
-	 * Checks if a file has a specific tag using multiple methods
+	 * Checks if a file has a specific tag using Obsidian's metadataCache.
+	 * This method does NOT read file content, avoiding unnecessary I/O operations.
+	 * Only uses the cached metadata which Obsidian maintains for all files.
+	 * 
 	 * @param file - The file to check
 	 * @param tag - The tag to search for (with or without #)
+	 * @returns True if the file has the tag, false otherwise
 	 */
-	private async fileHasTag(file: TFile, tag: string): Promise<boolean> {
+	private fileHasTagUsingCache(file: TFile, tag: string): boolean {
 		// Normalize tag: remove #, trim whitespace, lowercase
 		const normalizedTag = tag.startsWith('#') ? tag.substring(1).trim().toLowerCase() : tag.trim().toLowerCase();
 		
-		// Method 1: Use Obsidian's metadata cache tags (includes all tags from file)
+		// Use Obsidian's metadata cache tags (includes all tags from file)
 		const fileCache = this.app.metadataCache.getFileCache(file);
 		if (fileCache && fileCache.tags) {
 			for (const tagObj of Object.keys(fileCache.tags)) {
@@ -150,7 +185,7 @@ export class FrontmatterDataReader {
 			}
 		}
 		
-		// Method 2: Check frontmatter directly via metadata cache
+		// Check frontmatter directly via metadata cache
 		if (fileCache && fileCache.frontmatter) {
 			const frontmatterTags = fileCache.frontmatter.tags;
 			if (frontmatterTags) {
@@ -164,26 +199,6 @@ export class FrontmatterDataReader {
 					}
 				}
 			}
-		}
-		
-		// Method 3: Fallback to parsing frontmatter manually if cache is incomplete
-		try {
-			const content = await this.app.vault.read(file);
-			const frontmatter = this.parseFrontmatter(content);
-			
-			if (frontmatter && frontmatter.tags) {
-				const tags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [frontmatter.tags];
-				
-				for (const t of tags) {
-					const tagStr = String(t).trim();
-					const normalizedT = tagStr.startsWith('#') ? tagStr.substring(1).trim().toLowerCase() : tagStr.trim().toLowerCase();
-					if (normalizedT === normalizedTag) {
-						return true;
-					}
-				}
-			}
-		} catch (error) {
-			// Silently ignore parsing errors
 		}
 		
 		return false;
