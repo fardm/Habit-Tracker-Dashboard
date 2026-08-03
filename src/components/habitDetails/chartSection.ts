@@ -45,24 +45,14 @@ export class ChartSection extends HTMLElementComponent {
 			type: "button",
 			attr: { title: "Line Chart" }
 		});
-		lineButton.innerHTML = `
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-			</svg>
-		`;
+		lineButton.appendChild(this.createLineChartIcon());
 
 		const barButton = createEl("button", {
 			cls: this.props.chartType === ChartType.BAR ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button",
 			type: "button",
 			attr: { title: "Bar Chart" }
 		});
-		barButton.innerHTML = `
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<line x1="12" y1="20" x2="12" y2="10"></line>
-				<line x1="18" y1="20" x2="18" y2="4"></line>
-				<line x1="6" y1="20" x2="6" y2="16"></line>
-			</svg>
-		`;
+		barButton.appendChild(this.createBarChartIcon());
 
 		lineButton.addEventListener("click", (e) => {
 			e.preventDefault();
@@ -394,5 +384,59 @@ export class ChartSection extends HTMLElementComponent {
 			this.toggleButtons.bar.className = "chart-toggle-button chart-toggle-button-active";
 			this.toggleButtons.line.className = "chart-toggle-button";
 		}
+	}
+
+	private createLineChartIcon(): SVGElement {
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("width", "16");
+		svg.setAttribute("height", "16");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		svg.setAttribute("fill", "none");
+		svg.setAttribute("stroke", "currentColor");
+		svg.setAttribute("stroke-width", "2");
+		svg.setAttribute("stroke-linecap", "round");
+		svg.setAttribute("stroke-linejoin", "round");
+
+		const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+		polyline.setAttribute("points", "22 12 18 12 15 21 9 3 6 12 2 12");
+		svg.appendChild(polyline);
+
+		return svg;
+	}
+
+	private createBarChartIcon(): SVGElement {
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("width", "16");
+		svg.setAttribute("height", "16");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		svg.setAttribute("fill", "none");
+		svg.setAttribute("stroke", "currentColor");
+		svg.setAttribute("stroke-width", "2");
+		svg.setAttribute("stroke-linecap", "round");
+		svg.setAttribute("stroke-linejoin", "round");
+
+		const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		line1.setAttribute("x1", "12");
+		line1.setAttribute("y1", "20");
+		line1.setAttribute("x2", "12");
+		line1.setAttribute("y2", "10");
+
+		const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		line2.setAttribute("x1", "18");
+		line2.setAttribute("y1", "20");
+		line2.setAttribute("x2", "18");
+		line2.setAttribute("y2", "4");
+
+		const line3 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		line3.setAttribute("x1", "6");
+		line3.setAttribute("y1", "20");
+		line3.setAttribute("x2", "6");
+		line3.setAttribute("y2", "16");
+
+		svg.appendChild(line1);
+		svg.appendChild(line2);
+		svg.appendChild(line3);
+
+		return svg;
 	}
 }

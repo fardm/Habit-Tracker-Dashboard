@@ -18,11 +18,7 @@ export class DateNavigator {
 		const leftButton = createEl("button", {
 			cls: "date-navigator-button"
 		});
-		leftButton.innerHTML = `
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<polyline points="15 18 9 12 15 6"></polyline>
-			</svg>
-		`;
+		leftButton.appendChild(this.createChevronIcon("left"));
 		// Hover states are handled by CSS
 		leftButton.addEventListener("click", () => {
 			this.previousDay();
@@ -42,11 +38,7 @@ export class DateNavigator {
 		const rightButton = createEl("button", {
 			cls: "date-navigator-button"
 		});
-		rightButton.innerHTML = `
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<polyline points="9 18 15 12 9 6"></polyline>
-			</svg>
-		`;
+		rightButton.appendChild(this.createChevronIcon("right"));
 		// Hover states are handled by CSS
 		rightButton.addEventListener("click", () => {
 			this.nextDay();
@@ -158,5 +150,27 @@ export class DateNavigator {
 	 */
 	setCurrentDate(date: Date): void {
 		this.setDate(date);
+	}
+
+	private createChevronIcon(direction: "left" | "right"): SVGElement {
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("width", "16");
+		svg.setAttribute("height", "16");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		svg.setAttribute("fill", "none");
+		svg.setAttribute("stroke", "currentColor");
+		svg.setAttribute("stroke-width", "2");
+		svg.setAttribute("stroke-linecap", "round");
+		svg.setAttribute("stroke-linejoin", "round");
+
+		const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+		if (direction === "left") {
+			polyline.setAttribute("points", "15 18 9 12 15 6");
+		} else {
+			polyline.setAttribute("points", "9 18 15 12 9 6");
+		}
+		svg.appendChild(polyline);
+
+		return svg;
 	}
 }
