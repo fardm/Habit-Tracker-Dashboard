@@ -2,7 +2,7 @@
   "id": "habit-tracker-dashboard",
   "name": "Habit Tracker Dashboard",
   "version": "0.1.2",
-  "minAppVersion": "0.15.0",
+  "minAppVersion": "0.16.0",
   "description": "A habit tracker dashboard with heatmaps, charts, and statistics.",
   "author": "Hossein Fardmohammadi",
   "authorUrl": "https://github.com/fardm",
