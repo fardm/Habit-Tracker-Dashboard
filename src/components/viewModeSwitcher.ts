@@ -25,7 +25,14 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 
 		// Grid button
 		this.gridButton = document.createElement("button");
-		this.gridButton.innerHTML = "⊞";
+		this.gridButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<rect x="3" y="3" width="7" height="7"></rect>
+				<rect x="14" y="3" width="7" height="7"></rect>
+				<rect x="14" y="14" width="7" height="7"></rect>
+				<rect x="3" y="14" width="7" height="7"></rect>
+			</svg>
+		`;
 		this.gridButton.title = "Grid View";
 		this.gridButton.className = "view-mode-button";
 		if (this.props.currentMode === ViewMode.GRID) {
@@ -38,7 +45,16 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 
 		// List button
 		this.listButton = document.createElement("button");
-		this.listButton.innerHTML = "≣";
+		this.listButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<line x1="8" y1="6" x2="21" y2="6"></line>
+				<line x1="8" y1="12" x2="21" y2="12"></line>
+				<line x1="8" y1="18" x2="21" y2="18"></line>
+				<line x1="3" y1="6" x2="3.01" y2="6"></line>
+				<line x1="3" y1="12" x2="3.01" y2="12"></line>
+				<line x1="3" y1="18" x2="3.01" y2="18"></line>
+			</svg>
+		`;
 		this.listButton.title = "List View";
 		this.listButton.className = "view-mode-button";
 		if (this.props.currentMode === ViewMode.LIST) {

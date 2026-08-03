@@ -49,7 +49,13 @@ export class HabitCard extends HTMLElementComponent {
 		// Menu button - positioned at top-right
 		const menuButton = document.createElement("button");
 		menuButton.className = "habit-menu-btn";
-		menuButton.innerHTML = "⋮";
+		menuButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="12" cy="12" r="1"></circle>
+				<circle cx="12" cy="5" r="1"></circle>
+				<circle cx="12" cy="19" r="1"></circle>
+			</svg>
+		`;
 		// Hover states are handled by CSS
 
 		menuButton.addEventListener("click", (e) => {
@@ -64,7 +70,16 @@ export class HabitCard extends HTMLElementComponent {
 		// Drag handle - positioned absolutely on the left
 		const dragHandle = document.createElement("div");
 		dragHandle.className = "habit-drag-handle";
-		dragHandle.innerHTML = "⋮⋮";
+		dragHandle.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="9" cy="12" r="1"></circle>
+				<circle cx="9" cy="5" r="1"></circle>
+				<circle cx="9" cy="19" r="1"></circle>
+				<circle cx="15" cy="12" r="1"></circle>
+				<circle cx="15" cy="5" r="1"></circle>
+				<circle cx="15" cy="19" r="1"></circle>
+			</svg>
+		`;
 		// Hover and active states are handled by CSS
 
 		// Make card draggable

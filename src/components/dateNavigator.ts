@@ -17,7 +17,11 @@ export class DateNavigator {
 
 		// Left arrow button
 		const leftButton = document.createElement("button");
-		leftButton.innerHTML = "<";
+		leftButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<polyline points="15 18 9 12 15 6"></polyline>
+			</svg>
+		`;
 		leftButton.className = "date-navigator-button";
 		// Hover states are handled by CSS
 		leftButton.addEventListener("click", () => {
@@ -35,7 +39,11 @@ export class DateNavigator {
 
 		// Right arrow button
 		const rightButton = document.createElement("button");
-		rightButton.innerHTML = ">";
+		rightButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<polyline points="9 18 15 12 9 6"></polyline>
+			</svg>
+		`;
 		rightButton.className = "date-navigator-button";
 		// Hover states are handled by CSS
 		rightButton.addEventListener("click", () => {

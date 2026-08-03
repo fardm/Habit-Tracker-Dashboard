@@ -115,9 +115,12 @@ export class HabitDetailsModal extends Modal {
 		navContainer.className = "year-nav-container";
 
 		// Previous year button
-		const prevButton = navContainer.createEl("button", {
-			text: "‹"
-		});
+		const prevButton = navContainer.createEl("button");
+		prevButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<polyline points="15 18 9 12 15 6"></polyline>
+			</svg>
+		`;
 		prevButton.className = "year-nav-button";
 		prevButton.onclick = () => this.handleYearChange(-1);
 		// Hover states are handled by CSS
@@ -129,9 +132,12 @@ export class HabitDetailsModal extends Modal {
 		yearDisplay.className = "year-nav-display";
 
 		// Next year button
-		const nextButton = navContainer.createEl("button", {
-			text: "›"
-		});
+		const nextButton = navContainer.createEl("button");
+		nextButton.innerHTML = `
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<polyline points="9 18 15 12 9 6"></polyline>
+			</svg>
+		`;
 		nextButton.className = "year-nav-button";
 		nextButton.onclick = () => this.handleYearChange(1);
 		// Hover states are handled by CSS
