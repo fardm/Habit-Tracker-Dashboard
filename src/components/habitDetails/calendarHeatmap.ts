@@ -137,7 +137,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		// Menu button - positioned absolutely
 		const menuButton = createEl("button", {
-			cls: "calendar-heatmap-menu-button",
+			cls: "calendar-heatmap-menu-button clickable-icon",
 			type: "button",
 			attr: { title: "Heatmap Settings" }
 		});

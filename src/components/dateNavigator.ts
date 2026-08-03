@@ -18,7 +18,7 @@ export class DateNavigator {
 
 		// Left arrow button
 		const leftButton = createEl("button", {
-			cls: "date-navigator-button"
+			cls: "date-navigator-button clickable-icon"
 		});
 		setIcon(leftButton, "chevron-left");
 		// Hover states are handled by CSS
@@ -38,7 +38,7 @@ export class DateNavigator {
 
 		// Right arrow button
 		const rightButton = createEl("button", {
-			cls: "date-navigator-button"
+			cls: "date-navigator-button clickable-icon"
 		});
 		setIcon(rightButton, "chevron-right");
 		// Hover states are handled by CSS

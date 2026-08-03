@@ -45,7 +45,7 @@ export class HabitCard extends HTMLElementComponent {
 
 		// Menu button - positioned at top-right
 		const menuButton = createEl("button", {
-			cls: "habit-menu-btn"
+			cls: "habit-menu-btn clickable-icon"
 		});
 		
 		const menuSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");

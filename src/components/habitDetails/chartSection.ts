@@ -42,14 +42,14 @@ export class ChartSection extends HTMLElementComponent {
 		const themeColor = this.getThemeColor();
 
 		const lineButton = createEl("button", {
-			cls: this.props.chartType === ChartType.LINE ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button",
+			cls: this.props.chartType === ChartType.LINE ? "chart-toggle-button chart-toggle-button-active clickable-icon" : "chart-toggle-button clickable-icon",
 			type: "button",
 			attr: { title: "Line Chart" }
 		});
 		setIcon(lineButton, "line-chart");
 
 		const barButton = createEl("button", {
-			cls: this.props.chartType === ChartType.BAR ? "chart-toggle-button chart-toggle-button-active" : "chart-toggle-button",
+			cls: this.props.chartType === ChartType.BAR ? "chart-toggle-button chart-toggle-button-active clickable-icon" : "chart-toggle-button clickable-icon",
 			type: "button",
 			attr: { title: "Bar Chart" }
 		});

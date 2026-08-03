@@ -117,7 +117,7 @@ export class HabitDetailsModal extends Modal {
 		// Previous year button
 		const prevButton = navContainer.createEl("button");
 		setIcon(prevButton, "chevron-left");
-		prevButton.className = "year-nav-button";
+		prevButton.className = "year-nav-button clickable-icon";
 		prevButton.onclick = () => this.handleYearChange(-1);
 		// Hover states are handled by CSS
 
@@ -130,7 +130,7 @@ export class HabitDetailsModal extends Modal {
 		// Next year button
 		const nextButton = navContainer.createEl("button");
 		setIcon(nextButton, "chevron-right");
-		nextButton.className = "year-nav-button";
+		nextButton.className = "year-nav-button clickable-icon";
 		nextButton.onclick = () => this.handleYearChange(1);
 		// Hover states are handled by CSS
 	}

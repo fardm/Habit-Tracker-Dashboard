@@ -134,8 +134,8 @@
 	top: 25%;
 	right: 10px;
 	transform: translateY(-50%);
-	background: none !important;
-	box-shadow: none !important;
+	background: none;
+	box-shadow: none;
 	border: none;
 	color: var(--text-muted);
 	font-size: 16px;
@@ -148,7 +148,7 @@
 
 .habit-menu-btn:hover {
 	color: var(--text-normal);
-	background-color: var(--interactive-normal) !important;
+	background-color: var(--interactive-normal);
 	
 }
 
@@ -615,7 +615,7 @@
 	cursor: pointer;
 	font-size: 16px;
 	line-height: 1;
-	background: var(--background-secondary) !important;
+	background: var(--background-secondary);
 	padding: 6px 8px;
 	border-radius: 6px;
 	border: 1px solid var(--background-modifier-border);
@@ -680,9 +680,9 @@
 	top: 15px;
 	right: 10px;
 	padding: 6px 8px;
-	background-color: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
+	background-color: transparent;
+	border: none;
+	box-shadow: none;
 	border-radius: 6px;
 	cursor: pointer;
 	transition: all 0.2s;
@@ -694,7 +694,7 @@
 
 .calendar-heatmap-menu-button:hover {
 	color: var(--text-normal);
-	background-color: var(--background-secondary) !important;
+	background-color: var(--background-secondary);
 }
 
 .heatmap-settings-menu {
@@ -1025,7 +1025,7 @@
 	background-color: transparent;
 	color: var(--text-muted);
 	border-radius: 4px;
-	box-shadow: none !important;
+	box-shadow: none;
 	cursor: pointer;
 	font-size: 14px;
 	transition: all 0.2s;
