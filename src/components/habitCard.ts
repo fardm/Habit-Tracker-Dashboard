@@ -49,13 +49,36 @@ export class HabitCard extends HTMLElementComponent {
 		// Menu button - positioned at top-right
 		const menuButton = document.createElement("button");
 		menuButton.className = "habit-menu-btn";
-		menuButton.innerHTML = `
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<circle cx="12" cy="12" r="1"></circle>
-				<circle cx="12" cy="5" r="1"></circle>
-				<circle cx="12" cy="19" r="1"></circle>
-			</svg>
-		`;
+		
+		const menuSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		menuSvg.setAttribute("width", "16");
+		menuSvg.setAttribute("height", "16");
+		menuSvg.setAttribute("viewBox", "0 0 24 24");
+		menuSvg.setAttribute("fill", "none");
+		menuSvg.setAttribute("stroke", "currentColor");
+		menuSvg.setAttribute("stroke-width", "2");
+		menuSvg.setAttribute("stroke-linecap", "round");
+		menuSvg.setAttribute("stroke-linejoin", "round");
+		
+		const circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle1.setAttribute("cx", "12");
+		circle1.setAttribute("cy", "12");
+		circle1.setAttribute("r", "1");
+		
+		const circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle2.setAttribute("cx", "12");
+		circle2.setAttribute("cy", "5");
+		circle2.setAttribute("r", "1");
+		
+		const circle3 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle3.setAttribute("cx", "12");
+		circle3.setAttribute("cy", "19");
+		circle3.setAttribute("r", "1");
+		
+		menuSvg.appendChild(circle1);
+		menuSvg.appendChild(circle2);
+		menuSvg.appendChild(circle3);
+		menuButton.appendChild(menuSvg);
 		// Hover states are handled by CSS
 
 		menuButton.addEventListener("click", (e) => {
@@ -70,16 +93,31 @@ export class HabitCard extends HTMLElementComponent {
 		// Drag handle - positioned absolutely on the left
 		const dragHandle = document.createElement("div");
 		dragHandle.className = "habit-drag-handle";
-		dragHandle.innerHTML = `
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<circle cx="9" cy="12" r="1"></circle>
-				<circle cx="9" cy="5" r="1"></circle>
-				<circle cx="9" cy="19" r="1"></circle>
-				<circle cx="15" cy="12" r="1"></circle>
-				<circle cx="15" cy="5" r="1"></circle>
-				<circle cx="15" cy="19" r="1"></circle>
-			</svg>
-		`;
+		
+		const dragSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		dragSvg.setAttribute("width", "16");
+		dragSvg.setAttribute("height", "16");
+		dragSvg.setAttribute("viewBox", "0 0 24 24");
+		dragSvg.setAttribute("fill", "none");
+		dragSvg.setAttribute("stroke", "currentColor");
+		dragSvg.setAttribute("stroke-width", "2");
+		dragSvg.setAttribute("stroke-linecap", "round");
+		dragSvg.setAttribute("stroke-linejoin", "round");
+		
+		const dragCircles = [
+			{cx: 9, cy: 12}, {cx: 9, cy: 5}, {cx: 9, cy: 19},
+			{cx: 15, cy: 12}, {cx: 15, cy: 5}, {cx: 15, cy: 19}
+		];
+		
+		dragCircles.forEach(pos => {
+			const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+			circle.setAttribute("cx", pos.cx.toString());
+			circle.setAttribute("cy", pos.cy.toString());
+			circle.setAttribute("r", "1");
+			dragSvg.appendChild(circle);
+		});
+		
+		dragHandle.appendChild(dragSvg);
 		// Hover and active states are handled by CSS
 
 		// Make card draggable
@@ -171,16 +209,13 @@ export class HabitCard extends HTMLElementComponent {
 			statusContainer.className = "habit-status-no-data";
 		} else if (this.props.habit.type === "boolean") {
 			const completed = this.props.currentValue as boolean;
-			// Use SVG icons for better appearance
-			const checkIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>`;
-			const dashedIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
 			
 			// Create vertical layout for icon and text
 			const booleanContainer = document.createElement("div");
 			booleanContainer.className = "habit-boolean-container";
 			
 			const iconContainer = document.createElement("div");
-			iconContainer.innerHTML = completed ? checkIcon : dashedIcon;
+			iconContainer.appendChild(this.createBooleanStatusIcon(completed));
 			
 			const statusText = document.createElement("div");
 			statusText.textContent = completed ? "Done" : "Not done";
@@ -290,7 +325,7 @@ export class HabitCard extends HTMLElementComponent {
 					// Add checkmark icon for At least when completed
 					if (completionOperator === CompletionOperator.AT_LEAST && isCompleted) {
 						const checkIcon = document.createElement("div");
-						checkIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><path d="M20 6L9 17l-5-5"></path></svg>`;
+						checkIcon.appendChild(this.createCheckIcon());
 						checkIcon.className = "habit-check-icon";
 						visualizationContainer.appendChild(checkIcon);
 					}
@@ -298,17 +333,14 @@ export class HabitCard extends HTMLElementComponent {
 					// Add warning icon for At most when exceeded
 					if (isAtMostExceeded) {
 						const warningIcon = document.createElement("div");
-						warningIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-error);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+						warningIcon.appendChild(this.createWarningIcon());
 						warningIcon.className = "habit-warning-icon";
 						visualizationContainer.appendChild(warningIcon);
 					}
 				} else if (visualization === Visualization.CIRCLE_CHECK) {
 					// Circle check visualization for numeric habits
-					const checkIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>`;
-					const dashedIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
-					
 					const iconContainer = document.createElement("div");
-					iconContainer.innerHTML = isCompleted ? checkIcon : dashedIcon;
+					iconContainer.appendChild(this.createCircleCheckIcon(isCompleted));
 					visualizationContainer.appendChild(iconContainer);
 				}
 				
@@ -328,11 +360,8 @@ export class HabitCard extends HTMLElementComponent {
 					visualizationContainer.appendChild(chartElement);
 				} else if (visualization === Visualization.CIRCLE_CHECK) {
 					// Circle check visualization for numeric habits without target
-					const checkIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-success);"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>`;
-					const dashedIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"></circle></svg>`;
-					
 					const iconContainer = document.createElement("div");
-					iconContainer.innerHTML = value > 0 ? checkIcon : dashedIcon;
+					iconContainer.appendChild(this.createCircleCheckIcon(value > 0));
 					visualizationContainer.appendChild(iconContainer);
 				}
 				
@@ -345,6 +374,118 @@ export class HabitCard extends HTMLElementComponent {
 		}
 
 		return statusContainer;
+	}
+
+	private createBooleanStatusIcon(completed: boolean): SVGElement {
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("width", "24");
+		svg.setAttribute("height", "24");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		svg.setAttribute("fill", "none");
+		svg.setAttribute("stroke", "currentColor");
+		svg.setAttribute("stroke-width", "2");
+		svg.setAttribute("stroke-linecap", "round");
+		svg.setAttribute("stroke-linejoin", "round");
+		svg.style.color = completed ? "var(--text-success)" : "var(--text-muted)";
+
+		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle.setAttribute("cx", "12");
+		circle.setAttribute("cy", "12");
+		circle.setAttribute("r", "10");
+		if (!completed) {
+			circle.setAttribute("stroke-dasharray", "4 2");
+		}
+		svg.appendChild(circle);
+
+		if (completed) {
+			const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			path.setAttribute("d", "M9 12l2 2 4-4");
+			svg.appendChild(path);
+		}
+
+		return svg;
+	}
+
+	private createCheckIcon(): SVGElement {
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("width", "12");
+		svg.setAttribute("height", "12");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		svg.setAttribute("fill", "none");
+		svg.setAttribute("stroke", "currentColor");
+		svg.setAttribute("stroke-width", "3");
+		svg.setAttribute("stroke-linecap", "round");
+		svg.setAttribute("stroke-linejoin", "round");
+		svg.style.color = "var(--text-success)";
+
+		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		path.setAttribute("d", "M20 6L9 17l-5-5");
+		svg.appendChild(path);
+
+		return svg;
+	}
+
+	private createWarningIcon(): SVGElement {
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("width", "12");
+		svg.setAttribute("height", "12");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		svg.setAttribute("fill", "none");
+		svg.setAttribute("stroke", "currentColor");
+		svg.setAttribute("stroke-width", "3");
+		svg.setAttribute("stroke-linecap", "round");
+		svg.setAttribute("stroke-linejoin", "round");
+		svg.style.color = "var(--text-error)";
+
+		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		path.setAttribute("d", "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z");
+		svg.appendChild(path);
+
+		const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		line1.setAttribute("x1", "12");
+		line1.setAttribute("y1", "9");
+		line1.setAttribute("x2", "12");
+		line1.setAttribute("y2", "13");
+		svg.appendChild(line1);
+
+		const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		line2.setAttribute("x1", "12");
+		line2.setAttribute("y1", "17");
+		line2.setAttribute("x2", "12.01");
+		line2.setAttribute("y2", "17");
+		svg.appendChild(line2);
+
+		return svg;
+	}
+
+	private createCircleCheckIcon(completed: boolean): SVGElement {
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("width", "24");
+		svg.setAttribute("height", "24");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		svg.setAttribute("fill", "none");
+		svg.setAttribute("stroke", "currentColor");
+		svg.setAttribute("stroke-width", "2");
+		svg.setAttribute("stroke-linecap", "round");
+		svg.setAttribute("stroke-linejoin", "round");
+		svg.style.color = completed ? "var(--text-success)" : "var(--text-muted)";
+
+		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle.setAttribute("cx", "12");
+		circle.setAttribute("cy", "12");
+		circle.setAttribute("r", "10");
+		if (!completed) {
+			circle.setAttribute("stroke-dasharray", "4 2");
+		}
+		svg.appendChild(circle);
+
+		if (completed) {
+			const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			path.setAttribute("d", "M9 12l2 2 4-4");
+			svg.appendChild(path);
+		}
+
+		return svg;
 	}
 
 	private showMenu(event: MouseEvent, card: HTMLElement): void {
