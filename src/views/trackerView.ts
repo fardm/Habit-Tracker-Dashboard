@@ -1,6 +1,10 @@
 import { ItemView, WorkspaceLeaf, TFile, ViewStateResult } from "obsidian";
 import { Dashboard } from "../components/dashboard";
 
+interface TrackerViewState extends Record<string, unknown> {
+	file?: string;
+}
+
 export const TRACKER_VIEW_TYPE = "tracker-view";
 
 export class TrackerView extends ItemView {
@@ -23,7 +27,7 @@ export class TrackerView extends ItemView {
 		return "Habit Tracker Dashboard";
 	}
 
-	async setState(state: any, result: ViewStateResult): Promise<void> {
+	async setState(state: TrackerViewState, result: ViewStateResult): Promise<void> {
 		await super.setState(state, result);
 		
 		// Get the file from the state
@@ -65,7 +69,7 @@ export class TrackerView extends ItemView {
 		}
 	}
 
-	getState(): any {
+	getState(): TrackerViewState {
 		// Save the file path so Obsidian can restore the view after restart
 		if (this.file) {
 			return {

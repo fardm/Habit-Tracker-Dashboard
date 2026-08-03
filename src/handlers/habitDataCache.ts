@@ -17,7 +17,7 @@ export interface CachedHabitValue {
 export interface FileCacheEntry {
 	filePath: string;
 	date: Date;
-	frontmatter: Record<string, any> | null;
+	frontmatter: Record<string, unknown> | null;
 }
 
 /**
@@ -220,14 +220,14 @@ export class HabitDataCache {
 	/**
 	 * Parses frontmatter from markdown content
 	 */
-	private parseFrontmatter(content: string): Record<string, any> | null {
+	private parseFrontmatter(content: string): Record<string, unknown> | null {
 		const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
 		const match = content.match(frontmatterRegex);
 		
 		if (!match) return null;
 		
 		const frontmatterText = match[1];
-		const frontmatter: Record<string, any> = {};
+		const frontmatter: Record<string, unknown> = {};
 		
 		const lines = frontmatterText.split('\n');
 		for (const line of lines) {
@@ -327,7 +327,7 @@ export class HabitDataCache {
 	/**
 	 * Processes a raw value based on habit type
 	 */
-	private processValue(rawValue: any, habitType: HabitType): boolean | number | null {
+	private processValue(rawValue: unknown, habitType: HabitType): boolean | number | null {
 		if (habitType === HabitType.BOOLEAN) {
 			if (typeof rawValue === 'boolean') return rawValue;
 			if (typeof rawValue === 'string') {

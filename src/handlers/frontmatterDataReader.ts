@@ -262,14 +262,14 @@ export class FrontmatterDataReader {
 	/**
 	 * Parses frontmatter from markdown content
 	 */
-	private parseFrontmatter(content: string): Record<string, any> | null {
+	private parseFrontmatter(content: string): Record<string, unknown> | null {
 		const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
 		const match = content.match(frontmatterRegex);
 		
 		if (!match) return null;
 		
 		const frontmatterText = match[1];
-		const frontmatter: Record<string, any> = {};
+		const frontmatter: Record<string, unknown> = {};
 		
 		// Simple YAML-like parsing
 		const lines = frontmatterText.split('\n');
@@ -299,7 +299,7 @@ export class FrontmatterDataReader {
 	/**
 	 * Processes a raw value based on habit type
 	 */
-	private processValue(rawValue: any, habitType: HabitType): boolean | number | null {
+	private processValue(rawValue: unknown, habitType: HabitType): boolean | number | null {
 		if (rawValue === undefined || rawValue === null) return null;
 		
 		if (habitType === HabitType.BOOLEAN) {
