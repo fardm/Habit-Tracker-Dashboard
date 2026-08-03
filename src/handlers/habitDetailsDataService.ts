@@ -102,7 +102,7 @@ export class HabitDetailsDataService {
 		values: HabitValueEntry[],
 		habitType: "boolean" | "numeric",
 		target?: number,
-		graceDays: number = 0,
+		graceDays = 0,
 		completionOperator?: CompletionOperator
 	): HabitStreaks {
 		if (values.length === 0) {
@@ -119,7 +119,7 @@ export class HabitDetailsDataService {
 		const streakHistory: StreakEntry[] = [];
 		let currentStreak = 0;
 		let longestStreak = 0;
-		let currentStreakStart: Date | null = null;
+		const currentStreakStart: Date | null = null;
 		let tempStreakStart: Date | null = null;
 		let tempStreakLength = 0;
 		let consecutiveMissedDays = 0;
@@ -271,7 +271,7 @@ export class HabitDetailsDataService {
 		values: HabitValueEntry[],
 		habitType: "boolean" | "numeric",
 		target?: number,
-		weeks: number = 53
+		weeks = 53
 	): Map<string, number> {
 		const heatmapData = new Map<string, number>();
 		const today = new Date();

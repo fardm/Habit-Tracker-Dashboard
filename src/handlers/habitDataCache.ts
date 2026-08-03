@@ -29,7 +29,7 @@ export class HabitDataCache {
 	private settings: TrackerSettings;
 	private fileCache: Map<string, FileCacheEntry> = new Map();
 	private habitValueCache: Map<string, Map<string, CachedHabitValue>> = new Map();
-	private isBuilt: boolean = false;
+	private isBuilt = false;
 
 	constructor(app: App, settings: TrackerSettings) {
 		this.app = app;

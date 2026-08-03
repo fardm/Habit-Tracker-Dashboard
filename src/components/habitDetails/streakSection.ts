@@ -7,7 +7,7 @@ import { getCalendarAdapter } from "../../utils/calendarAdapter";
  */
 export class StreakSection extends HTMLElementComponent {
 	private props: StreakSectionProps;
-	private isExpanded: boolean = false;
+	private isExpanded = false;
 
 	constructor(props: StreakSectionProps) {
 		super();

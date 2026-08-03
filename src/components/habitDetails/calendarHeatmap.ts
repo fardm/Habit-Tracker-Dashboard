@@ -18,7 +18,7 @@ import { ReportCalendar, WeekStartDay } from "../../types/habitTypes";
 export class CalendarHeatmap extends HTMLElementComponent {
 	private props: CalendarHeatmapProps;
 	private settings: HeatmapSettings;
-	private isMenuOpen: boolean = false;
+	private isMenuOpen = false;
 	private heatmapContainer?: HTMLElement;
 	private gridBlock?: HTMLElement;
 	private legendElement?: HTMLElement;
@@ -76,7 +76,8 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		const max = Math.max(rNorm, gNorm, bNorm);
 		const min = Math.min(rNorm, gNorm, bNorm);
-		let h = 0, s = 0, l = (max + min) / 2;
+		let h = 0, s = 0;
+		const l = (max + min) / 2;
 
 		if (max !== min) {
 			const d = max - min;

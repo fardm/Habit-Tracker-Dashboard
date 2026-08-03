@@ -7,7 +7,7 @@ import { setIcon } from "obsidian";
  */
 export class SettingsPanel extends HTMLElementComponent {
 	private props: SettingsPanelProps;
-	private isOpen: boolean = false;
+	private isOpen = false;
 
 	constructor(props: SettingsPanelProps) {
 		super();

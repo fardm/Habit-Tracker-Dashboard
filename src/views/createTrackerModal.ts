@@ -1,7 +1,7 @@
 import { App, Modal, Setting } from "obsidian";
 
 export class CreateTrackerModal extends Modal {
-	private fileName: string = "";
+	private fileName = "";
 	private onSubmit: (fileName: string) => void;
 
 	constructor(app: App, onSubmit: (fileName: string) => void) {

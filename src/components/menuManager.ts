@@ -5,6 +5,7 @@ export class MenuManager {
 	private static instance: MenuManager;
 	private activeMenu?: HTMLElement;
 
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	private constructor() {}
 
 	static getInstance(): MenuManager {

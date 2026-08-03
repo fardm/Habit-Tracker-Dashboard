@@ -6,7 +6,7 @@ export class DonutChart {
 	private size: number;
 	private strokeWidth: number;
 
-	constructor(size: number = 32, strokeWidth: number = 3) {
+	constructor(size = 32, strokeWidth = 3) {
 		this.size = size;
 		this.strokeWidth = strokeWidth;
 		this.container = createDiv({ cls: "habit-donut-chart" });
@@ -17,7 +17,7 @@ export class DonutChart {
 	/**
 	 * Renders the donut chart with the given progress (0-1)
 	 */
-	render(progress: number, isExceeded: boolean = false, color?: string): HTMLElement {
+	render(progress: number, isExceeded = false, color?: string): HTMLElement {
 		this.container.empty();
 
 		const normalizedProgress = Math.min(Math.max(progress, 0), 1);
