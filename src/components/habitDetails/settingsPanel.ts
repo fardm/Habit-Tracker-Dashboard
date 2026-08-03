@@ -1,5 +1,6 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
 import { SettingsPanelProps, HabitDetailsSettings, SectionVisibility, ColorTheme } from "../../types/habitDetailsTypes";
+import { setIcon } from "obsidian";
 
 /**
  * SettingsPanel component for customizing habit details view
@@ -25,7 +26,7 @@ export class SettingsPanel extends HTMLElementComponent {
 		});
 		
 		// Eye icon SVG
-		settingsButton.appendChild(this.createEyeIcon());
+		setIcon(settingsButton, "eye");
 		// Hover states are handled by CSS
 
 		settingsButton.addEventListener("click", (e) => {
@@ -111,28 +112,4 @@ export class SettingsPanel extends HTMLElementComponent {
 		}
 	}
 
-	private createEyeIcon(): SVGElement {
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", "16");
-		svg.setAttribute("height", "16");
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", "currentColor");
-		svg.setAttribute("stroke-width", "2");
-		svg.setAttribute("stroke-linecap", "round");
-		svg.setAttribute("stroke-linejoin", "round");
-
-		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		path.setAttribute("d", "M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z");
-
-		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle.setAttribute("cx", "12");
-		circle.setAttribute("cy", "12");
-		circle.setAttribute("r", "3");
-
-		svg.appendChild(path);
-		svg.appendChild(circle);
-
-		return svg;
 	}
-}

@@ -1,3 +1,5 @@
+import { setIcon } from "obsidian";
+
 /**
  * Component for single-day date navigation
  */
@@ -18,7 +20,7 @@ export class DateNavigator {
 		const leftButton = createEl("button", {
 			cls: "date-navigator-button"
 		});
-		leftButton.appendChild(this.createChevronIcon("left"));
+		setIcon(leftButton, "chevron-left");
 		// Hover states are handled by CSS
 		leftButton.addEventListener("click", () => {
 			this.previousDay();
@@ -38,7 +40,7 @@ export class DateNavigator {
 		const rightButton = createEl("button", {
 			cls: "date-navigator-button"
 		});
-		rightButton.appendChild(this.createChevronIcon("right"));
+		setIcon(rightButton, "chevron-right");
 		// Hover states are handled by CSS
 		rightButton.addEventListener("click", () => {
 			this.nextDay();
@@ -152,25 +154,4 @@ export class DateNavigator {
 		this.setDate(date);
 	}
 
-	private createChevronIcon(direction: "left" | "right"): SVGElement {
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", "16");
-		svg.setAttribute("height", "16");
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", "currentColor");
-		svg.setAttribute("stroke-width", "2");
-		svg.setAttribute("stroke-linecap", "round");
-		svg.setAttribute("stroke-linejoin", "round");
-
-		const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-		if (direction === "left") {
-			polyline.setAttribute("points", "15 18 9 12 15 6");
-		} else {
-			polyline.setAttribute("points", "9 18 15 12 9 6");
-		}
-		svg.appendChild(polyline);
-
-		return svg;
 	}
-}

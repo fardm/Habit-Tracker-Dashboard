@@ -1,5 +1,6 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
 import { CalendarHeatmapProps, HeatmapSettings, ColorScaleMode } from "../../types/habitDetailsTypes";
+import { setIcon } from "obsidian";
 import {
 	CalendarDateAdapter,
 	getCalendarAdapter,
@@ -140,7 +141,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			type: "button",
 			attr: { title: "Heatmap Settings" }
 		});
-		menuButton.appendChild(this.createMenuIcon());
+		setIcon(menuButton, "more-horizontal");
 		// Hover states are handled by CSS
 
 		menuButton.addEventListener("click", (e) => {
@@ -611,36 +612,4 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		return legend;
 	}
 
-	private createMenuIcon(): SVGElement {
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", "16");
-		svg.setAttribute("height", "16");
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", "currentColor");
-		svg.setAttribute("stroke-width", "2");
-		svg.setAttribute("stroke-linecap", "round");
-		svg.setAttribute("stroke-linejoin", "round");
-
-		const circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle1.setAttribute("cx", "12");
-		circle1.setAttribute("cy", "12");
-		circle1.setAttribute("r", "1");
-
-		const circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle2.setAttribute("cx", "12");
-		circle2.setAttribute("cy", "5");
-		circle2.setAttribute("r", "1");
-
-		const circle3 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle3.setAttribute("cx", "12");
-		circle3.setAttribute("cy", "19");
-		circle3.setAttribute("r", "1");
-
-		svg.appendChild(circle1);
-		svg.appendChild(circle2);
-		svg.appendChild(circle3);
-
-		return svg;
 	}
-}

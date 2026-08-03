@@ -1,4 +1,4 @@
-import { App, Modal } from "obsidian";
+import { App, Modal, setIcon } from "obsidian";
 import { HTMLElementComponent } from "../htmlElementComponent";
 import { HabitDetailsModalProps, ChartType, HabitDetailsSettings, HabitValueEntry, HabitStatistics, HabitStreaks, HeatmapSettings, ColorScaleMode } from "../../types/habitDetailsTypes";
 import { ChartSection } from "./chartSection";
@@ -116,7 +116,7 @@ export class HabitDetailsModal extends Modal {
 
 		// Previous year button
 		const prevButton = navContainer.createEl("button");
-		prevButton.appendChild(this.createChevronIcon("left"));
+		setIcon(prevButton, "chevron-left");
 		prevButton.className = "year-nav-button";
 		prevButton.onclick = () => this.handleYearChange(-1);
 		// Hover states are handled by CSS
@@ -129,7 +129,7 @@ export class HabitDetailsModal extends Modal {
 
 		// Next year button
 		const nextButton = navContainer.createEl("button");
-		nextButton.appendChild(this.createChevronIcon("right"));
+		setIcon(nextButton, "chevron-right");
 		nextButton.className = "year-nav-button";
 		nextButton.onclick = () => this.handleYearChange(1);
 		// Hover states are handled by CSS
@@ -408,28 +408,6 @@ export class HabitDetailsModal extends Modal {
 
 	private getThemeColor(): string {
 		return this.habit.themeColor || "var(--interactive-accent)";
-	}
-
-	private createChevronIcon(direction: "left" | "right"): SVGElement {
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", "16");
-		svg.setAttribute("height", "16");
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", "currentColor");
-		svg.setAttribute("stroke-width", "2");
-		svg.setAttribute("stroke-linecap", "round");
-		svg.setAttribute("stroke-linejoin", "round");
-
-		const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-		if (direction === "left") {
-			polyline.setAttribute("points", "15 18 9 12 15 6");
-		} else {
-			polyline.setAttribute("points", "9 18 15 12 9 6");
-		}
-		svg.appendChild(polyline);
-
-		return svg;
 	}
 
 	onClose() {
