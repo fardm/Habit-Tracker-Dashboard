@@ -394,8 +394,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const weekStartDay = this.getWeekStartDay();
 		const layout = adapter.buildYearHeatmapLayout(year, weekStartDay);
 
-		this.gridBlock = document.createElement("div");
-		this.gridBlock.className = "heatmap-grid-block";
+		this.gridBlock = createDiv({ cls: "heatmap-grid-block" });
 
 		if (this.settings.showMonthLabels) {
 			this.gridBlock.appendChild(
@@ -422,15 +421,12 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	): HTMLElement {
 		const cellSize = 10;
 		const gap = 2;
-		const row = document.createElement("div");
-		row.className = "heatmap-month-labels";
+		const row = createDiv({ cls: "heatmap-month-labels" });
 		row.style.setProperty("--heatmap-width", `${weeksCount * cellSize + Math.max(0, weeksCount - 1) * gap}px`);
 		// Other styles handled by CSS
 
 		for (const label of monthLabels) {
-			const el = document.createElement("span");
-			el.className = "heatmap-month-label";
-			el.textContent = label.label;
+			const el = createSpan({ cls: "heatmap-month-label", text: label.label });
 			el.style.setProperty("--label-left", `${label.weekIndex * (cellSize + gap)}px`);
 			row.appendChild(el);
 		}
@@ -514,22 +510,21 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		const valueMap = this.buildValueMap();
 		const themeColor = this.getThemeColor();
 
-		const grid = document.createElement("div");
-		grid.className = "heatmap-grid";
+		const grid = createDiv({ cls: "heatmap-grid" });
 		grid.setAttribute("data-weeks", String(weeksCount));
 		grid.setAttribute("data-week-start", String(this.getWeekStartDay()));
 
 		for (const cellData of cells) {
-			const cell = document.createElement("div");
+			const cell = createDiv();
 
 			if (cellData.isEmpty || !cellData.isoDate) {
-				cell.className = "heatmap-cell heatmap-cell-empty";
+				cell.addClass("heatmap-cell", "heatmap-cell-empty");
 				grid.appendChild(cell);
 				continue;
 			}
 
 			const value = valueMap.get(cellData.isoDate) || 0;
-			cell.className = "heatmap-cell";
+			cell.addClass("heatmap-cell");
 			cell.style.setProperty("--cell-bg-color", this.intensityColor(value, themeColor));
 			cell.title = this.formatTooltip(cellData.isoDate, value, adapter);
 			grid.appendChild(cell);
@@ -539,8 +534,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 	}
 
 	private createLegend(): HTMLElement {
-		const legend = document.createElement("div");
-		legend.className = "heatmap-legend";
+		const legend = createDiv({ cls: "heatmap-legend" });
 
 		if (this.props.habitType === "boolean") {
 			const legendItems = [
@@ -549,15 +543,12 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			];
 
 			legendItems.forEach((item) => {
-				const legendItem = document.createElement("div");
-				legendItem.className = "heatmap-legend-item";
+				const legendItem = createDiv({ cls: "heatmap-legend-item" });
 
-				const square = document.createElement("div");
-				square.className = "heatmap-legend-square";
+				const square = createDiv({ cls: "heatmap-legend-square" });
 				square.style.setProperty("--legend-bg-color", item.color);
 
-				const label = document.createElement("span");
-				label.textContent = item.label;
+				const label = createSpan({ text: item.label });
 				legendItem.appendChild(square);
 				legendItem.appendChild(label);
 				legend.appendChild(legendItem);
@@ -594,20 +585,17 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			];
 		}
 
-		const legendLabel = document.createElement("span");
-		legendLabel.textContent = "Less";
+		const legendLabel = createSpan({ text: "Less" });
 		legend.appendChild(legendLabel);
 
 		legendColors.forEach((item) => {
-			const legendItem = document.createElement("div");
-			legendItem.className = "heatmap-legend-color-box";
+			const legendItem = createDiv({ cls: "heatmap-legend-color-box" });
 			legendItem.style.setProperty("--legend-box-color", item.color);
 			legendItem.title = item.label;
 			legend.appendChild(legendItem);
 		});
 
-		const moreLabel = document.createElement("span");
-		moreLabel.textContent = "More";
+		const moreLabel = createSpan({ text: "More" });
 		legend.appendChild(moreLabel);
 
 		return legend;

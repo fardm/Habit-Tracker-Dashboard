@@ -101,9 +101,7 @@ export class ChartSection extends HTMLElementComponent {
 		this.chartContainer.innerHTML = '';
 
 		if (this.props.data.length === 0) {
-			const noData = document.createElement("div");
-			noData.textContent = "No data available";
-			noData.className = "chart-no-data";
+			const noData = createDiv({ cls: "chart-no-data", text: "No data available" });
 			this.chartContainer.appendChild(noData);
 			return;
 		}
