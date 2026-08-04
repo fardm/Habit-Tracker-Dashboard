@@ -299,8 +299,7 @@ export class CalendarModal extends Modal {
 			return;
 		}
 
-		const dropdown = document.createElement("div");
-		dropdown.addClass("calendar-month-year-dropdown");
+		const dropdown = createDiv({ cls: "calendar-month-year-dropdown" });
 
 		// Year selector section
 		const yearSection = dropdown.createDiv({ cls: "calendar-dropdown-section" });

@@ -123,7 +123,7 @@ export class HabitDetailsModal extends Modal {
 		// Hover states are handled by CSS
 
 		// Year display
-		const yearDisplay = navContainer.createEl("span", {
+		const yearDisplay = navContainer.createSpan({
 			text: this.selectedYear.toString()
 		});
 		yearDisplay.className = "year-nav-display";

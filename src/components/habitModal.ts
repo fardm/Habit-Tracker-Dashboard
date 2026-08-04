@@ -277,7 +277,7 @@ export class HabitModal extends Modal {
 			} else {
 				errorContainer.empty();
 				this.validationErrors.forEach((error) => {
-					const errorEl = errorContainer.createEl("div", { text: error });
+					const errorEl = errorContainer.createDiv({ text: error });
 					errorEl.className = "habit-modal-error";
 				});
 			}
