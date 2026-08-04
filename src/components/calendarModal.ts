@@ -106,7 +106,7 @@ export class CalendarModal extends Modal {
 			? ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"]
 			: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 		weekdayNames.forEach(day => {
-			container.createEl("span", {
+			container.createSpan({
 				cls: "calendar-weekday",
 				text: day
 			});
@@ -304,7 +304,7 @@ export class CalendarModal extends Modal {
 
 		// Year selector section
 		const yearSection = dropdown.createDiv({ cls: "calendar-dropdown-section" });
-		yearSection.createEl("div", {
+		yearSection.createDiv({
 			cls: "calendar-dropdown-section-label",
 			text: "Year"
 		});
@@ -334,7 +334,7 @@ export class CalendarModal extends Modal {
 
 		// Month selector section
 		const monthSection = dropdown.createDiv({ cls: "calendar-dropdown-section" });
-		monthSection.createEl("div", {
+		monthSection.createDiv({
 			cls: "calendar-dropdown-section-label",
 			text: "Month"
 		});
