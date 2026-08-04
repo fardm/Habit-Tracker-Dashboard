@@ -1,4 +1,4 @@
-import { App, Modal } from "obsidian";
+import { App, Modal, setIcon } from "obsidian";
 import { ReportCalendar } from "../types/habitTypes";
 import { getCalendarAdapter, CalendarDateAdapter } from "../utils/calendarAdapter";
 import {
@@ -72,9 +72,9 @@ export class CalendarModal extends Modal {
 
 		// Previous month button
 		const prevButton = navContainer.createEl("button", {
-			cls: "calendar-nav-button clickable-icon",
-			text: "◀"
+			cls: "calendar-nav-button clickable-icon"
 		});
+		setIcon(prevButton, "chevron-left");
 		prevButton.addEventListener("click", () => {
 			this.navigateMonth(-1);
 		});
@@ -91,16 +91,19 @@ export class CalendarModal extends Modal {
 
 		// Next month button
 		const nextButton = navContainer.createEl("button", {
-			cls: "calendar-nav-button clickable-icon",
-			text: "▶"
+			cls: "calendar-nav-button clickable-icon"
 		});
+		setIcon(nextButton, "chevron-right");
 		nextButton.addEventListener("click", () => {
 			this.navigateMonth(1);
 		});
 	}
 
 	private renderWeekdays(container: HTMLElement): void {
-		const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+		// Jalali calendar weeks start on Saturday, Gregorian on Sunday
+		const weekdayNames = this.calendarAdapter.system === ReportCalendar.JALALI
+			? ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"]
+			: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 		weekdayNames.forEach(day => {
 			container.createEl("span", {
 				cls: "calendar-weekday",
@@ -116,16 +119,24 @@ export class CalendarModal extends Modal {
 		const firstDayOfMonth = this.getFirstDayOfMonth(this.viewYear, this.viewMonth);
 		const daysInMonth = this.getDaysInMonth(this.viewYear, this.viewMonth);
 
-		// Get the weekday of the first day (0 = Sunday)
+		// Get the weekday of the first day (0 = Sunday in Gregorian)
 		const firstDayWeekday = firstDayOfMonth.getDay();
+
+		// Calculate padding days based on calendar system
+		// Gregorian: week starts on Sunday (0), Jalali: week starts on Saturday
+		let paddingDays: number;
+		if (this.calendarAdapter.system === ReportCalendar.JALALI) {
+			// Convert Gregorian weekday to Jalali weekday (Saturday = 0)
+			paddingDays = (firstDayWeekday + 1) % 7;
+		} else {
+			// Gregorian: Sunday = 0
+			paddingDays = firstDayWeekday;
+		}
 
 		// Get the previous month's info for padding
 		const prevMonthYear = this.viewMonth === 1 ? this.viewYear - 1 : this.viewYear;
 		const prevMonth = this.viewMonth === 1 ? 12 : this.viewMonth - 1;
 		const daysInPrevMonth = this.getDaysInMonth(prevMonthYear, prevMonth);
-
-		// Calculate padding days
-		const paddingDays = firstDayWeekday;
 
 		// Render padding days from previous month
 		for (let i = paddingDays - 1; i >= 0; i--) {
@@ -301,9 +312,9 @@ export class CalendarModal extends Modal {
 		const yearNav = yearSection.createDiv({ cls: "calendar-dropdown-year-nav" });
 
 		const yearPrevBtn = yearNav.createEl("button", {
-			cls: "calendar-dropdown-nav-button clickable-icon",
-			text: "◀"
+			cls: "calendar-dropdown-nav-button clickable-icon"
 		});
+		setIcon(yearPrevBtn, "chevron-left");
 		yearPrevBtn.addEventListener("click", () => {
 			this.yearSelectStart -= 12;
 			this.renderYearGrid(yearGrid);
@@ -313,9 +324,9 @@ export class CalendarModal extends Modal {
 		this.renderYearGrid(yearGrid);
 
 		const yearNextBtn = yearNav.createEl("button", {
-			cls: "calendar-dropdown-nav-button clickable-icon",
-			text: "▶"
+			cls: "calendar-dropdown-nav-button clickable-icon"
 		});
+		setIcon(yearNextBtn, "chevron-right");
 		yearNextBtn.addEventListener("click", () => {
 			this.yearSelectStart += 12;
 			this.renderYearGrid(yearGrid);
