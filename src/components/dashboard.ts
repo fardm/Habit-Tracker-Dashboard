@@ -445,16 +445,7 @@ export class Dashboard extends HTMLElementComponent {
 			const habit = this.habits.find(h => h.id === habitId);
 			if (!habit) return;
 
-			await this.dataManager.addHabit({
-				name: `${habit.name} (copy)`,
-				emoji: habit.emoji,
-				type: habit.type,
-				frontmatterField: `${habit.frontmatterField}_copy`,
-				unit: habit.unit,
-				target: habit.target,
-				visualization: habit.visualization,
-				completionRule: habit.completionRule
-			});
+			await this.dataManager.addHabit(habit as Omit<typeof habit, "id" | "createdAt">);
 
 			// Reload habits from data source to ensure proper initialization
 			await this.loadHabits();
