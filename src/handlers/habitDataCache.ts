@@ -272,7 +272,7 @@ export class HabitDataCache {
 			const frontmatter = entry.frontmatter;
 			
 			if (frontmatter && habit.frontmatterField in frontmatter) {
-				const rawValue = frontmatter[habit.frontmatterField] as unknown;
+				const rawValue = frontmatter[habit.frontmatterField];
 				const processedValue = this.processValue(rawValue, habit.type);
 				
 				if (processedValue !== null) {

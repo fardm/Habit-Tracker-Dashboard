@@ -208,7 +208,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		});
 
 		weekStartSelect.addEventListener("change", () => {
-			this.settings.weekStartDay = Number(weekStartSelect.value) as WeekStartDay;
+			this.settings.weekStartDay = Number(weekStartSelect.value);
 			this.notifySettingsChange();
 			this.updateHeatmapContent();
 		});

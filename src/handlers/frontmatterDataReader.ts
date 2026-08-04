@@ -83,7 +83,7 @@ export class FrontmatterDataReader {
 				
 				// Check if the habit field exists in frontmatter
 				if (frontmatter && habit.frontmatterField in frontmatter) {
-					const rawValue = frontmatter[habit.frontmatterField] as unknown;
+					const rawValue = frontmatter[habit.frontmatterField];
 					const processedValue = this.processValue(rawValue, habit.type);
 					
 					if (processedValue !== null) {
@@ -217,7 +217,7 @@ export class FrontmatterDataReader {
 			
 			const frontmatter = this.parseFrontmatter(content);
 			if (frontmatter && this.settings.dateFrontmatterProperty in frontmatter) {
-				const dateStr = frontmatter[this.settings.dateFrontmatterProperty] as unknown;
+				const dateStr = frontmatter[this.settings.dateFrontmatterProperty];
 				if (typeof dateStr === 'string') {
 					const date = new Date(dateStr);
 					if (!isNaN(date.getTime())) {
