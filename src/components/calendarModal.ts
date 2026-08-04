@@ -357,10 +357,37 @@ export class CalendarModal extends Modal {
 		// Position dropdown
 		const rect = triggerElement.getBoundingClientRect();
 		dropdown.addClass("calendar-dropdown-positioned");
-		dropdown.style.top = `${rect.bottom + 4}px`;
-		dropdown.style.left = `${rect.left}px`;
 
+		// Set vertical position using CSS variable
+		dropdown.style.setProperty("--calendar-dropdown-top", `${rect.bottom + 4}px`);
+
+		// Calculate horizontal position with mobile support
+		const viewportWidth = window.innerWidth;
+		const isMobile = viewportWidth < 768; // Standard mobile breakpoint
+
+		// Append dropdown to body first to get its width
 		document.body.appendChild(dropdown);
+		const dropdownWidth = dropdown.offsetWidth;
+
+		if (!isMobile) {
+			// On desktop: use trigger element position with boundary checking
+			let left = rect.left;
+
+			// Prevent left overflow
+			if (left < 0) {
+				left = 0;
+			}
+
+			// Prevent right overflow
+			if (left + dropdownWidth > viewportWidth) {
+				left = viewportWidth - dropdownWidth;
+			}
+
+			// Set horizontal position using CSS variable
+			dropdown.style.setProperty("--calendar-dropdown-left", `${left}px`);
+		}
+		// On mobile: CSS media query handles centering with transform
+
 		this.monthYearDropdown = dropdown;
 
 		// Prevent dropdown from closing when clicking inside

@@ -1588,6 +1588,16 @@
 .calendar-dropdown-positioned {
 	position: fixed;
 	z-index: 10000;
+	top: var(--calendar-dropdown-top, 0);
+	left: var(--calendar-dropdown-left, 0);
+}
+
+/* Mobile: center the dropdown in viewport */
+@media (max-width: 768px) {
+	.calendar-dropdown-positioned {
+		left: 50%;
+		transform: translateX(-50%);
+	}
 }
 
 .calendar-dropdown-section {
