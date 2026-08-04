@@ -33,7 +33,23 @@ export class RefreshButton extends HTMLElementComponent {
 		button.addEventListener("click", (e) => {
 			e.preventDefault();
 			e.stopPropagation();
+			
+			// Show success state
+			setIcon(iconContainer, "check");
+			textSpan.setText("Refreshed");
+			iconContainer.style.color = "var(--text-success)";
+			textSpan.style.color = "var(--text-success)";
+			
+			// Call the original refresh functionality
 			this.onClick();
+			
+			// Revert to normal state after 2 seconds
+			setTimeout(() => {
+				setIcon(iconContainer, "refresh-cw");
+				textSpan.setText("Refresh");
+				iconContainer.style.color = "";
+				textSpan.style.color = "";
+			}, 2000);
 		});
 
 		return button;
