@@ -375,6 +375,7 @@
 	align-items: center;
 	justify-content: center;
 	box-shadow: none;
+	color: var(--text-normal);
 }
 
 .habit-tracker-settings-btn:hover {
