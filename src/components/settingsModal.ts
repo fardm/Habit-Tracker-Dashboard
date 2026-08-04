@@ -81,7 +81,7 @@ export class SettingsModal extends Modal {
 		this.updateDateFrontmatterField();
 
 		new Setting(contentEl)
-			.setName("Report Calendar")
+			.setName("Calendar System")
 			.setDesc("Choose the calendar system for habit reports (Heatmap, Streaks, Statistics)")
 			.addDropdown((dropdown) =>
 				dropdown

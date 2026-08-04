@@ -80,7 +80,9 @@ export class DateNavigator {
 		// Use calendar adapter for Jalali format, otherwise use Gregorian
 		if (this.calendarSystem === ReportCalendar.JALALI) {
 			const adapter = getCalendarAdapter(this.calendarSystem);
-			return adapter.formatDisplayDate(date);
+			const monthName = adapter.getMonthName(adapter.getMonthOfDate(date));
+			const day = adapter.getDayOfMonth(date);
+			return `${monthName} ${day}`;
 		}
 
 		const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
