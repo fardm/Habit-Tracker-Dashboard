@@ -304,7 +304,7 @@ export class CalendarModal extends Modal {
 
 		// Year selector section
 		const yearSection = dropdown.createDiv({ cls: "calendar-dropdown-section" });
-		const yearLabel = yearSection.createEl("div", {
+		yearSection.createEl("div", {
 			cls: "calendar-dropdown-section-label",
 			text: "Year"
 		});
@@ -334,7 +334,7 @@ export class CalendarModal extends Modal {
 
 		// Month selector section
 		const monthSection = dropdown.createDiv({ cls: "calendar-dropdown-section" });
-		const monthLabel = monthSection.createEl("div", {
+		monthSection.createEl("div", {
 			cls: "calendar-dropdown-section-label",
 			text: "Month"
 		});
@@ -396,8 +396,8 @@ export class CalendarModal extends Modal {
 	private handleDocumentClick(e: MouseEvent): void {
 		if (this.monthYearDropdown) {
 			const target = e.target as HTMLElement;
-			if (!target.closest(".calendar-month-year-dropdown") && 
-			    !target.closest(".calendar-nav-label")) {
+			if (!target.closest(".calendar-month-year-dropdown") &&
+				!target.closest(".calendar-nav-label")) {
 				this.closeMonthYearDropdown();
 			}
 		}

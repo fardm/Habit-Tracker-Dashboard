@@ -44,8 +44,8 @@ export class DateNavigator {
 			text: this.formatDate(this.currentDate)
 		});
 		// Hover states are handled by CSS
-		dateDisplay.addEventListener("click", (e) => {
-			this.openDatePicker(e, dateDisplay);
+		dateDisplay.addEventListener("click", () => {
+			this.openDatePicker();
 		});
 
 		// Right arrow button
@@ -114,7 +114,7 @@ export class DateNavigator {
 		}
 	}
 
-	private openDatePicker(event: MouseEvent, button: HTMLElement): void {
+	private openDatePicker(): void {
 		new CalendarModal(
 			this.app,
 			this.currentDate,

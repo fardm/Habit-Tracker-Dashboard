@@ -1417,7 +1417,6 @@
 	align-items: center;
 	margin-bottom: 16px;
 	padding-bottom: 12px;
-	border-bottom: 1px solid var(--background-modifier-border);
 }
 
 .calendar-nav {
@@ -1525,7 +1524,6 @@
 	display: flex;
 	justify-content: center;
 	padding-top: 12px;
-	border-top: 1px solid var(--background-modifier-border);
 }
 
 .calendar-today-button {
