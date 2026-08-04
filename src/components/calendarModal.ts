@@ -356,10 +356,9 @@ export class CalendarModal extends Modal {
 
 		// Position dropdown
 		const rect = triggerElement.getBoundingClientRect();
-		dropdown.style.position = "fixed";
+		dropdown.addClass("calendar-dropdown-positioned");
 		dropdown.style.top = `${rect.bottom + 4}px`;
 		dropdown.style.left = `${rect.left}px`;
-		dropdown.style.zIndex = "10000";
 
 		document.body.appendChild(dropdown);
 		this.monthYearDropdown = dropdown;

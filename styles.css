@@ -358,6 +358,14 @@
 	margin-right: 4px;
 }
 
+.habit-tracker-refresh-btn-icon-success {
+	color: var(--text-success);
+}
+
+.habit-tracker-refresh-btn-text-success {
+	color: var(--text-success);
+}
+
 .habit-tracker-settings-btn {
 	padding: 6px;
 	background-color: var(--background-modifier-border);
@@ -1577,6 +1585,11 @@
 	padding: 16px;
 	min-width: 280px;
 	max-width: 320px;
+}
+
+.calendar-dropdown-positioned {
+	position: fixed;
+	z-index: 10000;
 }
 
 .calendar-dropdown-section {

@@ -37,8 +37,8 @@ export class RefreshButton extends HTMLElementComponent {
 			// Show success state
 			setIcon(iconContainer, "check");
 			textSpan.setText("Refreshed");
-			iconContainer.style.color = "var(--text-success)";
-			textSpan.style.color = "var(--text-success)";
+			iconContainer.addClass("habit-tracker-refresh-btn-icon-success");
+			textSpan.addClass("habit-tracker-refresh-btn-text-success");
 			
 			// Call the original refresh functionality
 			this.onClick();
@@ -47,8 +47,8 @@ export class RefreshButton extends HTMLElementComponent {
 			setTimeout(() => {
 				setIcon(iconContainer, "refresh-cw");
 				textSpan.setText("Refresh");
-				iconContainer.style.color = "";
-				textSpan.style.color = "";
+				iconContainer.removeClass("habit-tracker-refresh-btn-icon-success");
+				textSpan.removeClass("habit-tracker-refresh-btn-text-success");
 			}, 2000);
 		});
 
