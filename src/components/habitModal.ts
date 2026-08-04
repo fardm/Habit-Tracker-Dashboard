@@ -37,9 +37,6 @@ export class HabitModal extends Modal {
 		this.onSubmit = onSubmit;
 		this.isEditMode = !!initialData; // If initialData is provided, it's edit mode
 		
-		console.log('[HabitModal Constructor] initialData:', initialData);
-		console.log('[HabitModal Constructor] initialData?.frontmatterField:', initialData?.frontmatterField);
-		
 		this.formData = {
 			name: initialData?.name || "",
 			emoji: initialData?.emoji || "",
@@ -53,14 +50,9 @@ export class HabitModal extends Modal {
 			completionRule: initialData?.completionRule || { operator: CompletionOperator.AT_LEAST }
 		};
 		
-		console.log('[HabitModal Constructor] formData after init:', this.formData);
-		
 		// If editing and frontmatter field already has a value, mark as manually edited
 		if (initialData?.frontmatterField) {
 			this.frontmatterFieldManuallyEdited = true;
-			console.log('[HabitModal Constructor] Set frontmatterFieldManuallyEdited = true');
-		} else {
-			console.log('[HabitModal Constructor] Set frontmatterFieldManuallyEdited = false');
 		}
 	}
 
@@ -79,11 +71,8 @@ export class HabitModal extends Modal {
 				text
 					.setPlaceholder("Reading")
 					.onChange((value) => {
-						console.log('[Habit Name onChange] value:', value);
-						console.log('[Habit Name onChange] frontmatterFieldManuallyEdited:', this.frontmatterFieldManuallyEdited);
 						this.formData.name = value;
 						if (!this.frontmatterFieldManuallyEdited) {
-							console.log('[Habit Name onChange] Calling updateFrontmatterField');
 							this.updateFrontmatterField();
 						}
 					})
@@ -98,15 +87,9 @@ export class HabitModal extends Modal {
 				text
 					.setPlaceholder("e.g. 📚")
 					.onChange((value) => {
-						console.log('[Emoji onChange] value:', value);
-						console.log('[Emoji onChange] frontmatterFieldManuallyEdited:', this.frontmatterFieldManuallyEdited);
-						console.log('[Emoji onChange] current frontmatterField before change:', this.formData.frontmatterField);
 						this.formData.emoji = value;
 						if (!this.frontmatterFieldManuallyEdited) {
-							console.log('[Emoji onChange] Calling updateFrontmatterField');
 							this.updateFrontmatterField();
-						} else {
-							console.log('[Emoji onChange] SKIPPING updateFrontmatterField because manually edited');
 						}
 					})
 					.setValue(this.formData.emoji)
@@ -123,10 +106,8 @@ export class HabitModal extends Modal {
 				text
 					.setPlaceholder("reading")
 					.onChange((value) => {
-						console.log('[Frontmatter Field onChange] value:', value);
 						this.formData.frontmatterField = value;
 						this.frontmatterFieldManuallyEdited = true;
-						console.log('[Frontmatter Field onChange] Set frontmatterFieldManuallyEdited = true');
 					})
 					.setValue(this.formData.frontmatterField)
 			);
@@ -331,18 +312,12 @@ export class HabitModal extends Modal {
 	}
 
 	private updateFrontmatterField(): void {
-		console.log('[updateFrontmatterField] Called');
-		console.log('[updateFrontmatterField] emoji:', this.formData.emoji);
-		console.log('[updateFrontmatterField] name:', this.formData.name);
-		console.log('[updateFrontmatterField] frontmatterField BEFORE:', this.formData.frontmatterField);
-		
 		// Auto-generate frontmatter field based on emoji and name
 		if (this.formData.emoji && this.formData.name) {
 			const cleanName = this.formData.name
 				.toLowerCase()
 				.replace(/[^a-z0-9]/g, "");
 			this.formData.frontmatterField = `${this.formData.emoji}${cleanName}`;
-			console.log('[updateFrontmatterField] frontmatterField AFTER:', this.formData.frontmatterField);
 		}
 	}
 
