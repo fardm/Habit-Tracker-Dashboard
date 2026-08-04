@@ -1,3 +1,5 @@
+English | [فارسی](README-FA.md)
+
 # Habit Tracker Dashboard
 
 <div align="center">
@@ -8,13 +10,13 @@
 
 An interactive Habit Tracker dashboard for Obsidian that visualizes habit data from your daily notes.
 
-This is a **dashboard-only** plugin. It reads habit data from your daily notes' frontmatter based on your configured settings and provides visualizations, statistics, and progress tracking.
+This plugin reads habit data from the properties of your daily notes and displays their completion status.
 
 ## Usage
 
 ### 1. Add Habit Data to Your Daily Notes
 
-First, record your habits in the frontmatter of your daily notes.
+First, record your habits in the properties of your daily notes.
 
 ```yaml
 ---
@@ -23,11 +25,11 @@ reading: 30
 ---
 ```
 
-### 2. Create a Habit Tracker
+### 2. Create a dashboard
 
 Click the plugin icon in the ribbon, or run **"Habit Tracker Dashboard: Create new habit tracker"** from the Command Palette.
 
-Enter a name for your tracker file and click **Create**.
+Enter a name for your dashboard file and click **Create**.
 
 ### 3. Configure the Data Source
 
@@ -38,11 +40,12 @@ Open **Tracker Settings (⚙️)** and choose:
 
 ### 4. Create Your Habits
 
-Click **Add Habit** and create a habit that matches the frontmatter field in your daily notes.
+Click **Add Habit** and enter your habit information.
 
-For example:
-- **Exercise** → Boolean
-- **Reading** → Numeric
+Choose the habit type based on the property type in your daily notes:
+
+- **Boolean**: For habits with checkbox properties. e.g. Exercise
+- **Numeric**: For habits with number properties. e.g. Reading
 
 You can customize options such as target values, units, and visualization settings for numeric habits.
 
@@ -66,7 +69,9 @@ That's it! The dashboard will automatically read your daily notes.
 
 ### Refresh
 
-If you edit your daily notes manually, click **Refresh (🔄)** to re-scan your notes and update the dashboard.
+To improve performance and avoid continuously scanning files, the plugin stores habit data in a temporary cache.
+
+If you manually edit your daily notes, click **Refresh (🔄)** to re-scan the files and update the dashboard with the latest changes.
 
 
 ### Completion Condition
