@@ -74,9 +74,9 @@ export class StreakSection extends HTMLElementComponent {
 
 			// Chevron icon
 			const chevron = createDiv({ cls: "streak-history-chevron" });
-			chevron.style.setProperty("--chevron-rotation", this.isExpanded ? '0deg' : '-90deg');
 
 			const svg = createSvg("svg", {
+				cls: this.isExpanded ? "streak-history-chevron-svg-expanded" : "streak-history-chevron-svg-collapsed",
 				attr: {
 					width: "16",
 					height: "16",
@@ -119,11 +119,14 @@ export class StreakSection extends HTMLElementComponent {
 			// Toggle functionality
 			historyHeader.addEventListener("click", () => {
 				this.isExpanded = !this.isExpanded;
-				chevron.style.setProperty("--chevron-rotation", this.isExpanded ? '0deg' : '-90deg');
 				if (this.isExpanded) {
+					svg.classList.remove("streak-history-chevron-svg-collapsed");
+					svg.classList.add("streak-history-chevron-svg-expanded");
 					historyContent.classList.remove("hidden");
 					historyContent.classList.add("visible");
 				} else {
+					svg.classList.remove("streak-history-chevron-svg-expanded");
+					svg.classList.add("streak-history-chevron-svg-collapsed");
 					historyContent.classList.remove("visible");
 					historyContent.classList.add("hidden");
 				}

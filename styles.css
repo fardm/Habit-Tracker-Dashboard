@@ -1232,15 +1232,17 @@
 
 .streak-history-chevron {
 	color: var(--text-muted);
-	transition: transform 0.2s;
-	transform: var(--chevron-rotation, -90deg);
 }
 
-.streak-history-chevron-expanded {
+.streak-history-chevron svg {
+	transition: transform 0.2s;
+}
+
+.streak-history-chevron-svg-expanded {
 	transform: rotate(0deg);
 }
 
-.streak-history-chevron-collapsed {
+.streak-history-chevron-svg-collapsed {
 	transform: rotate(-90deg);
 }
 
