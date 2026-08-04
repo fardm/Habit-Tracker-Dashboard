@@ -317,7 +317,7 @@
 	padding: 9px 12px;
 	border-radius: 4px;
 	cursor: pointer;
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: 500;
 	transition: background-color 0.2s;
 	line-height: 1;
@@ -335,7 +335,7 @@
 	padding: 6px 12px;
 	border-radius: 4px;
 	cursor: pointer;
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: 500;
 	transition: background-color 0.2s;
 	line-height: 1;
@@ -348,6 +348,7 @@
 }
 
 .habit-tracker-refresh-btn:active {
+
 	transform: scale(0.9);
 	filter: brightness(0.9);
   }
@@ -386,10 +387,10 @@
 	color: var(--text-muted);
 	font-size: 16px;
 	cursor: pointer;
-	padding: 4px 6px;
+	padding: 6px;
 	transition: color 0.2s;
 	line-height: 1;
-	background: var(--background-secondary);
+	background: var(--background-modifier-border);
 	border-radius: 6px;
 	border: 1px solid var(--background-modifier-border);
 }
@@ -400,14 +401,14 @@
 }
 
 .date-navigator-display {
-	background: var(--background-secondary);
+	background: var(--background-modifier-border);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 4px;
 	color: var(--text-normal);
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: 500;
 	cursor: pointer;
-	padding: 6px 8px;
+	padding: 8px;
 	transition: color 0.2s, background-color 0.2s;
 	min-width: 80px;
 	text-align: center;
@@ -428,12 +429,12 @@
 }
 
 .view-mode-button {
-	background: none;
+	background: var(--background-modifier-border);
 	border: none;
 	color: var(--text-muted);
 	font-size: 16px;
 	cursor: pointer;
-	padding: 4px 8px;
+	padding: 6px;
 	transition: color 0.2s, background-color 0.2s;
 	line-height: 1;
 	box-shadow: none;

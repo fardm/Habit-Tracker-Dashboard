@@ -176,11 +176,6 @@ export class Dashboard extends HTMLElementComponent {
 				
 				// Load view mode if saved
 				this.currentViewMode = data.settings.viewMode || ViewMode.GRID;
-				
-				// Load selected date if saved
-				if (data.settings.selectedDate) {
-					this.currentDate = new Date(data.settings.selectedDate);
-				}
 			}
 		} catch (error) {
 			console.error("Error loading user settings:", error);
@@ -192,8 +187,7 @@ export class Dashboard extends HTMLElementComponent {
 			const data = await this.dataManager.readTrackerData();
 			data.settings = {
 				...this.currentSettings,
-				viewMode: this.currentViewMode,
-				selectedDate: this.currentDate.toISOString().split('T')[0] // Store as YYYY-MM-DD
+				viewMode: this.currentViewMode
 			};
 			await this.dataManager.writeTrackerData(data);
 		} catch (error) {
