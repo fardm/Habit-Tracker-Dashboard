@@ -14,7 +14,7 @@ export class AddHabitButton extends HTMLElementComponent {
 
 	render(): HTMLElement {
 		const button = createEl("button", {
-			cls: "habit-tracker-add-habit-btn",
+			cls: "habit-tracker-add-habit-btn clickable-icon",
 			text: "+ Add Habit",
 			type: "button"
 		});

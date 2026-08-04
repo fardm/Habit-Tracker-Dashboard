@@ -40,7 +40,7 @@ export class DateNavigator {
 
 		// Date display
 		const dateDisplay = createEl("button", {
-			cls: "date-navigator-display",
+			cls: "date-navigator-display clickable-icon",
 			text: this.formatDate(this.currentDate)
 		});
 		// Hover states are handled by CSS

@@ -311,20 +311,21 @@
    ============================================ */
 
 .habit-tracker-add-habit-btn {
-	background-color: var(--interactive-accent);
-	color: var(--text-on-accent);
+	background-color: var(--background-modifier-border);
+	color: var(--text-normal);
 	border: none;
-	padding: 6px 12px;
+	padding: 9px 12px;
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: 13px;
 	font-weight: 500;
 	transition: background-color 0.2s;
 	line-height: 1;
+	box-shadow: none;
 }
 
 .habit-tracker-add-habit-btn:hover {
-	background-color: var(--interactive-accent-hover);
+	background-color: var(--background-modifier-hover);
 }
 
 .habit-tracker-refresh-btn {
@@ -338,11 +339,18 @@
 	font-weight: 500;
 	transition: background-color 0.2s;
 	line-height: 1;
+	box-shadow: none;
+	transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .habit-tracker-refresh-btn:hover {
 	background-color: var(--background-modifier-hover);
 }
+
+.habit-tracker-refresh-btn:active {
+	transform: scale(0.9);
+	filter: brightness(0.9);
+  }
 
 .habit-tracker-refresh-btn-icon {
 	vertical-align: middle;
@@ -350,8 +358,8 @@
 }
 
 .habit-tracker-settings-btn {
-	padding: 8px 12px;
-	background-color: var(--background-secondary);
+	padding: 6px;
+	background-color: var(--background-modifier-border);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 6px;
 	cursor: pointer;
@@ -359,6 +367,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	box-shadow: none;
 }
 
 .habit-tracker-settings-btn:hover {
@@ -398,15 +407,17 @@
 	font-size: 13px;
 	font-weight: 500;
 	cursor: pointer;
-	padding: 4px 8px;
-	transition: color 0.2s;
+	padding: 6px 8px;
+	transition: color 0.2s, background-color 0.2s;
 	min-width: 80px;
 	text-align: center;
 	line-height: 1;
+	box-shadow: none;
 }
 
 .date-navigator-display:hover {
 	color: var(--interactive-accent);
+	background-color: var(--background-modifier-hover);
 }
 
 /* View Mode Switcher */
@@ -423,12 +434,14 @@
 	font-size: 16px;
 	cursor: pointer;
 	padding: 4px 8px;
-	transition: color 0.2s;
+	transition: color 0.2s, background-color 0.2s;
 	line-height: 1;
+	box-shadow: none;
 }
 
 .view-mode-button:hover {
 	color: var(--text-normal);
+	background-color: var(--background-modifier-hover);
 }
 
 .view-mode-button-active {

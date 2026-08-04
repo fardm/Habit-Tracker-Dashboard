@@ -25,7 +25,7 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 
 		// Grid button
 		this.gridButton = createEl("button", {
-			cls: this.props.currentMode === ViewMode.GRID ? "view-mode-button view-mode-button-active" : "view-mode-button",
+			cls: this.props.currentMode === ViewMode.GRID ? "view-mode-button view-mode-button-active clickable-icon" : "view-mode-button clickable-icon",
 			attr: { title: "Grid View" }
 		});
 		setIcon(this.gridButton, "layout-grid");
@@ -36,7 +36,7 @@ export class ViewModeSwitcher extends HTMLElementComponent {
 
 		// List button
 		this.listButton = createEl("button", {
-			cls: this.props.currentMode === ViewMode.LIST ? "view-mode-button view-mode-button-active" : "view-mode-button",
+			cls: this.props.currentMode === ViewMode.LIST ? "view-mode-button view-mode-button-active clickable-icon" : "view-mode-button clickable-icon",
 			attr: { title: "List View" }
 		});
 		setIcon(this.listButton, "list");

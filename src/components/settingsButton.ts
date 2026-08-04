@@ -15,7 +15,7 @@ export class SettingsButton extends HTMLElementComponent {
 
 	render(): HTMLElement {
 		const button = createEl("button", {
-			cls: "habit-tracker-settings-btn settings-button",
+			cls: "habit-tracker-settings-btn settings-button clickable-icon",
 			type: "button",
 			attr: { title: "Settings" }
 		});

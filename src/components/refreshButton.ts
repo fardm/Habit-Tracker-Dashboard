@@ -15,7 +15,7 @@ export class RefreshButton extends HTMLElementComponent {
 
 	render(): HTMLElement {
 		const button = createEl("button", {
-			cls: "habit-tracker-refresh-btn",
+			cls: "habit-tracker-refresh-btn clickable-icon",
 			type: "button"
 		});
 		
