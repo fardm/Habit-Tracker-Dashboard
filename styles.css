@@ -281,7 +281,7 @@
 
 .habit-check-icon {
 	position: absolute;
-	top: 50%;
+	top: 55%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
@@ -304,6 +304,8 @@
 .habit-boolean-status-icon svg,
 .habit-circle-check-icon svg {
 	color: var(--icon-color, currentColor);
+	width: 32px;
+	height: 32px;
 }
 
 /* ============================================
