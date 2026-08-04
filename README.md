@@ -8,9 +8,23 @@ English | [فارسی](README-FA.md)
   <img src="img/details-boolean.webp" width="30%" />
 </div>
 
-An interactive Habit Tracker dashboard for Obsidian that visualizes habit data from your daily notes.
+This plugin reads habit data from your note properties and displays it through visual dashboards.
 
-This plugin reads habit data from the properties of your daily notes and displays their completion status.
+
+
+## Features
+
+- 📅 **Daily Dashboard**: Track your daily habits, view completion status, and navigate through previous days.
+
+- 🔥 **Heatmap Calendar**: Visualize your habit activity throughout the year with a GitHub-style contribution calendar.
+
+- 📈 **Line and Bar Charts**: Analyze habit trends and progress over time with interactive charts.
+
+- 📊 **Detailed Statistics**: View total counts, averages, maximum and minimum values, and completion rates.
+
+- 🔗 **Habit Streak Tracking**: Monitor current streaks, longest streaks, and streak history.
+
+<br>
 
 ## Usage
 
@@ -38,6 +52,8 @@ Open **Tracker Settings (⚙️)** and choose:
 - Where your daily notes are located (Tag or Folder)
 - How dates should be extracted (File name or Frontmatter)
 
+> ⚠️ Dates must use the Gregorian format (YYYY-MM-DD) for the selected date source. e.g. 2026-05-08
+
 ### 4. Create Your Habits
 
 Click **Add Habit** and enter your habit information.
@@ -52,18 +68,6 @@ You can customize options such as target values, units, and visualization settin
 
 That's it! The dashboard will automatically read your daily notes.
 
-
-## Features
-
-- 📅 **Daily Dashboard and Date Navigation**: View all your habits for the current day with progress indicators, and browse different time periods with the date navigator
-
-- 📊 **Full Yearly Reports**: Access comprehensive reports for any habit with detailed visualizations
-- 🔥 **Calendar Heatmap**: GitHub-style heatmap showing habit consistency over the entire year
-- 📈 **Line and Bar Charts**: Track trends and compare values over time with interactive line and bar charts
-- 🔗 **Habit Streak Calculation**: Track current streak, longest streak, and streak history
-- 📊 **Detailed Statistics**: Total, average, highest, lowest, completion rate.
-
-<br>
 
 ## Settings & Behavior
 

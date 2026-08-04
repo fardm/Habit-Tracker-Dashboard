@@ -48,30 +48,42 @@ export class HabitCard extends HTMLElementComponent {
 			cls: "habit-menu-btn clickable-icon"
 		});
 		
-		const menuSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		menuSvg.setAttribute("width", "16");
-		menuSvg.setAttribute("height", "16");
-		menuSvg.setAttribute("viewBox", "0 0 24 24");
-		menuSvg.setAttribute("fill", "none");
-		menuSvg.setAttribute("stroke", "currentColor");
-		menuSvg.setAttribute("stroke-width", "2");
-		menuSvg.setAttribute("stroke-linecap", "round");
-		menuSvg.setAttribute("stroke-linejoin", "round");
+		const menuSvg = createSvg("svg", {
+			attr: {
+				width: "16",
+				height: "16",
+				viewBox: "0 0 24 24",
+				fill: "none",
+				stroke: "currentColor",
+				"stroke-width": "2",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round"
+			}
+		});
 		
-		const circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle1.setAttribute("cx", "12");
-		circle1.setAttribute("cy", "12");
-		circle1.setAttribute("r", "1");
+		const circle1 = createSvg("circle", {
+			attr: {
+				cx: "12",
+				cy: "12",
+				r: "1"
+			}
+		});
 		
-		const circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle2.setAttribute("cx", "12");
-		circle2.setAttribute("cy", "5");
-		circle2.setAttribute("r", "1");
+		const circle2 = createSvg("circle", {
+			attr: {
+				cx: "12",
+				cy: "5",
+				r: "1"
+			}
+		});
 		
-		const circle3 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle3.setAttribute("cx", "12");
-		circle3.setAttribute("cy", "19");
-		circle3.setAttribute("r", "1");
+		const circle3 = createSvg("circle", {
+			attr: {
+				cx: "12",
+				cy: "19",
+				r: "1"
+			}
+		});
 		
 		menuSvg.appendChild(circle1);
 		menuSvg.appendChild(circle2);
@@ -91,15 +103,18 @@ export class HabitCard extends HTMLElementComponent {
 		// Drag handle - positioned absolutely on the left
 		const dragHandle = createDiv({ cls: "habit-drag-handle" });
 		
-		const dragSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		dragSvg.setAttribute("width", "16");
-		dragSvg.setAttribute("height", "16");
-		dragSvg.setAttribute("viewBox", "0 0 24 24");
-		dragSvg.setAttribute("fill", "none");
-		dragSvg.setAttribute("stroke", "currentColor");
-		dragSvg.setAttribute("stroke-width", "2");
-		dragSvg.setAttribute("stroke-linecap", "round");
-		dragSvg.setAttribute("stroke-linejoin", "round");
+		const dragSvg = createSvg("svg", {
+			attr: {
+				width: "16",
+				height: "16",
+				viewBox: "0 0 24 24",
+				fill: "none",
+				stroke: "currentColor",
+				"stroke-width": "2",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round"
+			}
+		});
 		
 		const dragCircles = [
 			{cx: 9, cy: 12}, {cx: 9, cy: 5}, {cx: 9, cy: 19},
@@ -107,10 +122,13 @@ export class HabitCard extends HTMLElementComponent {
 		];
 		
 		dragCircles.forEach(pos => {
-			const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-			circle.setAttribute("cx", pos.cx.toString());
-			circle.setAttribute("cy", pos.cy.toString());
-			circle.setAttribute("r", "1");
+			const circle = createSvg("circle", {
+				attr: {
+					cx: pos.cx.toString(),
+					cy: pos.cy.toString(),
+					r: "1"
+				}
+			});
 			dragSvg.appendChild(circle);
 		});
 		
@@ -363,29 +381,37 @@ export class HabitCard extends HTMLElementComponent {
 	}
 
 	private createBooleanStatusIcon(completed: boolean): SVGElement {
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", "24");
-		svg.setAttribute("height", "24");
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", "currentColor");
-		svg.setAttribute("stroke-width", "2");
-		svg.setAttribute("stroke-linecap", "round");
-		svg.setAttribute("stroke-linejoin", "round");
+		const svg = createSvg("svg", {
+			attr: {
+				width: "24",
+				height: "24",
+				viewBox: "0 0 24 24",
+				fill: "none",
+				stroke: "currentColor",
+				"stroke-width": "2",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round"
+			},
+			cls: completed ? "icon-success" : "icon-muted"
+		});
 		svg.style.setProperty("--icon-color", completed ? "var(--text-success)" : "var(--text-muted)");
 
-		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle.setAttribute("cx", "12");
-		circle.setAttribute("cy", "12");
-		circle.setAttribute("r", "10");
-		if (!completed) {
-			circle.setAttribute("stroke-dasharray", "4 2");
-		}
+		const circle = createSvg("circle", {
+			attr: {
+				cx: "12",
+				cy: "12",
+				r: "10",
+				...(completed ? {} : { "stroke-dasharray": "4 2" })
+			}
+		});
 		svg.appendChild(circle);
 
 		if (completed) {
-			const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			path.setAttribute("d", "M9 12l2 2 4-4");
+			const path = createSvg("path", {
+				attr: {
+					d: "M9 12l2 2 4-4"
+				}
+			});
 			svg.appendChild(path);
 		}
 
@@ -393,86 +419,105 @@ export class HabitCard extends HTMLElementComponent {
 	}
 
 	private createCheckIcon(): SVGElement {
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", "12");
-		svg.setAttribute("height", "12");
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", "currentColor");
-		svg.setAttribute("stroke-width", "3");
-		svg.setAttribute("stroke-linecap", "round");
-		svg.setAttribute("stroke-linejoin", "round");
+		const svg = createSvg("svg", {
+			attr: {
+				width: "12",
+				height: "12",
+				viewBox: "0 0 24 24",
+				fill: "none",
+				stroke: "currentColor",
+				"stroke-width": "3",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round"
+			}
+		});
 
-		
-		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		path.setAttribute("d", "M20 6L9 17l-5-5");
+		const path = createSvg("path", {
+			attr: {
+				d: "M20 6L9 17l-5-5"
+			}
+		});
 		svg.appendChild(path);
 
 		return svg;
 	}
 
 	private createWarningIcon(): SVGElement {
-		
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", "12");
-		svg.setAttribute("height", "12");
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", "currentColor");
-		svg.setAttribute("stroke-width", "3");
-		svg.setAttribute("stroke-linecap", "round");
-		svg.setAttribute("stroke-linejoin", "round");
+		const svg = createSvg("svg", {
+			attr: {
+				width: "12",
+				height: "12",
+				viewBox: "0 0 24 24",
+				fill: "none",
+				stroke: "currentColor",
+				"stroke-width": "3",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round"
+			}
+		});
 
-		
-		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		path.setAttribute("d", "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z");
+		const path = createSvg("path", {
+			attr: {
+				d: "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+			}
+		});
 		svg.appendChild(path);
 
-		
-		const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
-		line1.setAttribute("x1", "12");
-		line1.setAttribute("y1", "9");
-		line1.setAttribute("x2", "12");
-		line1.setAttribute("y2", "13");
+		const line1 = createSvg("line", {
+			attr: {
+				x1: "12",
+				y1: "9",
+				x2: "12",
+				y2: "13"
+			}
+		});
 		svg.appendChild(line1);
 
-		
-		const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
-		line2.setAttribute("x1", "12");
-		line2.setAttribute("y1", "17");
-		line2.setAttribute("x2", "12.01");
-		line2.setAttribute("y2", "17");
+		const line2 = createSvg("line", {
+			attr: {
+				x1: "12",
+				y1: "17",
+				x2: "12.01",
+				y2: "17"
+			}
+		});
 		svg.appendChild(line2);
 
 		return svg;
 	}
 
 	private createCircleCheckIcon(completed: boolean): SVGElement {
-		
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", "24");
-		svg.setAttribute("height", "24");
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", "currentColor");
-		svg.setAttribute("stroke-width", "2");
-		svg.setAttribute("stroke-linecap", "round");
-		svg.setAttribute("stroke-linejoin", "round");
+		const svg = createSvg("svg", {
+			attr: {
+				width: "24",
+				height: "24",
+				viewBox: "0 0 24 24",
+				fill: "none",
+				stroke: "currentColor",
+				"stroke-width": "2",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round"
+			},
+			cls: completed ? "icon-success" : "icon-muted"
+		});
 		svg.style.setProperty("--icon-color", completed ? "var(--text-success)" : "var(--text-muted)");
 
-		
-		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		circle.setAttribute("cx", "12");
-		circle.setAttribute("cy", "12");
-		circle.setAttribute("r", "10");
-		if (!completed) {
-			circle.setAttribute("stroke-dasharray", "4 2");
-		}
+		const circle = createSvg("circle", {
+			attr: {
+				cx: "12",
+				cy: "12",
+				r: "10",
+				...(completed ? {} : { "stroke-dasharray": "4 2" })
+			}
+		});
 		svg.appendChild(circle);
 
 		if (completed) {
-			const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			path.setAttribute("d", "M9 12l2 2 4-4");
+			const path = createSvg("path", {
+				attr: {
+					d: "M9 12l2 2 4-4"
+				}
+			});
 			svg.appendChild(path);
 		}
 

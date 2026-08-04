@@ -204,11 +204,13 @@ export class ChartSection extends HTMLElementComponent {
 		const paddingBottom = 40;
 		const themeColor = this.getThemeColor();
 
-		
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", width.toString());
-		svg.setAttribute("height", height.toString());
-		svg.setAttribute("class", "chart-svg");
+		const svg = createSvg("svg", {
+			attr: {
+				width: width.toString(),
+				height: height.toString()
+			},
+			cls: "chart-svg"
+		});
 
 		const points = this.getAggregatedPoints();
 		const { start, end } = this.getDateRange(points);
@@ -225,14 +227,17 @@ export class ChartSection extends HTMLElementComponent {
 
 		for (let i = 0; i <= 4; i++) {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
-			
-			const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-			line.setAttribute("x1", paddingLeft.toString());
-			line.setAttribute("y1", y.toString());
-			line.setAttribute("x2", (width - paddingRight).toString());
-			line.setAttribute("y2", y.toString());
-			line.setAttribute("stroke", "var(--background-modifier-border)");
-			line.setAttribute("stroke-width", "1");
+
+			const line = createSvg("line", {
+				attr: {
+					x1: paddingLeft.toString(),
+					y1: y.toString(),
+					x2: (width - paddingRight).toString(),
+					y2: y.toString(),
+					stroke: "var(--background-modifier-border)",
+					"stroke-width": "1"
+				}
+			});
 			svg.appendChild(line);
 		}
 
@@ -243,23 +248,27 @@ export class ChartSection extends HTMLElementComponent {
 			pathD += index === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
 		});
 
-		
-		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		path.setAttribute("d", pathD);
-		path.setAttribute("fill", "none");
-		path.setAttribute("stroke", themeColor);
-		path.setAttribute("stroke-width", "2");
+		const path = createSvg("path", {
+			attr: {
+				d: pathD,
+				fill: "none",
+				stroke: themeColor,
+				"stroke-width": "2"
+			}
+		});
 		svg.appendChild(path);
 
 		const monthLabels = this.getMonthLabels(start, end, plotWidth, paddingLeft, rangeDurationMs, xScale);
 		monthLabels.forEach((monthLabel) => {
-			
-			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-			text.setAttribute("x", monthLabel.x.toString());
-			text.setAttribute("y", (height - 12).toString());
-			text.setAttribute("text-anchor", "middle");
-			text.setAttribute("fill", "var(--text-muted)");
-			text.setAttribute("font-size", "10");
+			const text = createSvg("text", {
+				attr: {
+					x: monthLabel.x.toString(),
+					y: (height - 12).toString(),
+					"text-anchor": "middle",
+					fill: "var(--text-muted)",
+					"font-size": "10"
+				}
+			});
 			text.textContent = monthLabel.label;
 			svg.appendChild(text);
 		});
@@ -267,13 +276,16 @@ export class ChartSection extends HTMLElementComponent {
 		const yLabels = [0, 0.25, 0.5, 0.75, 1].map((p) => minValue + p * range);
 		yLabels.forEach((labelValue, i) => {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
-			
-			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-			text.setAttribute("x", (paddingLeft - 8).toString());
-			text.setAttribute("y", (y + 4).toString());
-			text.setAttribute("text-anchor", "end");
-			text.setAttribute("fill", "var(--text-muted)");
-			text.setAttribute("font-size", "10");
+
+			const text = createSvg("text", {
+				attr: {
+					x: (paddingLeft - 8).toString(),
+					y: (y + 4).toString(),
+					"text-anchor": "end",
+					fill: "var(--text-muted)",
+					"font-size": "10"
+				}
+			});
 			text.textContent = (Math.round(labelValue * 10) / 10).toString();
 			svg.appendChild(text);
 		});
@@ -292,11 +304,13 @@ export class ChartSection extends HTMLElementComponent {
 		const paddingBottom = 40;
 		const themeColor = this.getThemeColor();
 
-		
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", width.toString());
-		svg.setAttribute("height", height.toString());
-		svg.setAttribute("class", "chart-svg");
+		const svg = createSvg("svg", {
+			attr: {
+				width: width.toString(),
+				height: height.toString()
+			},
+			cls: "chart-svg"
+		});
 
 		const points = this.getAggregatedPoints();
 		const { start, end } = this.getDateRange(points);
@@ -313,14 +327,17 @@ export class ChartSection extends HTMLElementComponent {
 
 		for (let i = 0; i <= 4; i++) {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
-			
-			const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-			line.setAttribute("x1", paddingLeft.toString());
-			line.setAttribute("y1", y.toString());
-			line.setAttribute("x2", (width - paddingRight).toString());
-			line.setAttribute("y2", y.toString());
-			line.setAttribute("stroke", "var(--background-modifier-border)");
-			line.setAttribute("stroke-width", "1");
+
+			const line = createSvg("line", {
+				attr: {
+					x1: paddingLeft.toString(),
+					y1: y.toString(),
+					x2: (width - paddingRight).toString(),
+					y2: y.toString(),
+					stroke: "var(--background-modifier-border)",
+					"stroke-width": "1"
+				}
+			});
 			svg.appendChild(line);
 		}
 
@@ -331,33 +348,37 @@ export class ChartSection extends HTMLElementComponent {
 			const barWidth = Math.max(6, Math.min(20, (nextX - x) / 2));
 			const barHeight = height - paddingBottom - y;
 
-			
-			const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-			rect.setAttribute("x", (x - barWidth / 2).toString());
-			rect.setAttribute("y", y.toString());
-			rect.setAttribute("width", barWidth.toString());
-			rect.setAttribute("height", barHeight.toString());
-			rect.setAttribute("fill", themeColor);
-			rect.setAttribute("rx", "2");
-		
+			const rect = createSvg("rect", {
+				attr: {
+					x: (x - barWidth / 2).toString(),
+					y: y.toString(),
+					width: barWidth.toString(),
+					height: barHeight.toString(),
+					fill: themeColor,
+					rx: "2"
+				}
+			});
+
 			const dateStr = point.date.toLocaleDateString();
 			const valueStr = this.props.habitType === "boolean"
 				? (point.value > 0 ? "Completed" : "Not completed")
 				: `${point.value}${this.props.unit ? ' ' + this.props.unit : ''}`;
 			rect.setAttribute("title", `${dateStr}: ${valueStr}`);
-			
+
 			svg.appendChild(rect);
 		});
 
 		const monthLabels = this.getMonthLabels(start, end, plotWidth, paddingLeft, rangeDurationMs, xScale);
 		monthLabels.forEach((monthLabel) => {
-			
-			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-			text.setAttribute("x", monthLabel.x.toString());
-			text.setAttribute("y", (height - 12).toString());
-			text.setAttribute("text-anchor", "middle");
-			text.setAttribute("fill", "var(--text-muted)");
-			text.setAttribute("font-size", "10");
+			const text = createSvg("text", {
+				attr: {
+					x: monthLabel.x.toString(),
+					y: (height - 12).toString(),
+					"text-anchor": "middle",
+					fill: "var(--text-muted)",
+					"font-size": "10"
+				}
+			});
 			text.textContent = monthLabel.label;
 			svg.appendChild(text);
 		});
@@ -365,13 +386,16 @@ export class ChartSection extends HTMLElementComponent {
 		const yLabels = [0, 0.25, 0.5, 0.75, 1].map((p) => minValue + p * range);
 		yLabels.forEach((labelValue, i) => {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
-			
-			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-			text.setAttribute("x", (paddingLeft - 8).toString());
-			text.setAttribute("y", (y + 4).toString());
-			text.setAttribute("text-anchor", "end");
-			text.setAttribute("fill", "var(--text-muted)");
-			text.setAttribute("font-size", "10");
+
+			const text = createSvg("text", {
+				attr: {
+					x: (paddingLeft - 8).toString(),
+					y: (y + 4).toString(),
+					"text-anchor": "end",
+					fill: "var(--text-muted)",
+					"font-size": "10"
+				}
+			});
 			text.textContent = (Math.round(labelValue * 10) / 10).toString();
 			svg.appendChild(text);
 		});

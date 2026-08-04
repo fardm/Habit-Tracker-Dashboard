@@ -26,7 +26,7 @@ export class HabitModal extends Modal {
 	private numericSettingsContent?: HTMLElement;
 	private visualizationContainer?: HTMLElement;
 	private isEditMode: boolean;
-	private frontmatterFieldManuallyEdited: boolean = false;
+	private frontmatterFieldManuallyEdited = false;
 
 	constructor(
 		app: App,

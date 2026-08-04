@@ -24,34 +24,43 @@ export class DonutChart {
 		const circumference = 2 * Math.PI * ((this.size - this.strokeWidth) / 2);
 		const strokeDashoffset = circumference * (1 - normalizedProgress);
 
-		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("width", this.size.toString());
-		svg.setAttribute("height", this.size.toString());
-		svg.setAttribute("viewBox", `0 0 ${this.size} ${this.size}`);
-		svg.setAttribute("class", "habit-donut-svg");
+		const svg = createSvg("svg", {
+			attr: {
+				width: this.size.toString(),
+				height: this.size.toString(),
+				viewBox: `0 0 ${this.size} ${this.size}`
+			},
+			cls: "habit-donut-svg"
+		});
 
 		// Background circle
-		const backgroundCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		backgroundCircle.setAttribute("cx", (this.size / 2).toString());
-		backgroundCircle.setAttribute("cy", (this.size / 2).toString());
-		backgroundCircle.setAttribute("r", ((this.size - this.strokeWidth) / 2).toString());
-		backgroundCircle.setAttribute("fill", "none");
-		backgroundCircle.setAttribute("stroke", "var(--background-modifier-border)");
-		backgroundCircle.setAttribute("stroke-width", this.strokeWidth.toString());
-		backgroundCircle.setAttribute("class", "habit-donut-background-circle");
+		const backgroundCircle = createSvg("circle", {
+			attr: {
+				cx: (this.size / 2).toString(),
+				cy: (this.size / 2).toString(),
+				r: ((this.size - this.strokeWidth) / 2).toString(),
+				fill: "none",
+				stroke: "var(--background-modifier-border)",
+				"stroke-width": this.strokeWidth.toString()
+			},
+			cls: "habit-donut-background-circle"
+		});
 
 		// Progress circle
-		const progressCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		progressCircle.setAttribute("cx", (this.size / 2).toString());
-		progressCircle.setAttribute("cy", (this.size / 2).toString());
-		progressCircle.setAttribute("r", ((this.size - this.strokeWidth) / 2).toString());
-		progressCircle.setAttribute("fill", "none");
-		progressCircle.setAttribute("stroke", color || (normalizedProgress >= 1 ? "var(--text-success)" : "#90EE90"));
-		progressCircle.setAttribute("stroke-width", this.strokeWidth.toString());
-		progressCircle.setAttribute("stroke-linecap", "round");
-		progressCircle.setAttribute("stroke-dasharray", circumference.toString());
-		progressCircle.setAttribute("stroke-dashoffset", strokeDashoffset.toString());
-		progressCircle.setAttribute("class", isExceeded ? "habit-donut-progress-circle-exceeded" : "habit-donut-progress-circle");
+		const progressCircle = createSvg("circle", {
+			attr: {
+				cx: (this.size / 2).toString(),
+				cy: (this.size / 2).toString(),
+				r: ((this.size - this.strokeWidth) / 2).toString(),
+				fill: "none",
+				stroke: color || (normalizedProgress >= 1 ? "var(--text-success)" : "#90EE90"),
+				"stroke-width": this.strokeWidth.toString(),
+				"stroke-linecap": "round",
+				"stroke-dasharray": circumference.toString(),
+				"stroke-dashoffset": strokeDashoffset.toString()
+			},
+			cls: isExceeded ? "habit-donut-progress-circle-exceeded" : "habit-donut-progress-circle"
+		});
 
 		svg.appendChild(backgroundCircle);
 		svg.appendChild(progressCircle);

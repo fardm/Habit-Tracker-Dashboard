@@ -75,21 +75,25 @@ export class StreakSection extends HTMLElementComponent {
 			// Chevron icon
 			const chevron = createDiv({ cls: "streak-history-chevron" });
 			chevron.style.setProperty("--chevron-rotation", this.isExpanded ? '0deg' : '-90deg');
-			
-			
-			const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-			svg.setAttribute("width", "16");
-			svg.setAttribute("height", "16");
-			svg.setAttribute("viewBox", "0 0 24 24");
-			svg.setAttribute("fill", "none");
-			svg.setAttribute("stroke", "currentColor");
-			svg.setAttribute("stroke-width", "2");
-			svg.setAttribute("stroke-linecap", "round");
-			svg.setAttribute("stroke-linejoin", "round");
-			
-			
-			const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-			polyline.setAttribute("points", "6 9 12 15 18 9");
+
+			const svg = createSvg("svg", {
+				attr: {
+					width: "16",
+					height: "16",
+					viewBox: "0 0 24 24",
+					fill: "none",
+					stroke: "currentColor",
+					"stroke-width": "2",
+					"stroke-linecap": "round",
+					"stroke-linejoin": "round"
+				}
+			});
+
+			const polyline = createSvg("polyline", {
+				attr: {
+					points: "6 9 12 15 18 9"
+				}
+			});
 			svg.appendChild(polyline);
 			chevron.appendChild(svg);
 			historyHeader.appendChild(chevron);
