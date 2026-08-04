@@ -1404,7 +1404,11 @@
 
 .calendar-modal {
 	padding: 20px;
-	min-width: 320px;
+}
+
+.modal:has(.calendar-modal) {
+	width: 420px;
+	max-width: 420px;
 }
 
 .calendar-header {
@@ -1555,6 +1559,11 @@
 @media (max-width: 768px) {
 	.modal-content {
 		padding: 16px !important;
+	}
+	
+	.modal:has(.calendar-modal) {
+		width: 100%;
+		max-width: 100%;
 	}
 }
 
