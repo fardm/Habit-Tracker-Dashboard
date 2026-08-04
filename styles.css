@@ -337,7 +337,6 @@
 	cursor: pointer;
 	font-size: 14px;
 	font-weight: 500;
-	transition: background-color 0.2s;
 	line-height: 1;
 	box-shadow: none;
 	transition: transform 0.12s ease, box-shadow 0.12s ease;
@@ -348,7 +347,6 @@
 }
 
 .habit-tracker-refresh-btn:active {
-
 	transform: scale(0.9);
 	filter: brightness(0.9);
   }

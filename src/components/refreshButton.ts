@@ -44,7 +44,7 @@ export class RefreshButton extends HTMLElementComponent {
 			this.onClick();
 			
 			// Revert to normal state after 2 seconds
-			setTimeout(() => {
+			window.setTimeout(() => {
 				setIcon(iconContainer, "refresh-cw");
 				textSpan.setText("Refresh");
 				iconContainer.removeClass("habit-tracker-refresh-btn-icon-success");
