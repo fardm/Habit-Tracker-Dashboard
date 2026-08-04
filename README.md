@@ -10,24 +10,6 @@ An interactive Habit Tracker dashboard for Obsidian that visualizes habit data f
 
 This is a **dashboard-only** plugin. It reads habit data from your daily notes' frontmatter based on your configured settings and provides visualizations, statistics, and progress tracking.
 
-
-## Installation (Beta)
-
-This plugin is currently available as a beta release and can be installed using the **BRAT** plugin.
-
-1. Install the **BRAT** plugin: [https://community.obsidian.md/plugins/obsidian42-brat](https://community.obsidian.md/plugins/obsidian42-brat)
-2. Click the **BRAT** icon in the ribbon.
-3. Select **"Plugins: Add a beta plugin for testing (with or without version)"**.
-4. Paste this repository URL into the repository field:
-
-   ```text
-   https://github.com/fardm/Habit-Tracker-Dashboard
-   ```
-5. Select the **latest version** from the version dropdown.
-6. Click **Add Plugin**.
-
-The plugin will be installed and enabled in your Obsidian vault.
-
 ## Usage
 
 ### 1. Add Habit Data to Your Daily Notes
