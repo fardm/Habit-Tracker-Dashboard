@@ -46,6 +46,7 @@ export class CalendarModal extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 		contentEl.addClass("calendar-modal");
+		this.modalEl.addClass("modal-calendar-modal");
 
 		// Header with month/year navigation
 		const header = contentEl.createDiv({ cls: "calendar-header" });
@@ -404,6 +405,7 @@ export class CalendarModal extends Modal {
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+		this.modalEl.removeClass("modal-calendar-modal");
 		this.closeMonthYearDropdown();
 		document.removeEventListener("click", (e) => this.handleDocumentClick(e));
 	}
