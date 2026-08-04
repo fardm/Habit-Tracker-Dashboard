@@ -135,8 +135,11 @@ export class HabitDataManager {
 
 		if (!habit.type) {
 			errors.push("Habit type is required");
-		} else if (!Object.values(HabitType).includes(habit.type)) {
-			errors.push("Invalid habit type");
+		} else {
+			const validHabitTypes = new Set([HabitType.BOOLEAN, HabitType.NUMERIC]);
+			if (!validHabitTypes.has(habit.type)) {
+				errors.push("Invalid habit type");
+			}
 		}
 
 		if (!habit.frontmatterField || habit.frontmatterField.trim() === "") {
