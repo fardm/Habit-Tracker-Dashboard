@@ -65,8 +65,8 @@ const JALALI_MONTHS = [
 /** Format a local Date as Gregorian YYYY-MM-DD (avoids UTC shift from toISOString). */
 export function toLocalISODate(date: Date): string {
 	const y = date.getFullYear();
-	const m = String(date.getMonth() + 1).padStart(2, "0") as string;
-	const d = String(date.getDate()).padStart(2, "0") as string;
+	const m = `${date.getMonth() + 1}`.padStart(2, "0");
+	const d = `${date.getDate()}`.padStart(2, "0");
 	return `${y}-${m}-${d}`;
 }
 
@@ -241,7 +241,7 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 			date.getMonth() + 1,
 			date.getDate()
 		);
-		return `${j.jy}/${String(j.jm).padStart(2, "0")}/${String(j.jd).padStart(2, "0")}`;
+		return `${j.jy}/${`${j.jm}`.padStart(2, "0")}/${`${j.jd}`.padStart(2, "0")}`;
 	}
 
 	getPeriodLabel(year: number): string {

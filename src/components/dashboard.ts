@@ -293,7 +293,11 @@ export class Dashboard extends HTMLElementComponent {
 				currentValue: this.habitValues.get(habit.id),
 				viewMode: effectiveViewMode,
 				onEdit: (habitId) => this.handleEditHabit(habitId),
-				onDuplicate: (habitId) => this.handleDuplicateHabit(habitId),
+				onDuplicate: (habitId) => {
+				void this.handleDuplicateHabit(habitId).catch(error => {
+					console.error("Error duplicating habit:", error);
+				});
+			},
 				onDelete: (habitId) => {
 					void this.handleDeleteHabit(habitId).catch(error => {
 						console.error("Error deleting habit:", error);
