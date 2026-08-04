@@ -1549,11 +1549,11 @@
 }
 
 .hidden {
-	display: none !important;
+	display: none;
 }
 
 .visible {
-	display: block !important;
+	display: block;
 }
 
 /* ============================================
@@ -1561,8 +1561,8 @@
    ============================================ */
 
 @media (max-width: 768px) {
-	.modal-content {
-		padding: 16px !important;
+	.modal-calendar-modal .modal-content {
+		padding: 16px;
 	}
 	
 	.modal-calendar-modal {
