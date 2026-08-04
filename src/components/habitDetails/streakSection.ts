@@ -77,6 +77,7 @@ export class StreakSection extends HTMLElementComponent {
 			chevron.style.setProperty("--chevron-rotation", this.isExpanded ? '0deg' : '-90deg');
 			
 			
+			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 			svg.setAttribute("width", "16");
 			svg.setAttribute("height", "16");
@@ -88,6 +89,7 @@ export class StreakSection extends HTMLElementComponent {
 			svg.setAttribute("stroke-linejoin", "round");
 			
 			
+			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
 			polyline.setAttribute("points", "6 9 12 15 18 9");
 			svg.appendChild(polyline);

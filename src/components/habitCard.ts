@@ -48,6 +48,7 @@ export class HabitCard extends HTMLElementComponent {
 			cls: "habit-menu-btn clickable-icon"
 		});
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const menuSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		menuSvg.setAttribute("width", "16");
 		menuSvg.setAttribute("height", "16");
@@ -58,16 +59,19 @@ export class HabitCard extends HTMLElementComponent {
 		menuSvg.setAttribute("stroke-linecap", "round");
 		menuSvg.setAttribute("stroke-linejoin", "round");
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle1.setAttribute("cx", "12");
 		circle1.setAttribute("cy", "12");
 		circle1.setAttribute("r", "1");
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle2.setAttribute("cx", "12");
 		circle2.setAttribute("cy", "5");
 		circle2.setAttribute("r", "1");
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const circle3 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle3.setAttribute("cx", "12");
 		circle3.setAttribute("cy", "19");
@@ -91,6 +95,7 @@ export class HabitCard extends HTMLElementComponent {
 		// Drag handle - positioned absolutely on the left
 		const dragHandle = createDiv({ cls: "habit-drag-handle" });
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const dragSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		dragSvg.setAttribute("width", "16");
 		dragSvg.setAttribute("height", "16");
@@ -107,6 +112,7 @@ export class HabitCard extends HTMLElementComponent {
 		];
 		
 		dragCircles.forEach(pos => {
+			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 			circle.setAttribute("cx", pos.cx.toString());
 			circle.setAttribute("cy", pos.cy.toString());
@@ -363,6 +369,7 @@ export class HabitCard extends HTMLElementComponent {
 	}
 
 	private createBooleanStatusIcon(completed: boolean): SVGElement {
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", "24");
 		svg.setAttribute("height", "24");
@@ -374,6 +381,7 @@ export class HabitCard extends HTMLElementComponent {
 		svg.setAttribute("stroke-linejoin", "round");
 		svg.style.setProperty("--icon-color", completed ? "var(--text-success)" : "var(--text-muted)");
 
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle.setAttribute("cx", "12");
 		circle.setAttribute("cy", "12");
@@ -384,6 +392,7 @@ export class HabitCard extends HTMLElementComponent {
 		svg.appendChild(circle);
 
 		if (completed) {
+			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			path.setAttribute("d", "M9 12l2 2 4-4");
 			svg.appendChild(path);
@@ -393,6 +402,7 @@ export class HabitCard extends HTMLElementComponent {
 	}
 
 	private createCheckIcon(): SVGElement {
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", "12");
 		svg.setAttribute("height", "12");
@@ -404,6 +414,7 @@ export class HabitCard extends HTMLElementComponent {
 		svg.setAttribute("stroke-linejoin", "round");
 
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("d", "M20 6L9 17l-5-5");
 		svg.appendChild(path);
@@ -413,6 +424,7 @@ export class HabitCard extends HTMLElementComponent {
 
 	private createWarningIcon(): SVGElement {
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", "12");
 		svg.setAttribute("height", "12");
@@ -424,11 +436,13 @@ export class HabitCard extends HTMLElementComponent {
 		svg.setAttribute("stroke-linejoin", "round");
 
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("d", "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z");
 		svg.appendChild(path);
 
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
 		line1.setAttribute("x1", "12");
 		line1.setAttribute("y1", "9");
@@ -437,6 +451,7 @@ export class HabitCard extends HTMLElementComponent {
 		svg.appendChild(line1);
 
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
 		line2.setAttribute("x1", "12");
 		line2.setAttribute("y1", "17");
@@ -449,6 +464,7 @@ export class HabitCard extends HTMLElementComponent {
 
 	private createCircleCheckIcon(completed: boolean): SVGElement {
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", "24");
 		svg.setAttribute("height", "24");
@@ -461,6 +477,7 @@ export class HabitCard extends HTMLElementComponent {
 		svg.style.setProperty("--icon-color", completed ? "var(--text-success)" : "var(--text-muted)");
 
 		
+		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		circle.setAttribute("cx", "12");
 		circle.setAttribute("cy", "12");
@@ -471,7 +488,7 @@ export class HabitCard extends HTMLElementComponent {
 		svg.appendChild(circle);
 
 		if (completed) {
-			
+			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			path.setAttribute("d", "M9 12l2 2 4-4");
 			svg.appendChild(path);

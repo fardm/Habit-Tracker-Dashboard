@@ -41,10 +41,10 @@ Open **Tracker Settings (⚙️)** and choose:
 Click **Add Habit** and create a habit that matches the frontmatter field in your daily notes.
 
 For example:
-- **Exercise** → Boolean → `exercise`
-- **Reading** → Numeric → `reading`
+- **Exercise** → Boolean
+- **Reading** → Numeric
 
-You can also customize options such as target value, unit, color, visualization, and streak settings.
+You can customize options such as target values, units, and visualization settings for numeric habits.
 
 ### 5. Start Tracking
 
