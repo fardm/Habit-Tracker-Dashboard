@@ -71,6 +71,39 @@ That's it! The dashboard will automatically read your daily notes.
 
 ## Settings & Behavior
 
+### Visualization Modes
+
+![image](img/visualization.webp)
+
+#### Boolean Habits
+
+Boolean habits have a simple two-state visualization:
+
+* Completed: A checked icon is displayed.
+* Not completed: A circle icon without a check mark is displayed.
+
+#### Numeric Habits - At Least Mode
+
+In this mode, higher values are better.
+For example, if the goal is to drink 8 glasses of water per day:
+
+* 0 value: The donut chart is empty.
+* 4 value: Half of the donut chart is filled.
+* 8 value: The donut chart is complete and a check mark appears inside the circle.
+* Above 8: An additional ring appears around the donut, and the extra amount is displayed as (+2).
+
+#### Numeric Habits - At Most Mode
+
+In this mode, lower values are better. It works exactly opposite to the At Least mode.
+For example, if the goal is to control daily calorie intake for weight loss, with a maximum target of 2000 calories:
+
+* 0 value: The donut chart is completely filled because no calories have been consumed yet.
+* As the value increases: The donut chart gradually empties and its color shifts toward red.
+* Reaching 2000: The donut chart becomes completely empty.
+* Above 2000: A warning ring appears around the donut and the ⚠️ icon is displayed.
+
+
+
 ### Refresh
 
 To improve performance and avoid continuously scanning files, the plugin stores habit data in a temporary cache.
