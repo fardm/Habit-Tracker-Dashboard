@@ -1,6 +1,7 @@
 import { setIcon, App } from "obsidian";
 import { CalendarModal } from "./calendarModal";
 import { ReportCalendar } from "../types/habitTypes";
+import { getCalendarAdapter } from "../utils/calendarAdapter";
 
 /**
  * Component for single-day date navigation
@@ -74,6 +75,12 @@ export class DateNavigator {
 
 		if (isToday) {
 			return "Today";
+		}
+
+		// Use calendar adapter for Jalali format, otherwise use Gregorian
+		if (this.calendarSystem === ReportCalendar.JALALI) {
+			const adapter = getCalendarAdapter(this.calendarSystem);
+			return adapter.formatDisplayDate(date);
 		}
 
 		const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
