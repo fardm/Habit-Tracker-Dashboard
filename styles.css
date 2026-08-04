@@ -1209,9 +1209,10 @@
 }
 
 .streak-history-section {
-	margin-top: 20px;
-	padding-top: 16px;
-	border-top: 1px solid var(--background-modifier-border);
+    margin-top: 20px;
+    padding: 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
 }
 
 .streak-history-header {
@@ -1219,7 +1220,6 @@
 	align-items: center;
 	justify-content: space-between;
 	cursor: pointer;
-	padding: 8px 0;
 	user-select: none;
 }
 
