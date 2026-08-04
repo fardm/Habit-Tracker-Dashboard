@@ -116,7 +116,7 @@ export class HabitDataManager {
 	 * Generates a unique ID for habits
 	 */
 	private generateId(): string {
-		return `habit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		return `habit-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 	}
 
 	/**
