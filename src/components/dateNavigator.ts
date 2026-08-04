@@ -1,4 +1,6 @@
-import { setIcon } from "obsidian";
+import { setIcon, App } from "obsidian";
+import { CalendarModal } from "./calendarModal";
+import { ReportCalendar } from "../types/habitTypes";
 
 /**
  * Component for single-day date navigation
@@ -7,10 +9,19 @@ export class DateNavigator {
 	private currentDate: Date;
 	private onDateChange: (date: Date) => void;
 	private container?: HTMLElement;
+	private calendarSystem: ReportCalendar;
+	private app: App;
 
-	constructor(initialDate: Date, onDateChange: (date: Date) => void) {
+	constructor(
+		app: App,
+		initialDate: Date,
+		onDateChange: (date: Date) => void,
+		calendarSystem: ReportCalendar = ReportCalendar.GREGORIAN
+	) {
+		this.app = app;
 		this.currentDate = initialDate;
 		this.onDateChange = onDateChange;
+		this.calendarSystem = calendarSystem;
 	}
 
 	render(): HTMLElement {
@@ -95,55 +106,14 @@ export class DateNavigator {
 	}
 
 	private openDatePicker(event: MouseEvent, button: HTMLElement): void {
-		// Create a hidden date input positioned directly below the button
-		const dateInput = createEl("input", {
-			cls: "date-picker-hidden-input",
-			type: "date"
-		});
-		
-		const rect = button.getBoundingClientRect();
-		dateInput.style.left = `${rect.left}px`;
-		dateInput.style.top = `${rect.bottom}px`;
-		dateInput.style.width = `${rect.width}px`;
-		dateInput.style.height = `${rect.height}px`;
-		
-		// Format date for input (YYYY-MM-DD)
-		const year = this.currentDate.getFullYear();
-		const month = `${this.currentDate.getMonth() + 1}`.padStart(2, '0');
-		const day = `${this.currentDate.getDate()}`.padStart(2, '0');
-		dateInput.value = `${year}-${month}-${day}`;
-		
-		document.body.appendChild(dateInput);
-		
-		// Focus and show picker immediately
-		dateInput.focus();
-		dateInput.showPicker();
-		
-		dateInput.addEventListener("change", (e) => {
-			const target = e.target as HTMLInputElement;
-			if (target.value) {
-				const selectedDate = new Date(target.value);
-				this.setDate(selectedDate);
-			}
-			if (document.body.contains(dateInput)) {
-				document.body.removeChild(dateInput);
-			}
-		});
-		
-		dateInput.addEventListener("blur", () => {
-			// Remove input when focus is lost (after a small delay to allow selection)
-			window.setTimeout(() => {
-				if (document.body.contains(dateInput)) {
-					document.body.removeChild(dateInput);
-				}
-			}, 200);
-		});
-		
-		dateInput.addEventListener("cancel", () => {
-			if (document.body.contains(dateInput)) {
-				document.body.removeChild(dateInput);
-			}
-		});
+		new CalendarModal(
+			this.app,
+			this.currentDate,
+			(date) => {
+				this.setDate(date);
+			},
+			this.calendarSystem
+		).open();
 	}
 
 	/**

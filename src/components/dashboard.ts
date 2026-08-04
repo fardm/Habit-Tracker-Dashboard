@@ -10,7 +10,7 @@ import { FrontmatterDataReader } from "../handlers/frontmatterDataReader";
 import { HabitDataCache } from "../handlers/habitDataCache";
 import { DateNavigator } from "./dateNavigator";
 import { ViewModeSwitcher } from "./viewModeSwitcher";
-import { Habit, ViewMode, TrackerSettings } from "../types/habitTypes";
+import { Habit, ViewMode, TrackerSettings, ReportCalendar } from "../types/habitTypes";
 import { HabitDetailsModal } from "./habitDetails/habitDetailsModal";
 import { SettingsModal, SettingsFormData } from "./settingsModal";
 
@@ -77,11 +77,16 @@ export class Dashboard extends HTMLElementComponent {
 		// Center: Date navigator
 		const centerControls = createDiv({ cls: "dashboard-center-controls" });
 		
-		this.dateNavigator = new DateNavigator(this.currentDate, (date) => {
-			void this.handleDateChange(date).catch(error => {
-				console.error("Error handling date change:", error);
-			});
-		});
+		this.dateNavigator = new DateNavigator(
+			this.app,
+			this.currentDate,
+			(date) => {
+				void this.handleDateChange(date).catch(error => {
+					console.error("Error handling date change:", error);
+				});
+			},
+			this.currentSettings.reportCalendar || ReportCalendar.GREGORIAN
+		);
 		centerControls.appendChild(this.dateNavigator.render());
 
 		// Right side: View mode switcher
