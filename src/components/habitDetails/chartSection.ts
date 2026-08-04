@@ -204,7 +204,7 @@ export class ChartSection extends HTMLElementComponent {
 		const paddingBottom = 40;
 		const themeColor = this.getThemeColor();
 
-		// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+		
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", width.toString());
 		svg.setAttribute("height", height.toString());
@@ -225,7 +225,7 @@ export class ChartSection extends HTMLElementComponent {
 
 		for (let i = 0; i <= 4; i++) {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
-			// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+			
 			const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 			line.setAttribute("x1", paddingLeft.toString());
 			line.setAttribute("y1", y.toString());
@@ -243,7 +243,7 @@ export class ChartSection extends HTMLElementComponent {
 			pathD += index === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
 		});
 
-		// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+		
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("d", pathD);
 		path.setAttribute("fill", "none");
@@ -253,7 +253,7 @@ export class ChartSection extends HTMLElementComponent {
 
 		const monthLabels = this.getMonthLabels(start, end, plotWidth, paddingLeft, rangeDurationMs, xScale);
 		monthLabels.forEach((monthLabel) => {
-			// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+			
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", monthLabel.x.toString());
 			text.setAttribute("y", (height - 12).toString());
@@ -267,7 +267,7 @@ export class ChartSection extends HTMLElementComponent {
 		const yLabels = [0, 0.25, 0.5, 0.75, 1].map((p) => minValue + p * range);
 		yLabels.forEach((labelValue, i) => {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
-			// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+			
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", (paddingLeft - 8).toString());
 			text.setAttribute("y", (y + 4).toString());
@@ -292,7 +292,7 @@ export class ChartSection extends HTMLElementComponent {
 		const paddingBottom = 40;
 		const themeColor = this.getThemeColor();
 
-		// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+		
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", width.toString());
 		svg.setAttribute("height", height.toString());
@@ -313,7 +313,7 @@ export class ChartSection extends HTMLElementComponent {
 
 		for (let i = 0; i <= 4; i++) {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
-			// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+			
 			const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 			line.setAttribute("x1", paddingLeft.toString());
 			line.setAttribute("y1", y.toString());
@@ -331,7 +331,7 @@ export class ChartSection extends HTMLElementComponent {
 			const barWidth = Math.max(6, Math.min(20, (nextX - x) / 2));
 			const barHeight = height - paddingBottom - y;
 
-			// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+			
 			const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 			rect.setAttribute("x", (x - barWidth / 2).toString());
 			rect.setAttribute("y", y.toString());
@@ -351,7 +351,7 @@ export class ChartSection extends HTMLElementComponent {
 
 		const monthLabels = this.getMonthLabels(start, end, plotWidth, paddingLeft, rangeDurationMs, xScale);
 		monthLabels.forEach((monthLabel) => {
-			// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+			
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", monthLabel.x.toString());
 			text.setAttribute("y", (height - 12).toString());
@@ -365,7 +365,7 @@ export class ChartSection extends HTMLElementComponent {
 		const yLabels = [0, 0.25, 0.5, 0.75, 1].map((p) => minValue + p * range);
 		yLabels.forEach((labelValue, i) => {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
-			// eslint-disable-next-line prefer-create-el -- SVG requires createElementNS
+			
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", (paddingLeft - 8).toString());
 			text.setAttribute("y", (y + 4).toString());
