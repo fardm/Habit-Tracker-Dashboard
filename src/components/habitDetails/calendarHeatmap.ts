@@ -142,7 +142,7 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			type: "button",
 			attr: { title: "Heatmap Settings" }
 		});
-		setIcon(menuButton, "more-horizontal");
+		setIcon(menuButton, "more-vertical");
 		// Hover states are handled by CSS
 
 		menuButton.addEventListener("click", (e) => {
