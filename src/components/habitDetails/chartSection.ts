@@ -205,7 +205,6 @@ export class ChartSection extends HTMLElementComponent {
 		const themeColor = this.getThemeColor();
 
 		
-		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", width.toString());
 		svg.setAttribute("height", height.toString());
@@ -227,7 +226,6 @@ export class ChartSection extends HTMLElementComponent {
 		for (let i = 0; i <= 4; i++) {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
 			
-			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 			line.setAttribute("x1", paddingLeft.toString());
 			line.setAttribute("y1", y.toString());
@@ -246,7 +244,6 @@ export class ChartSection extends HTMLElementComponent {
 		});
 
 		
-		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		path.setAttribute("d", pathD);
 		path.setAttribute("fill", "none");
@@ -257,7 +254,6 @@ export class ChartSection extends HTMLElementComponent {
 		const monthLabels = this.getMonthLabels(start, end, plotWidth, paddingLeft, rangeDurationMs, xScale);
 		monthLabels.forEach((monthLabel) => {
 			
-			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", monthLabel.x.toString());
 			text.setAttribute("y", (height - 12).toString());
@@ -272,7 +268,6 @@ export class ChartSection extends HTMLElementComponent {
 		yLabels.forEach((labelValue, i) => {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
 			
-			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", (paddingLeft - 8).toString());
 			text.setAttribute("y", (y + 4).toString());
@@ -298,7 +293,6 @@ export class ChartSection extends HTMLElementComponent {
 		const themeColor = this.getThemeColor();
 
 		
-		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", width.toString());
 		svg.setAttribute("height", height.toString());
@@ -320,7 +314,6 @@ export class ChartSection extends HTMLElementComponent {
 		for (let i = 0; i <= 4; i++) {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
 			
-			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 			line.setAttribute("x1", paddingLeft.toString());
 			line.setAttribute("y1", y.toString());
@@ -339,7 +332,6 @@ export class ChartSection extends HTMLElementComponent {
 			const barHeight = height - paddingBottom - y;
 
 			
-			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 			rect.setAttribute("x", (x - barWidth / 2).toString());
 			rect.setAttribute("y", y.toString());
@@ -360,7 +352,6 @@ export class ChartSection extends HTMLElementComponent {
 		const monthLabels = this.getMonthLabels(start, end, plotWidth, paddingLeft, rangeDurationMs, xScale);
 		monthLabels.forEach((monthLabel) => {
 			
-			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", monthLabel.x.toString());
 			text.setAttribute("y", (height - 12).toString());
@@ -375,7 +366,6 @@ export class ChartSection extends HTMLElementComponent {
 		yLabels.forEach((labelValue, i) => {
 			const y = height - paddingBottom - (i / 4) * plotHeight;
 			
-			// eslint-disable-next-line obsidianmd/prefer-create-el
 			const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text.setAttribute("x", (paddingLeft - 8).toString());
 			text.setAttribute("y", (y + 4).toString());

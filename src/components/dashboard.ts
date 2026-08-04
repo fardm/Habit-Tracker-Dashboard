@@ -348,7 +348,7 @@ export class Dashboard extends HTMLElementComponent {
 
 	private async handleAddHabit(formData: HabitFormData): Promise<void> {
 		try {
-			const newHabit = await this.dataManager.addHabit({
+			await this.dataManager.addHabit({
 				name: formData.name,
 				emoji: formData.emoji,
 				type: formData.type,
@@ -361,10 +361,13 @@ export class Dashboard extends HTMLElementComponent {
 				completionRule: formData.completionRule
 			});
 
-			this.habits.push(newHabit);
+			// Full refresh to ensure habit data is loaded from journal files
+			await this.loadHabits();
+			await this.loadUserSettings();
 			
-			// Rebuild cache to include the new habit
+			// Rebuild cache with updated settings
 			if (this.dataCache) {
+				this.dataCache.updateSettings(this.currentSettings);
 				await this.dataCache.buildCache();
 			}
 			
@@ -442,7 +445,7 @@ export class Dashboard extends HTMLElementComponent {
 			const habit = this.habits.find(h => h.id === habitId);
 			if (!habit) return;
 
-			const newHabit = await this.dataManager.addHabit({
+			await this.dataManager.addHabit({
 				name: `${habit.name} (copy)`,
 				emoji: habit.emoji,
 				type: habit.type,
@@ -453,7 +456,8 @@ export class Dashboard extends HTMLElementComponent {
 				completionRule: habit.completionRule
 			});
 
-			this.habits.push(newHabit);
+			// Reload habits from data source to ensure proper initialization
+			await this.loadHabits();
 			
 			// Rebuild cache to include the duplicated habit
 			if (this.dataCache) {

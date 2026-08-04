@@ -24,7 +24,6 @@ export class DonutChart {
 		const circumference = 2 * Math.PI * ((this.size - this.strokeWidth) / 2);
 		const strokeDashoffset = circumference * (1 - normalizedProgress);
 
-		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("width", this.size.toString());
 		svg.setAttribute("height", this.size.toString());
@@ -32,7 +31,6 @@ export class DonutChart {
 		svg.setAttribute("class", "habit-donut-svg");
 
 		// Background circle
-		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const backgroundCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		backgroundCircle.setAttribute("cx", (this.size / 2).toString());
 		backgroundCircle.setAttribute("cy", (this.size / 2).toString());
@@ -43,7 +41,6 @@ export class DonutChart {
 		backgroundCircle.setAttribute("class", "habit-donut-background-circle");
 
 		// Progress circle
-		// eslint-disable-next-line obsidianmd/prefer-create-el
 		const progressCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		progressCircle.setAttribute("cx", (this.size / 2).toString());
 		progressCircle.setAttribute("cy", (this.size / 2).toString());

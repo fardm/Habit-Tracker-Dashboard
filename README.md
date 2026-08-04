@@ -46,15 +46,8 @@ For example:
 
 You can customize options such as target values, units, and visualization settings for numeric habits.
 
-### 5. Start Tracking
 
-That's it! The dashboard will automatically read your daily notes and display:
-
-- Daily progress
-- Charts
-- Heatmap calendar
-- Statistics
-- Streaks
+That's it! The dashboard will automatically read your daily notes.
 
 
 ## Features
@@ -67,16 +60,14 @@ That's it! The dashboard will automatically read your daily notes and display:
 - 🔗 **Habit Streak Calculation**: Track current streak, longest streak, and streak history
 - 📊 **Detailed Statistics**: Total, average, highest, lowest, completion rate.
 
+<br>
 
-## How It Works
+## Settings & Behavior
 
 ### Refresh
 
 If you edit your daily notes manually, click **Refresh (🔄)** to re-scan your notes and update the dashboard.
 
-Use it after:
-- Editing habit values in your notes
-- Changing the data source settings
 
 ### Completion Condition
 
@@ -88,16 +79,11 @@ For **numeric habits**, choose when a habit is considered completed:
 
 ### Grace Days
 
-Allow a streak to continue after a limited number of missed consecutive days.
+Allow a streak to continue after a limited number of consecutive missed days.
 
-- **0** = No missed days allowed
-- **1+** = Allow that many missed days before the streak resets
+- **0** = No missed days allowed; the streak resets immediately.
+- **1+** = Allow the specified number of missed days before the streak resets.
 
-### Calendar
-
-Choose the calendar used in reports:
-- Gregorian
-- Solar Hijri (Jalali)
 
 ### Minimum Streak Length
 
