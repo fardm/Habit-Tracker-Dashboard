@@ -62,12 +62,17 @@ const JALALI_MONTHS = [
 	"Meh", "Aba", "Aza", "Dey", "Bah", "Esf"
 ];
 
+/** Helper function to pad a number with leading zeros */
+function padZero(num: number): string {
+	return num < 10 ? "0" + num.toString() : num.toString();
+}
+
 /** Format a local Date as Gregorian YYYY-MM-DD (avoids UTC shift from toISOString). */
 export function toLocalISODate(date: Date): string {
 	const y = date.getFullYear();
-	const m = `${date.getMonth() + 1}`.padStart(2, "0");
-	const d = `${date.getDate()}`.padStart(2, "0");
-	return `${y}-${m}-${d}`;
+	const m = padZero(date.getMonth() + 1);
+	const d = padZero(date.getDate());
+	return y + "-" + m + "-" + d;
 }
 
 /** Parse Gregorian YYYY-MM-DD as local midnight. */
@@ -241,7 +246,7 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 			date.getMonth() + 1,
 			date.getDate()
 		);
-		return `${j.jy}/${`${j.jm}`.padStart(2, "0")}/${`${j.jd}`.padStart(2, "0")}`;
+		return j.jy + "/" + padZero(j.jm) + "/" + padZero(j.jd);
 	}
 
 	getPeriodLabel(year: number): string {

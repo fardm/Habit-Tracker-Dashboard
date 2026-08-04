@@ -107,9 +107,9 @@ export class DateNavigator {
 		
 		// Update the date display
 		if (this.container) {
-			const dateDisplay = this.container.querySelector('button:nth-child(2)') as HTMLElement;
+			const dateDisplay = this.container.querySelector('button:nth-child(2)');
 			if (dateDisplay) {
-				dateDisplay.textContent = this.formatDate(date);
+				(dateDisplay as HTMLButtonElement).textContent = this.formatDate(date);
 			}
 		}
 	}
