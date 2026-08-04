@@ -445,7 +445,7 @@ export class Dashboard extends HTMLElementComponent {
 			const habit = this.habits.find(h => h.id === habitId);
 			if (!habit) return;
 
-			await this.dataManager.addHabit(habit as Omit<typeof habit, "id" | "createdAt">);
+			await this.dataManager.addHabit(habit);
 
 			// Reload habits from data source to ensure proper initialization
 			await this.loadHabits();
