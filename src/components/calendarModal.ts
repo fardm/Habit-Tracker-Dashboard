@@ -72,7 +72,7 @@ export class CalendarModal extends Modal {
 
 		// Previous month button
 		const prevButton = navContainer.createEl("button", {
-			cls: "calendar-nav-button",
+			cls: "calendar-nav-button clickable-icon",
 			text: "◀"
 		});
 		prevButton.addEventListener("click", () => {
@@ -81,7 +81,7 @@ export class CalendarModal extends Modal {
 
 		// Month/year label (clickable)
 		const label = navContainer.createEl("button", {
-			cls: "calendar-nav-label",
+			cls: "calendar-nav-label clickable-icon",
 			text: this.getMonthYearLabel()
 		});
 		label.addEventListener("click", (e) => {
@@ -91,7 +91,7 @@ export class CalendarModal extends Modal {
 
 		// Next month button
 		const nextButton = navContainer.createEl("button", {
-			cls: "calendar-nav-button",
+			cls: "calendar-nav-button clickable-icon",
 			text: "▶"
 		});
 		nextButton.addEventListener("click", () => {
@@ -131,7 +131,7 @@ export class CalendarModal extends Modal {
 		for (let i = paddingDays - 1; i >= 0; i--) {
 			const dayNum = daysInPrevMonth - i;
 			const dayCell = container.createEl("button", {
-				cls: "calendar-day calendar-day-padding",
+				cls: "calendar-day calendar-day-padding clickable-icon",
 				text: dayNum.toString()
 			});
 			dayCell.addEventListener("click", () => {
@@ -142,7 +142,7 @@ export class CalendarModal extends Modal {
 		// Render days of current month
 		for (let day = 1; day <= daysInMonth; day++) {
 			const dayCell = container.createEl("button", {
-				cls: "calendar-day",
+				cls: "calendar-day clickable-icon",
 				text: day.toString()
 			});
 
@@ -171,7 +171,7 @@ export class CalendarModal extends Modal {
 
 		for (let i = 1; i <= remainingCells; i++) {
 			const dayCell = container.createEl("button", {
-				cls: "calendar-day calendar-day-padding",
+				cls: "calendar-day calendar-day-padding clickable-icon",
 				text: i.toString()
 			});
 			dayCell.addEventListener("click", () => {
@@ -182,7 +182,7 @@ export class CalendarModal extends Modal {
 
 	private renderFooter(container: HTMLElement): void {
 		const todayButton = container.createEl("button", {
-			cls: "calendar-today-button",
+			cls: "calendar-today-button clickable-icon",
 			text: "Today"
 		});
 		todayButton.addEventListener("click", () => {
@@ -301,7 +301,7 @@ export class CalendarModal extends Modal {
 		const yearNav = yearSection.createDiv({ cls: "calendar-dropdown-year-nav" });
 
 		const yearPrevBtn = yearNav.createEl("button", {
-			cls: "calendar-dropdown-nav-button",
+			cls: "calendar-dropdown-nav-button clickable-icon",
 			text: "◀"
 		});
 		yearPrevBtn.addEventListener("click", () => {
@@ -313,7 +313,7 @@ export class CalendarModal extends Modal {
 		this.renderYearGrid(yearGrid);
 
 		const yearNextBtn = yearNav.createEl("button", {
-			cls: "calendar-dropdown-nav-button",
+			cls: "calendar-dropdown-nav-button clickable-icon",
 			text: "▶"
 		});
 		yearNextBtn.addEventListener("click", () => {
@@ -331,7 +331,7 @@ export class CalendarModal extends Modal {
 		const monthGrid = monthSection.createDiv({ cls: "calendar-dropdown-month-grid" });
 		for (let m = 1; m <= 12; m++) {
 			const monthBtn = monthGrid.createEl("button", {
-				cls: "calendar-dropdown-month-button",
+				cls: "calendar-dropdown-month-button clickable-icon",
 				text: this.calendarAdapter.getMonthName(m)
 			});
 			if (m === this.viewMonth) {
@@ -362,7 +362,7 @@ export class CalendarModal extends Modal {
 		for (let i = 0; i < 12; i++) {
 			const year = this.yearSelectStart + i;
 			const yearBtn = container.createEl("button", {
-				cls: "calendar-dropdown-year-button",
+				cls: "calendar-dropdown-year-button clickable-icon",
 				text: year.toString()
 			});
 			if (year === this.viewYear) {
