@@ -218,6 +218,11 @@ export class Dashboard extends HTMLElementComponent {
 				this.frontmatterReader.updateSettings(this.currentSettings);
 			}
 			
+			// Update date navigator calendar system
+			if (this.dateNavigator) {
+				this.dateNavigator.setCalendarSystem(this.currentSettings.reportCalendar || ReportCalendar.GREGORIAN);
+			}
+			
 			const data = await this.dataManager.readTrackerData();
 			data.settings = this.currentSettings;
 			await this.dataManager.writeTrackerData(data);

@@ -130,4 +130,11 @@ export class DateNavigator {
 		this.setDate(date);
 	}
 
+	/**
+	 * Updates the calendar system (Gregorian/Jalali)
+	 */
+	setCalendarSystem(calendarSystem: ReportCalendar): void {
+		this.calendarSystem = calendarSystem;
+	}
+
 	}
