@@ -1431,6 +1431,17 @@
 	color: var(--text-normal);
 	min-width: 120px;
 	text-align: center;
+	background: none;
+	border: none;
+	padding: 6px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.calendar-nav-label:hover {
+	background: var(--background-modifier-hover);
+	color: var(--interactive-accent);
 }
 
 .calendar-weekdays {
@@ -1532,4 +1543,119 @@
 	.modal-content {
 		padding: 16px !important;
 	}
+}
+
+/* ============================================
+   CALENDAR MONTH/YEAR DROPDOWN STYLES
+   ============================================ */
+
+.calendar-month-year-dropdown {
+	background-color: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+	padding: 16px;
+	min-width: 280px;
+	max-width: 320px;
+}
+
+.calendar-dropdown-section {
+	margin-bottom: 16px;
+}
+
+.calendar-dropdown-section:last-child {
+	margin-bottom: 0;
+}
+
+.calendar-dropdown-section-label {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-bottom: 8px;
+}
+
+.calendar-dropdown-year-nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
+.calendar-dropdown-nav-button {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	color: var(--text-normal);
+	padding: 4px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 12px;
+	transition: all 0.2s;
+	line-height: 1;
+}
+
+.calendar-dropdown-nav-button:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.calendar-dropdown-year-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 4px;
+}
+
+.calendar-dropdown-year-button {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	color: var(--text-normal);
+	padding: 8px 4px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 500;
+	transition: all 0.2s;
+	line-height: 1;
+}
+
+.calendar-dropdown-year-button:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.calendar-dropdown-year-selected {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+}
+
+.calendar-dropdown-month-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 4px;
+}
+
+.calendar-dropdown-month-button {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	color: var(--text-normal);
+	padding: 8px 4px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 500;
+	transition: all 0.2s;
+	line-height: 1;
+}
+
+.calendar-dropdown-month-button:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.calendar-dropdown-month-selected {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
 }

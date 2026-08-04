@@ -22,6 +22,8 @@ export class CalendarModal extends Modal {
 	private calendarAdapter: CalendarDateAdapter;
 	private viewYear: number;
 	private viewMonth: number;
+	private monthYearDropdown?: HTMLElement;
+	private yearSelectStart: number;
 
 	constructor(
 		app: App,
@@ -38,6 +40,7 @@ export class CalendarModal extends Modal {
 		// Initialize view to the selected date's year/month in the active calendar
 		this.viewYear = this.getViewYear(this.selectedDate);
 		this.viewMonth = this.calendarAdapter.getMonthOfDate(this.selectedDate);
+		this.yearSelectStart = this.viewYear - 6;
 	}
 
 	onOpen() {
@@ -59,6 +62,9 @@ export class CalendarModal extends Modal {
 		// Footer with today button
 		const footer = contentEl.createDiv({ cls: "calendar-footer" });
 		this.renderFooter(footer);
+
+		// Close dropdown when clicking outside
+		document.addEventListener("click", (e) => this.handleDocumentClick(e));
 	}
 
 	private renderHeader(container: HTMLElement): void {
@@ -73,10 +79,14 @@ export class CalendarModal extends Modal {
 			this.navigateMonth(-1);
 		});
 
-		// Month/year label
-		const label = navContainer.createEl("span", {
+		// Month/year label (clickable)
+		const label = navContainer.createEl("button", {
 			cls: "calendar-nav-label",
 			text: this.getMonthYearLabel()
+		});
+		label.addEventListener("click", (e) => {
+			e.stopPropagation();
+			this.toggleMonthYearDropdown(label);
 		});
 
 		// Next month button
@@ -208,6 +218,8 @@ export class CalendarModal extends Modal {
 		if (grid) {
 			this.renderCalendarGrid(grid);
 		}
+		// Close dropdown if open
+		this.closeMonthYearDropdown();
 	}
 
 	private selectDateFromDay(year: number, month: number, day: number): void {
@@ -270,8 +282,120 @@ export class CalendarModal extends Modal {
 		return this.toJalaaliYear(date);
 	}
 
+	private toggleMonthYearDropdown(triggerElement: HTMLElement): void {
+		if (this.monthYearDropdown) {
+			this.closeMonthYearDropdown();
+			return;
+		}
+
+		const dropdown = document.createElement("div");
+		dropdown.addClass("calendar-month-year-dropdown");
+
+		// Year selector section
+		const yearSection = dropdown.createDiv({ cls: "calendar-dropdown-section" });
+		const yearLabel = yearSection.createEl("div", {
+			cls: "calendar-dropdown-section-label",
+			text: "Year"
+		});
+
+		const yearNav = yearSection.createDiv({ cls: "calendar-dropdown-year-nav" });
+
+		const yearPrevBtn = yearNav.createEl("button", {
+			cls: "calendar-dropdown-nav-button",
+			text: "◀"
+		});
+		yearPrevBtn.addEventListener("click", () => {
+			this.yearSelectStart -= 12;
+			this.renderYearGrid(yearGrid);
+		});
+
+		const yearGrid = yearSection.createDiv({ cls: "calendar-dropdown-year-grid" });
+		this.renderYearGrid(yearGrid);
+
+		const yearNextBtn = yearNav.createEl("button", {
+			cls: "calendar-dropdown-nav-button",
+			text: "▶"
+		});
+		yearNextBtn.addEventListener("click", () => {
+			this.yearSelectStart += 12;
+			this.renderYearGrid(yearGrid);
+		});
+
+		// Month selector section
+		const monthSection = dropdown.createDiv({ cls: "calendar-dropdown-section" });
+		const monthLabel = monthSection.createEl("div", {
+			cls: "calendar-dropdown-section-label",
+			text: "Month"
+		});
+
+		const monthGrid = monthSection.createDiv({ cls: "calendar-dropdown-month-grid" });
+		for (let m = 1; m <= 12; m++) {
+			const monthBtn = monthGrid.createEl("button", {
+				cls: "calendar-dropdown-month-button",
+				text: this.calendarAdapter.getMonthName(m)
+			});
+			if (m === this.viewMonth) {
+				monthBtn.addClass("calendar-dropdown-month-selected");
+			}
+			monthBtn.addEventListener("click", () => {
+				this.viewMonth = m;
+				this.refreshCalendar();
+			});
+		}
+
+		// Position dropdown
+		const rect = triggerElement.getBoundingClientRect();
+		dropdown.style.position = "fixed";
+		dropdown.style.top = `${rect.bottom + 4}px`;
+		dropdown.style.left = `${rect.left}px`;
+		dropdown.style.zIndex = "10000";
+
+		document.body.appendChild(dropdown);
+		this.monthYearDropdown = dropdown;
+
+		// Prevent dropdown from closing when clicking inside
+		dropdown.addEventListener("click", (e) => e.stopPropagation());
+	}
+
+	private renderYearGrid(container: HTMLElement): void {
+		container.empty();
+		for (let i = 0; i < 12; i++) {
+			const year = this.yearSelectStart + i;
+			const yearBtn = container.createEl("button", {
+				cls: "calendar-dropdown-year-button",
+				text: year.toString()
+			});
+			if (year === this.viewYear) {
+				yearBtn.addClass("calendar-dropdown-year-selected");
+			}
+			yearBtn.addEventListener("click", () => {
+				this.viewYear = year;
+				this.refreshCalendar();
+			});
+		}
+	}
+
+	private closeMonthYearDropdown(): void {
+		if (this.monthYearDropdown) {
+			this.monthYearDropdown.remove();
+			this.monthYearDropdown = undefined;
+		}
+	}
+
+	private handleDocumentClick(e: MouseEvent): void {
+		if (this.monthYearDropdown) {
+			const target = e.target as HTMLElement;
+			if (!target.closest(".calendar-month-year-dropdown") && 
+			    !target.closest(".calendar-nav-label")) {
+				this.closeMonthYearDropdown();
+			}
+		}
+	}
+
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+		this.closeMonthYearDropdown();
+		document.removeEventListener("click", (e) => this.handleDocumentClick(e));
 	}
 }
