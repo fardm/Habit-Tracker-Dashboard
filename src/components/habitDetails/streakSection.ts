@@ -166,7 +166,7 @@ export class StreakSection extends HTMLElementComponent {
 		const item = createDiv({ cls: "streak-history-item" });
 
 		const dateRange = createSpan({
-			cls: "streak-history-date"
+			cls: ".statistics-icon svg"
 		});
 		const adapter = getCalendarAdapter(this.props.reportCalendar);
 		const startDate = adapter.formatDisplayDate(streak.startDate);

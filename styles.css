@@ -1136,8 +1136,17 @@
 }
 
 .statistics-icon {
-	font-size: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	margin-bottom: 8px;
+}
+
+.statistics-icon svg {
+	width: 36px;
+	height: 36px;
+	padding: 6px;
+	border-radius: 74px;
 }
 
 .statistics-value {

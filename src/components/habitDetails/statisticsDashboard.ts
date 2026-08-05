@@ -1,5 +1,6 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
 import { StatisticsDashboardProps } from "../../types/habitDetailsTypes";
+import { setIcon } from "obsidian";
 
 /**
  * StatisticsDashboard component for displaying habit statistics
@@ -46,16 +47,16 @@ export class StatisticsDashboard extends HTMLElementComponent {
 		
 		if (this.props.habitType === "boolean") {
 			return [
-				{ label: "Completed", value: stats.total.toString(), icon: "✅" },
-				{ label: "Missed", value: stats.highest.toString(), icon: "❌" },
-				{ label: "Completion Rate", value: `${Math.round(stats.completionRate)}%`, icon: "📊" }
+				{ label: "Completed", value: stats.total.toString(), icon: "circle-check-big" },
+				{ label: "Missed", value: stats.highest.toString(), icon: "circle-x" },
+				{ label: "Completion Rate", value: `${Math.round(stats.completionRate)}%`, icon: "circle-percent" }
 			];
 		} else {
 			return [
-				{ label: "Total", value: `${Math.round(stats.total)}${unit}`, icon: "📊" },
-				{ label: "Average", value: `${Math.round(stats.average)}${unit}`, icon: "📈" },
-				{ label: "Highest", value: `${Math.round(stats.highest)}${unit}`, icon: "🔝" },
-				{ label: "Lowest", value: `${Math.round(stats.lowest)}${unit}`, icon: "📉" }
+				{ label: "Total", value: `${Math.round(stats.total)}${unit}`, icon: "sigma" },
+				{ label: "Average", value: `${Math.round(stats.average)}${unit}`, icon: "chart-line" },
+				{ label: "Highest", value: `${Math.round(stats.highest)}${unit}`, icon: "trending-up" },
+				{ label: "Lowest", value: `${Math.round(stats.lowest)}${unit}`, icon: "trending-down" }
 			];
 		}
 	}
@@ -64,9 +65,9 @@ export class StatisticsDashboard extends HTMLElementComponent {
 		const item = createDiv({ cls: "statistics-item" });
 
 		const icon = createDiv({
-			cls: "statistics-icon",
-			text: stat.icon
+			cls: "statistics-icon"
 		});
+		setIcon(icon, stat.icon);
 		item.appendChild(icon);
 
 		const value = createDiv({
