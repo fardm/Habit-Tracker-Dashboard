@@ -165,20 +165,36 @@ export class StreakSection extends HTMLElementComponent {
 	private createHistoryItem(streak: { startDate: Date; endDate: Date; length: number }): HTMLElement {
 		const item = createDiv({ cls: "streak-history-item" });
 
-		const dateRange = createSpan({
-			cls: ".statistics-icon svg"
-		});
-		const adapter = getCalendarAdapter(this.props.reportCalendar);
-		const startDate = adapter.formatDisplayDate(streak.startDate);
-		const endDate = adapter.formatDisplayDate(streak.endDate);
-		dateRange.textContent = `${startDate} - ${endDate}`;
-		item.appendChild(dateRange);
-
 		const length = createSpan({
 			cls: "streak-history-length",
 			text: this.formatStreakText(streak.length)
 		});
 		item.appendChild(length);
+
+		const dateRange = createSpan({
+			cls: "streak-history-date"
+		});
+		const adapter = getCalendarAdapter(this.props.reportCalendar);
+		
+		// Desktop format with year
+		const startDate = adapter.formatDisplayDate(streak.startDate);
+		const endDate = adapter.formatDisplayDate(streak.endDate);
+		const desktopDate = createSpan({
+			cls: "streak-history-date-desktop",
+			text: `${startDate} → ${endDate}`
+		});
+		dateRange.appendChild(desktopDate);
+		
+		// Mobile format without year (compact MM/DD → MM/DD)
+		const startDateCompact = adapter.formatDisplayDateWithoutYear(streak.startDate);
+		const endDateCompact = adapter.formatDisplayDateWithoutYear(streak.endDate);
+		const mobileDate = createSpan({
+			cls: "streak-history-date-mobile",
+			text: `${startDateCompact} → ${endDateCompact}`
+		});
+		dateRange.appendChild(mobileDate);
+		
+		item.appendChild(dateRange);
 
 		return item;
 	}

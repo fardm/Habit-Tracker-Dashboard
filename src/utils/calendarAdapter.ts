@@ -43,6 +43,7 @@ export interface CalendarDateAdapter {
 	getYearEnd(year: number): Date;
 	getDaysInYear(year: number): number;
 	formatDisplayDate(date: Date): string;
+	formatDisplayDateWithoutYear(date: Date): string;
 	getPeriodLabel(year: number): string;
 	getMonthName(month: number): string;
 	/** Month (1–12) in this calendar for a Gregorian local Date. */
@@ -179,6 +180,12 @@ class GregorianCalendarAdapter implements CalendarDateAdapter {
 		return toLocalISODate(date);
 	}
 
+	formatDisplayDateWithoutYear(date: Date): string {
+		const m = padZero(date.getMonth() + 1);
+		const d = padZero(date.getDate());
+		return `${m}/${d}`;
+	}
+
 	getPeriodLabel(year: number): string {
 		return `Year ${year}`;
 	}
@@ -247,6 +254,15 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 			date.getDate()
 		);
 		return j.jy + "/" + padZero(j.jm) + "/" + padZero(j.jd);
+	}
+
+	formatDisplayDateWithoutYear(date: Date): string {
+		const j = toJalaali(
+			date.getFullYear(),
+			date.getMonth() + 1,
+			date.getDate()
+		);
+		return padZero(j.jm) + "/" + padZero(j.jd);
 	}
 
 	getPeriodLabel(year: number): string {
