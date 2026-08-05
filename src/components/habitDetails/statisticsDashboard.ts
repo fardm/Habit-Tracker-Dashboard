@@ -65,7 +65,7 @@ export class StatisticsDashboard extends HTMLElementComponent {
 		const item = createDiv({ cls: "statistics-item" });
 
 		const icon = createDiv({
-			cls: "statistics-icon"
+			cls: `statistics-icon statistics-icon-${stat.icon}`
 		});
 		setIcon(icon, stat.icon);
 		item.appendChild(icon);
