@@ -48,7 +48,7 @@ export class SettingsModal extends Modal {
 
 		new Setting(contentEl)
 			.setName("Data source")
-			.setDesc("Choose how to filter notes for habit data")
+			.setDesc("Choose how to filter notes")
 			.addDropdown((dropdown) =>
 				dropdown
 					.addOption(DataSourceType.TAG, "Tag")
@@ -82,7 +82,7 @@ export class SettingsModal extends Modal {
 
 		new Setting(contentEl)
 			.setName("Calendar System")
-			.setDesc("Choose the calendar system for habit reports (Heatmap, Streaks, Statistics)")
+			.setDesc("Choose the calendar system")
 			.addDropdown((dropdown) =>
 				dropdown
 					.addOption(ReportCalendar.GREGORIAN, "Gregorian")
@@ -139,7 +139,7 @@ export class SettingsModal extends Modal {
 
 		new Setting(this.dataSourceValueContainer)
 			.setName(label)
-			.setDesc(`Enter the ${this.formData.dataSourceType === DataSourceType.TAG ? "tag" : "folder path"} to filter notes`)
+			.setDesc(`Enter the ${this.formData.dataSourceType === DataSourceType.TAG ? "tag" : "folder path"}`)
 			.addText((text) =>
 				text
 					.setPlaceholder(placeholder)

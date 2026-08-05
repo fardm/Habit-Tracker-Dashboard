@@ -72,7 +72,7 @@ export class SettingsPanel extends HTMLElementComponent {
 
 		const sections: { key: keyof SectionVisibility; label: string }[] = [
 			{ key: "showHeatmap", label: "Activity Heatmap" },
-			{ key: "showChart", label: "Progress Chart" },
+			{ key: "showChart", label: "Chart" },
 			{ key: "showStatistics", label: "Statistics" },
 			{ key: "showStreaks", label: "Streaks" }
 		];

@@ -66,7 +66,7 @@ export class HabitModal extends Modal {
 		// Habit Name
 		new Setting(contentEl)
 			.setName("Habit name")
-			.setDesc("Enter the name for your habit")
+			.setDesc("Enter the name")
 			.addText((text) =>
 				text
 					.setPlaceholder("Reading")
@@ -82,7 +82,7 @@ export class HabitModal extends Modal {
 		// Emoji
 		new Setting(contentEl)
 			.setName("Emoji")
-			.setDesc("Choose an emoji to represent your habit")
+			.setDesc("Choose an emoji")
 			.addText((text) =>
 				text
 					.setPlaceholder("e.g. 📚")
@@ -100,8 +100,8 @@ export class HabitModal extends Modal {
 
 		// Frontmatter Field
 		new Setting(contentEl)
-			.setName("Frontmatter field")
-			.setDesc("The frontmatter field name for storing habit data")
+			.setName("Property name")
+			.setDesc("The property name used in your notes ")
 			.addText((text) =>
 				text
 					.setPlaceholder("reading")
@@ -115,7 +115,7 @@ export class HabitModal extends Modal {
 		// Type (dropdown)
 		new Setting(contentEl)
 			.setName("Type")
-			.setDesc("Choose the habit type")
+			.setDesc("Choose the property type")
 			.addDropdown((dropdown) =>
 				dropdown
 					.addOption(HabitType.BOOLEAN, "Boolean")
@@ -235,7 +235,7 @@ export class HabitModal extends Modal {
 		// Color Theme (shown for both habit types)
 		new Setting(contentEl)
 			.setName("Color theme")
-			.setDesc("Choose a custom color for this habit (optional)")
+			.setDesc("Choose a custom color for this habit")
 			.addColorPicker((picker) =>
 				picker
 					.onChange((value) => {

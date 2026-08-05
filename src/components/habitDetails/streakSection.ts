@@ -68,7 +68,7 @@ export class StreakSection extends HTMLElementComponent {
 
 			const historyTitle = createEl("h4", {
 				cls: "streak-history-title",
-				text: "Streak History"
+				text: "History"
 			});
 			historyHeader.appendChild(historyTitle);
 

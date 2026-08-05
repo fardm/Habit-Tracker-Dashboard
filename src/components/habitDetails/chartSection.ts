@@ -31,7 +31,7 @@ export class ChartSection extends HTMLElementComponent {
 
 		const title = createEl("h3", {
 			cls: "chart-title",
-			text: "Progress"
+			text: "Chart"
 		});
 		header.appendChild(title);
 		container.appendChild(header);
