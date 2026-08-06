@@ -303,11 +303,11 @@ export class HabitCard extends HTMLElementComponent {
 						if (value > target) {
 							extra = value - target;
 							displayValue = target;
-							donutColor = "var(--text-error)";
+							progress = 0;
 						} else {
 							displayValue = value;
+							progress = value === target ? 1 : Math.min(value / target, 1);
 						}
-						progress = value >= target ? 1 : Math.min(value / target, 1);
 						break;
 				}
 				
