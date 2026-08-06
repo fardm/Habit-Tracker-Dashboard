@@ -60,52 +60,52 @@ export class StreakSection extends HTMLElementComponent {
 		const minimumLength = this.props.minimumStreakLength || 7;
 		const filteredHistory = this.props.streaks.streakHistory.filter(streak => streak.length >= minimumLength);
 		
-		if (filteredHistory.length > 0) {
-			const historySection = createDiv({ cls: "streak-history-section" });
+		const historySection = createDiv({ cls: "streak-history-section" });
 
-			// Collapsible header
-			const historyHeader = createDiv({ cls: "streak-history-header" });
+		// Collapsible header
+		const historyHeader = createDiv({ cls: "streak-history-header" });
 
-			const historyTitle = createEl("h4", {
-				cls: "streak-history-title",
-				text: "History"
-			});
-			historyHeader.appendChild(historyTitle);
+		const historyTitle = createEl("h4", {
+			cls: "streak-history-title",
+			text: "History"
+		});
+		historyHeader.appendChild(historyTitle);
 
-			// Chevron icon
-			const chevron = createDiv({ cls: "streak-history-chevron" });
+		// Chevron icon
+		const chevron = createDiv({ cls: "streak-history-chevron" });
 
-			const svg = createSvg("svg", {
-				cls: this.isExpanded ? "streak-history-chevron-svg-expanded" : "streak-history-chevron-svg-collapsed",
-				attr: {
-					width: "16",
-					height: "16",
-					viewBox: "0 0 24 24",
-					fill: "none",
-					stroke: "currentColor",
-					"stroke-width": "2",
-					"stroke-linecap": "round",
-					"stroke-linejoin": "round"
-				}
-			});
-
-			const polyline = createSvg("polyline", {
-				attr: {
-					points: "6 9 12 15 18 9"
-				}
-			});
-			svg.appendChild(polyline);
-			chevron.appendChild(svg);
-			historyHeader.appendChild(chevron);
-
-			historySection.appendChild(historyHeader);
-
-			// Collapsible content
-			const historyContent = createDiv({ cls: "streak-history-content" });
-			if (!this.isExpanded) {
-				historyContent.classList.add("hidden");
+		const svg = createSvg("svg", {
+			cls: this.isExpanded ? "streak-history-chevron-svg-expanded" : "streak-history-chevron-svg-collapsed",
+			attr: {
+				width: "16",
+				height: "16",
+				viewBox: "0 0 24 24",
+				fill: "none",
+				stroke: "currentColor",
+				"stroke-width": "2",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round"
 			}
+		});
 
+		const polyline = createSvg("polyline", {
+			attr: {
+				points: "6 9 12 15 18 9"
+			}
+		});
+		svg.appendChild(polyline);
+		chevron.appendChild(svg);
+		historyHeader.appendChild(chevron);
+
+		historySection.appendChild(historyHeader);
+
+		// Collapsible content
+		const historyContent = createDiv({ cls: "streak-history-content" });
+		if (!this.isExpanded) {
+			historyContent.classList.add("hidden");
+		}
+
+		if (filteredHistory.length > 0) {
 			const historyList = createDiv({ cls: "streak-history-list" });
 
 			filteredHistory.forEach(streak => {
@@ -114,26 +114,33 @@ export class StreakSection extends HTMLElementComponent {
 			});
 
 			historyContent.appendChild(historyList);
-			historySection.appendChild(historyContent);
-
-			// Toggle functionality
-			historyHeader.addEventListener("click", () => {
-				this.isExpanded = !this.isExpanded;
-				if (this.isExpanded) {
-					svg.classList.remove("streak-history-chevron-svg-collapsed");
-					svg.classList.add("streak-history-chevron-svg-expanded");
-					historyContent.classList.remove("hidden");
-					historyContent.classList.add("visible");
-				} else {
-					svg.classList.remove("streak-history-chevron-svg-expanded");
-					svg.classList.add("streak-history-chevron-svg-collapsed");
-					historyContent.classList.remove("visible");
-					historyContent.classList.add("hidden");
-				}
+		} else {
+			const emptyState = createDiv({
+				cls: "streak-history-empty",
+				text: "No streak history available."
 			});
-
-			container.appendChild(historySection);
+			historyContent.appendChild(emptyState);
 		}
+
+		historySection.appendChild(historyContent);
+
+		// Toggle functionality
+		historyHeader.addEventListener("click", () => {
+			this.isExpanded = !this.isExpanded;
+			if (this.isExpanded) {
+				svg.classList.remove("streak-history-chevron-svg-collapsed");
+				svg.classList.add("streak-history-chevron-svg-expanded");
+				historyContent.classList.remove("hidden");
+				historyContent.classList.add("visible");
+			} else {
+				svg.classList.remove("streak-history-chevron-svg-expanded");
+				svg.classList.add("streak-history-chevron-svg-collapsed");
+				historyContent.classList.remove("visible");
+				historyContent.classList.add("hidden");
+			}
+		});
+
+		container.appendChild(historySection);
 
 		return container;
 	}

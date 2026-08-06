@@ -1326,6 +1326,14 @@
 	gap: 8px;
 }
 
+.streak-history-empty {
+	padding: 16px;
+	text-align: center;
+	color: var(--text-muted);
+	font-size: 13px;
+	font-style: italic;
+}
+
 .streak-history-item {
 	display: flex;
 	justify-content: space-between;
