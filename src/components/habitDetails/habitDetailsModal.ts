@@ -193,6 +193,8 @@ export class HabitDetailsModal extends Modal {
 	}
 
 	private handleNavigationChange(delta: number): void {
+		const adapter = getCalendarAdapter(this.props.trackerSettings?.reportCalendar);
+		
 		switch (this.selectedPeriod) {
 			case ReportPeriod.YEAR:
 				this.selectedYear += delta;
@@ -209,9 +211,19 @@ export class HabitDetailsModal extends Modal {
 				break;
 			case ReportPeriod.WEEK:
 				this.selectedWeekNumber += delta;
-				// Week number overflow handling would be more complex, simplified for now
+				
+				// Handle year boundary rollover
 				if (this.selectedWeekNumber < 1) {
-					this.selectedWeekNumber = 1;
+					// Go to previous year's last week
+					this.selectedYear -= 1;
+					this.selectedWeekNumber = adapter.getWeeksInYear(this.selectedYear);
+				} else {
+					const weeksInCurrentYear = adapter.getWeeksInYear(this.selectedYear);
+					if (this.selectedWeekNumber > weeksInCurrentYear) {
+						// Go to next year's first week
+						this.selectedYear += 1;
+						this.selectedWeekNumber = 1;
+					}
 				}
 				break;
 		}

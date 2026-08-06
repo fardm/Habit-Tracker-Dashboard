@@ -44,6 +44,7 @@ export interface CalendarDateAdapter {
 	getYearStart(year: number): Date;
 	getYearEnd(year: number): Date;
 	getDaysInYear(year: number): number;
+	getWeeksInYear(year: number): number;
 	getMonthStart(year: number, month: number): Date;
 	getMonthEnd(year: number, month: number): Date;
 	getWeekStart(year: number, weekNumber: number): Date;
@@ -202,6 +203,12 @@ class GregorianCalendarAdapter implements CalendarDateAdapter {
 		return isLeap ? 366 : 365;
 	}
 
+	getWeeksInYear(year: number): number {
+		const yearStart = this.getYearStart(year);
+		const leadingEmpty = dayOffsetInWeek(yearStart.getDay(), WeekStartDay.SATURDAY);
+		return Math.ceil((leadingEmpty + this.getDaysInYear(year)) / 7);
+	}
+
 	getMonthStart(year: number, month: number): Date {
 		const d = new Date(year, month - 1, 1);
 		d.setHours(0, 0, 0, 0);
@@ -338,6 +345,12 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 
 	getDaysInYear(year: number): number {
 		return isLeapJalaaliYear(year) ? 366 : 365;
+	}
+
+	getWeeksInYear(year: number): number {
+		const yearStart = this.getYearStart(year);
+		const leadingEmpty = dayOffsetInWeek(yearStart.getDay(), WeekStartDay.SATURDAY);
+		return Math.ceil((leadingEmpty + this.getDaysInYear(year)) / 7);
 	}
 
 	getMonthStart(year: number, month: number): Date {
