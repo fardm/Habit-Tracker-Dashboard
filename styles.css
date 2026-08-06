@@ -648,7 +648,7 @@
 .year-nav-container {
 	display: flex;
 	align-items: center;
-	justify-self: center;
+	justify-content: space-between;
 	gap: 12px;
 }
 
@@ -679,6 +679,40 @@
 
 .year-nav-button:active {
 	transform: scale(0.95);
+}
+
+.period-selector {
+	display: flex;
+	align-items: center;
+}
+
+.period-selector-select {
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	padding: 6px 28px 6px 10px;
+	color: var(--text-normal);
+	font-size: 14px;
+	cursor: pointer;
+	transition: border-color 0.2s, background-color 0.2s;
+	min-width: 80px;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 8px center;
+	background-size: 12px;
+}
+
+.period-selector-select:hover {
+	border-color: var(--interactive-accent);
+	background-color: var(--background-modifier-hover);
+}
+
+.period-selector-select:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
 }
 
 .habit-details-year-display {

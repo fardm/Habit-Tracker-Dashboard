@@ -39,12 +39,20 @@ export interface YearHeatmapLayout {
 export interface CalendarDateAdapter {
 	readonly system: ReportCalendar;
 	getCurrentYear(): number;
+	getCurrentMonth(): number;
+	getCurrentWeek(): { year: number; weekNumber: number };
 	getYearStart(year: number): Date;
 	getYearEnd(year: number): Date;
 	getDaysInYear(year: number): number;
+	getMonthStart(year: number, month: number): Date;
+	getMonthEnd(year: number, month: number): Date;
+	getWeekStart(year: number, weekNumber: number): Date;
+	getWeekEnd(year: number, weekNumber: number): Date;
 	formatDisplayDate(date: Date): string;
 	formatDisplayDateWithoutYear(date: Date): string;
 	getPeriodLabel(year: number): string;
+	getPeriodLabelForMonth(year: number, month: number): string;
+	getPeriodLabelForWeek(year: number, weekNumber: number): string;
 	getMonthName(month: number): string;
 	/** Month (1–12) in this calendar for a Gregorian local Date. */
 	getMonthOfDate(date: Date): number;
@@ -158,6 +166,24 @@ class GregorianCalendarAdapter implements CalendarDateAdapter {
 		return new Date().getFullYear();
 	}
 
+	getCurrentMonth(): number {
+		return new Date().getMonth() + 1;
+	}
+
+	getCurrentWeek(): { year: number; weekNumber: number } {
+		const now = new Date();
+		const year = now.getFullYear();
+		const yearStart = this.getYearStart(year);
+		const weekStart = WeekStartDay.SATURDAY;
+		
+		// Calculate week number starting from Saturday
+		const dayOffset = dayOffsetInWeek(yearStart.getDay(), weekStart);
+		const daysSinceStart = Math.floor((now.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24));
+		const weekNumber = Math.floor((daysSinceStart + dayOffset) / 7) + 1;
+		
+		return { year, weekNumber };
+	}
+
 	getYearStart(year: number): Date {
 		const d = new Date(year, 0, 1);
 		d.setHours(0, 0, 0, 0);
@@ -176,6 +202,37 @@ class GregorianCalendarAdapter implements CalendarDateAdapter {
 		return isLeap ? 366 : 365;
 	}
 
+	getMonthStart(year: number, month: number): Date {
+		const d = new Date(year, month - 1, 1);
+		d.setHours(0, 0, 0, 0);
+		return d;
+	}
+
+	getMonthEnd(year: number, month: number): Date {
+		const d = new Date(year, month, 0);
+		d.setHours(23, 59, 59, 999);
+		return d;
+	}
+
+	getWeekStart(year: number, weekNumber: number): Date {
+		const yearStart = this.getYearStart(year);
+		const weekStart = WeekStartDay.SATURDAY;
+		const dayOffset = dayOffsetInWeek(yearStart.getDay(), weekStart);
+		const daysToAdd = (weekNumber - 1) * 7 - dayOffset;
+		const d = new Date(yearStart);
+		d.setDate(d.getDate() + daysToAdd);
+		d.setHours(0, 0, 0, 0);
+		return d;
+	}
+
+	getWeekEnd(year: number, weekNumber: number): Date {
+		const weekStart = this.getWeekStart(year, weekNumber);
+		const d = new Date(weekStart);
+		d.setDate(d.getDate() + 6);
+		d.setHours(23, 59, 59, 999);
+		return d;
+	}
+
 	formatDisplayDate(date: Date): string {
 		return toLocalISODate(date);
 	}
@@ -188,6 +245,14 @@ class GregorianCalendarAdapter implements CalendarDateAdapter {
 
 	getPeriodLabel(year: number): string {
 		return `Year ${year}`;
+	}
+
+	getPeriodLabelForMonth(year: number, month: number): string {
+		return `${this.getMonthName(month)} ${year}`;
+	}
+
+	getPeriodLabelForWeek(year: number, weekNumber: number): string {
+		return `Week ${weekNumber}, ${year}`;
 	}
 
 	getMonthName(month: number): string {
@@ -226,6 +291,34 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 		).jy;
 	}
 
+	getCurrentMonth(): number {
+		const now = new Date();
+		return toJalaali(
+			now.getFullYear(),
+			now.getMonth() + 1,
+			now.getDate()
+		).jm;
+	}
+
+	getCurrentWeek(): { year: number; weekNumber: number } {
+		const now = new Date();
+		const j = toJalaali(
+			now.getFullYear(),
+			now.getMonth() + 1,
+			now.getDate()
+		);
+		const year = j.jy;
+		const yearStart = this.getYearStart(year);
+		const weekStart = WeekStartDay.SATURDAY;
+		
+		// Calculate week number starting from Saturday
+		const dayOffset = dayOffsetInWeek(yearStart.getDay(), weekStart);
+		const daysSinceStart = Math.floor((now.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24));
+		const weekNumber = Math.floor((daysSinceStart + dayOffset) / 7) + 1;
+		
+		return { year, weekNumber };
+	}
+
 	/** Farvardin 1 of the given Jalali year, as a local Gregorian Date. */
 	getYearStart(year: number): Date {
 		const g = toGregorian(year, 1, 1);
@@ -245,6 +338,40 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 
 	getDaysInYear(year: number): number {
 		return isLeapJalaaliYear(year) ? 366 : 365;
+	}
+
+	getMonthStart(year: number, month: number): Date {
+		const g = toGregorian(year, month, 1);
+		const d = new Date(g.gy, g.gm - 1, g.gd);
+		d.setHours(0, 0, 0, 0);
+		return d;
+	}
+
+	getMonthEnd(year: number, month: number): Date {
+		const monthLength = jalaaliMonthLength(year, month);
+		const g = toGregorian(year, month, monthLength);
+		const d = new Date(g.gy, g.gm - 1, g.gd);
+		d.setHours(23, 59, 59, 999);
+		return d;
+	}
+
+	getWeekStart(year: number, weekNumber: number): Date {
+		const yearStart = this.getYearStart(year);
+		const weekStart = WeekStartDay.SATURDAY;
+		const dayOffset = dayOffsetInWeek(yearStart.getDay(), weekStart);
+		const daysToAdd = (weekNumber - 1) * 7 - dayOffset;
+		const d = new Date(yearStart);
+		d.setDate(d.getDate() + daysToAdd);
+		d.setHours(0, 0, 0, 0);
+		return d;
+	}
+
+	getWeekEnd(year: number, weekNumber: number): Date {
+		const weekStart = this.getWeekStart(year, weekNumber);
+		const d = new Date(weekStart);
+		d.setDate(d.getDate() + 6);
+		d.setHours(23, 59, 59, 999);
+		return d;
 	}
 
 	formatDisplayDate(date: Date): string {
@@ -267,6 +394,14 @@ class JalaliCalendarAdapter implements CalendarDateAdapter {
 
 	getPeriodLabel(year: number): string {
 		return `Year ${year}`;
+	}
+
+	getPeriodLabelForMonth(year: number, month: number): string {
+		return `${this.getMonthName(month)} ${year}`;
+	}
+
+	getPeriodLabelForWeek(year: number, weekNumber: number): string {
+		return `Week ${weekNumber}, ${year}`;
 	}
 
 	getMonthName(month: number): string {

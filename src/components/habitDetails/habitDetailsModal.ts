@@ -1,10 +1,11 @@
 import { App, Modal, setIcon } from "obsidian";
-import { HabitDetailsModalProps, ChartType, HabitDetailsSettings, HabitValueEntry, HeatmapSettings, ColorScaleMode } from "../../types/habitDetailsTypes";
+import { HabitDetailsModalProps, ChartType, HabitDetailsSettings, HabitValueEntry, HeatmapSettings, ColorScaleMode, ReportPeriod } from "../../types/habitDetailsTypes";
 import { ChartSection } from "./chartSection";
 import { StatisticsDashboard } from "./statisticsDashboard";
 import { StreakSection } from "./streakSection";
 import { CalendarHeatmap } from "./calendarHeatmap";
 import { SettingsPanel } from "./settingsPanel";
+import { PeriodSelector } from "./periodSelector";
 import { HabitDetailsDataService } from "../../handlers/habitDetailsDataService";
 import { DateRangeCalculator } from "../../handlers/dateRangeCalculator";
 import { HabitDataCache } from "../../handlers/habitDataCache";
@@ -27,8 +28,12 @@ export class HabitDetailsModal extends Modal {
 	private trackerDataManager: HabitDataManager | null;
 	private dataCache: HabitDataCache;
 	private habitValues: HabitValueEntry[] = [];
+	private selectedPeriod: ReportPeriod = ReportPeriod.YEAR;
 	private selectedYear: number;
+	private selectedMonth: number;
+	private selectedWeekNumber: number;
 	private yearNavigationContainer?: HTMLElement;
+	private periodSelector?: PeriodSelector;
 
 	constructor(app: App, props: HabitDetailsModalProps, habit: Habit, dataCache: HabitDataCache) {
 		super(app);
@@ -41,9 +46,11 @@ export class HabitDetailsModal extends Modal {
 		this.dataService = new HabitDetailsDataService(app, props.trackerSettings || {});
 		this.dataCache = dataCache;
 		
-		// Initialize selected year in the active calendar system
+		// Initialize selected year, month, and week in the active calendar system
 		const adapter = getCalendarAdapter(props.trackerSettings?.reportCalendar);
 		this.selectedYear = adapter.getCurrentYear();
+		this.selectedMonth = adapter.getCurrentMonth();
+		this.selectedWeekNumber = adapter.getCurrentWeek().weekNumber;
 	}
 
 	async onOpen() {
@@ -115,29 +122,100 @@ export class HabitDetailsModal extends Modal {
 		const navContainer = this.yearNavigationContainer.createDiv();
 		navContainer.className = "year-nav-container";
 
-		// Previous year button
-		const prevButton = navContainer.createEl("button");
+		// Date navigator (left side)
+		const navigatorContainer = navContainer.createDiv({ cls: "date-navigator" });
+
+		// Previous button
+		const prevButton = navigatorContainer.createEl("button");
 		setIcon(prevButton, "chevron-left");
 		prevButton.className = "year-nav-button clickable-icon";
-		prevButton.onclick = () => this.handleYearChange(-1);
+		prevButton.onclick = () => this.handleNavigationChange(-1);
 		// Hover states are handled by CSS
 
-		// Year display
-		const yearDisplay = navContainer.createSpan({
-			text: this.selectedYear.toString()
+		// Period display
+		const periodDisplay = navigatorContainer.createSpan({
+			text: this.getPeriodDisplayText()
 		});
-		yearDisplay.className = "year-nav-display";
+		periodDisplay.className = "year-nav-display";
 
-		// Next year button
-		const nextButton = navContainer.createEl("button");
+		// Next button
+		const nextButton = navigatorContainer.createEl("button");
 		setIcon(nextButton, "chevron-right");
 		nextButton.className = "year-nav-button clickable-icon";
-		nextButton.onclick = () => this.handleYearChange(1);
+		nextButton.onclick = () => this.handleNavigationChange(1);
 		// Hover states are handled by CSS
+
+		// Period selector (right side)
+		this.periodSelector = new PeriodSelector({
+			currentPeriod: this.selectedPeriod,
+			onPeriodChange: (period) => this.handlePeriodChange(period)
+		});
+		navContainer.appendChild(this.periodSelector.render());
 	}
 
-	private handleYearChange(delta: number): void {
-		this.selectedYear += delta;
+	private getPeriodDisplayText(): string {
+		const adapter = getCalendarAdapter(this.props.trackerSettings?.reportCalendar);
+		switch (this.selectedPeriod) {
+			case ReportPeriod.YEAR:
+				return this.selectedYear.toString();
+			case ReportPeriod.MONTH:
+				return `${adapter.getMonthName(this.selectedMonth)} ${this.selectedYear}`;
+			case ReportPeriod.WEEK:
+				return `Week ${this.selectedWeekNumber}, ${this.selectedYear}`;
+		}
+	}
+
+	private handlePeriodChange(period: ReportPeriod): void {
+		this.selectedPeriod = period;
+		const adapter = getCalendarAdapter(this.props.trackerSettings?.reportCalendar);
+		
+		// Reset to current values when switching periods
+		switch (period) {
+			case ReportPeriod.YEAR:
+				this.selectedYear = adapter.getCurrentYear();
+				break;
+			case ReportPeriod.MONTH:
+				this.selectedYear = adapter.getCurrentYear();
+				this.selectedMonth = adapter.getCurrentMonth();
+				break;
+			case ReportPeriod.WEEK: {
+				const currentWeek = adapter.getCurrentWeek();
+				this.selectedYear = currentWeek.year;
+				this.selectedWeekNumber = currentWeek.weekNumber;
+				break;
+			}
+		}
+		
+		this.renderYearNavigation();
+		void this.loadHabitData().catch(error => {
+			console.error("Error loading habit data:", error);
+		});
+	}
+
+	private handleNavigationChange(delta: number): void {
+		switch (this.selectedPeriod) {
+			case ReportPeriod.YEAR:
+				this.selectedYear += delta;
+				break;
+			case ReportPeriod.MONTH:
+				this.selectedMonth += delta;
+				if (this.selectedMonth > 12) {
+					this.selectedMonth = 1;
+					this.selectedYear += 1;
+				} else if (this.selectedMonth < 1) {
+					this.selectedMonth = 12;
+					this.selectedYear -= 1;
+				}
+				break;
+			case ReportPeriod.WEEK:
+				this.selectedWeekNumber += delta;
+				// Week number overflow handling would be more complex, simplified for now
+				if (this.selectedWeekNumber < 1) {
+					this.selectedWeekNumber = 1;
+				}
+				break;
+		}
+		
 		this.renderYearNavigation();
 		void this.loadHabitData().catch(error => {
 			console.error("Error loading habit data:", error);
@@ -169,6 +247,9 @@ export class HabitDetailsModal extends Modal {
 				target: this.props.target,
 				theme: this.settings.theme,
 				year: this.selectedYear,
+				month: this.selectedPeriod === ReportPeriod.MONTH ? this.selectedMonth : undefined,
+				weekNumber: this.selectedPeriod === ReportPeriod.WEEK ? this.selectedWeekNumber : undefined,
+				period: this.selectedPeriod,
 				reportCalendar:
 					this.props.trackerSettings?.reportCalendar || ReportCalendar.GREGORIAN,
 				heatmapSettings: this.heatmapSettings,
@@ -245,7 +326,10 @@ export class HabitDetailsModal extends Modal {
 		try {
 			const dateRange = DateRangeCalculator.calculateDateRange(
 				this.props.trackerSettings || {},
-				this.selectedYear
+				this.selectedPeriod,
+				this.selectedYear,
+				this.selectedMonth,
+				this.selectedWeekNumber
 			);
 
 			const cachedValues = this.dataCache.getHabitValues(

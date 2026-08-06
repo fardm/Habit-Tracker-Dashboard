@@ -13,6 +13,15 @@ export enum TimeRange {
 }
 
 /**
+ * Report period options for habit details view
+ */
+export enum ReportPeriod {
+	YEAR = "year",
+	MONTH = "month",
+	WEEK = "week"
+}
+
+/**
  * Chart type options for progress visualization
  */
 export enum ChartType {
@@ -194,6 +203,12 @@ export interface CalendarHeatmapProps {
 	theme?: ColorTheme;
 	/** Year in the selected calendar system (Gregorian or Jalali). */
 	year?: number;
+	/** Month in the selected calendar system (1-12). */
+	month?: number;
+	/** Week number in the selected calendar system. */
+	weekNumber?: number;
+	/** Report period (year, month, or week). */
+	period?: ReportPeriod;
 	/** Calendar system used for year bounds and display labels. */
 	reportCalendar?: ReportCalendar | string;
 	/** Heatmap-specific settings. */
@@ -210,4 +225,12 @@ export interface CalendarHeatmapProps {
 export interface SettingsPanelProps {
 	settings: HabitDetailsSettings;
 	onSettingsChange: (settings: HabitDetailsSettings) => void;
+}
+
+/**
+ * Props for PeriodSelector
+ */
+export interface PeriodSelectorProps {
+	currentPeriod: ReportPeriod;
+	onPeriodChange: (period: ReportPeriod) => void;
 }

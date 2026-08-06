@@ -1,5 +1,5 @@
 import { HTMLElementComponent } from "../htmlElementComponent";
-import { CalendarHeatmapProps, HeatmapSettings, ColorScaleMode } from "../../types/habitDetailsTypes";
+import { CalendarHeatmapProps, HeatmapSettings, ColorScaleMode, ReportPeriod } from "../../types/habitDetailsTypes";
 import { setIcon } from "obsidian";
 import {
 	CalendarDateAdapter,
@@ -391,18 +391,40 @@ export class CalendarHeatmap extends HTMLElementComponent {
 			this.props.reportCalendar || ReportCalendar.GREGORIAN
 		);
 		const year = this.props.year ?? adapter.getCurrentYear();
+		const period = this.props.period ?? ReportPeriod.YEAR;
 		const weekStartDay = this.getWeekStartDay();
+		
+		// Determine date range based on period
+		let startDate: Date;
+		let endDate: Date;
+		
+		switch (period) {
+			case ReportPeriod.MONTH:
+				startDate = adapter.getMonthStart(year, this.props.month ?? adapter.getCurrentMonth());
+				endDate = adapter.getMonthEnd(year, this.props.month ?? adapter.getCurrentMonth());
+				break;
+			case ReportPeriod.WEEK:
+				startDate = adapter.getWeekStart(year, this.props.weekNumber ?? 1);
+				endDate = adapter.getWeekEnd(year, this.props.weekNumber ?? 1);
+				break;
+			case ReportPeriod.YEAR:
+			default:
+				startDate = adapter.getYearStart(year);
+				endDate = adapter.getYearEnd(year);
+				break;
+		}
+		
 		const layout = adapter.buildYearHeatmapLayout(year, weekStartDay);
 
 		this.gridBlock = createDiv({ cls: "heatmap-grid-block" });
 
-		if (this.settings.showMonthLabels) {
+		if (this.settings.showMonthLabels && period === ReportPeriod.YEAR) {
 			this.gridBlock.appendChild(
 				this.createMonthLabelsRow(layout.monthLabels, layout.weeksCount)
 			);
 		}
 
-		this.gridBlock.appendChild(this.createHeatmapGrid(adapter, layout));
+		this.gridBlock.appendChild(this.createHeatmapGrid(adapter, layout, startDate, endDate));
 		this.heatmapContainer.appendChild(this.gridBlock);
 
 		this.legendElement = this.createLegend();
@@ -504,7 +526,9 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 	private createHeatmapGrid(
 		adapter: CalendarDateAdapter,
-		layout: YearHeatmapLayout
+		layout: YearHeatmapLayout,
+		startDate?: Date,
+		endDate?: Date
 	): HTMLElement {
 		const { cells, weeksCount } = layout;
 		const valueMap = this.buildValueMap();
@@ -521,6 +545,16 @@ export class CalendarHeatmap extends HTMLElementComponent {
 				cell.addClass("heatmap-cell", "heatmap-cell-empty");
 				grid.appendChild(cell);
 				continue;
+			}
+
+			// Filter cells based on date range if provided
+			if (startDate && endDate) {
+				const cellDate = parseLocalISODate(cellData.isoDate);
+				if (cellDate < startDate || cellDate > endDate) {
+					cell.addClass("heatmap-cell", "heatmap-cell-empty");
+					grid.appendChild(cell);
+					continue;
+				}
 			}
 
 			const value = valueMap.get(cellData.isoDate) || 0;
