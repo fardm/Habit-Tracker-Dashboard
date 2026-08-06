@@ -107,11 +107,11 @@ Lower values are better.
 
 ##### Exactly (=)
 
-The donut fills as the value approaches the target.
+The donut represents whether the value matches the target exactly.
 
-- Below the target: The donut fills proportionally.
+- Below the target: The donut remains empty.
 - At the target: The donut is full and displays a check mark.
-- Above or below the target: The habit is not considered complete.
+- Above the target: A warning ring appears and the habit is not considered complete.
 
 #### Boolean Habits
 
