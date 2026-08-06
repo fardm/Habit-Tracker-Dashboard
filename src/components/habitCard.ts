@@ -293,13 +293,11 @@ export class HabitCard extends HTMLElementComponent {
 						// Reverse progress: full donut = best (0 value), empty = at limit
 						progress = 1 - Math.min(value / target, 1);
 						// Color transitions based on usage
-						if (value <= target * 0.5) {
+						if (value <= target * 0.75) {
 							donutColor = "var(--text-success)"; // Green - best state
-						} else if (value <= target * 0.8) {
-							donutColor = "var(--text-accent)"; // Orange - warning
-						} else if (value <= target) {
-							donutColor = "var(--text-error)"; // Red - near limit
-						}
+						} else {
+							donutColor = "var(--text-warning)"; // Orange - warning
+						} 
 						break;
 					case CompletionOperator.EXACTLY:
 						displayValue = value;
