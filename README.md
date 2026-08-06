@@ -83,13 +83,6 @@ For **numeric habits**, choose how completion is evaluated:
 
 ![image](img/visualization.webp)
 
-#### Boolean Habits
-
-Boolean habits have a simple two-state visualization:
-
-- **Completed:** A check icon is displayed.
-- **Not completed:** A circle icon is displayed.
-
 #### Numeric Habits
 
 The visualization depends on the selected completion condition.
@@ -112,7 +105,20 @@ Lower values are better.
 - Target reached: Empty donut.
 - Above the target: A warning ring appears with a ⚠️ icon.
 
+##### Exactly (=)
 
+The donut fills as the value approaches the target.
+
+- Below the target: The donut fills proportionally.
+- At the target: The donut is full and displays a check mark.
+- Above or below the target: The habit is not considered complete.
+
+#### Boolean Habits
+
+Boolean habits have a simple two-state visualization:
+
+- **Completed:** A check icon is displayed.
+- **Not completed:** A circle icon is displayed.
 
 
 ### Refresh

@@ -300,13 +300,20 @@ export class HabitCard extends HTMLElementComponent {
 						} 
 						break;
 					case CompletionOperator.EXACTLY:
-						displayValue = value;
-						progress = value === target ? 1 : Math.min(value / target, 1);
+						if (value > target) {
+							extra = value - target;
+							displayValue = target;
+							donutColor = "var(--text-error)";
+						} else {
+							displayValue = value;
+						}
+						progress = value >= target ? 1 : Math.min(value / target, 1);
 						break;
 				}
 				
 				const isExceeded = extra > 0 && completionOperator === CompletionOperator.AT_LEAST;
 				const isAtMostExceeded = extra > 0 && completionOperator === CompletionOperator.AT_MOST;
+				const isExactlyExceeded = extra > 0 && completionOperator === CompletionOperator.EXACTLY;
 				
 				// Add visualization based on setting
 				if (visualization === Visualization.DONUT) {
@@ -325,6 +332,12 @@ export class HabitCard extends HTMLElementComponent {
 						const overflowRing = createDiv({ cls: "habit-overflow-ring" });
 						visualizationContainer.appendChild(overflowRing);
 					}
+
+					// Add red warning ring for Exactly when exceeded
+					if (isExactlyExceeded) {
+						const exactlyRing = createDiv({ cls: "habit-exactly-exceeded-ring" });
+						visualizationContainer.appendChild(exactlyRing);
+					}
 					
 					// Add checkmark icon for At least when completed
 					if (completionOperator === CompletionOperator.AT_LEAST && isCompleted) {
@@ -332,9 +345,23 @@ export class HabitCard extends HTMLElementComponent {
 						checkIcon.appendChild(this.createCheckIcon());
 						visualizationContainer.appendChild(checkIcon);
 					}
+
+					// Add checkmark icon for Exactly when exactly met (not exceeded)
+					if (completionOperator === CompletionOperator.EXACTLY && isCompleted && !isExactlyExceeded) {
+						const checkIcon = createDiv({ cls: "habit-check-icon" });
+						checkIcon.appendChild(this.createCheckIcon());
+						visualizationContainer.appendChild(checkIcon);
+					}
 					
 					// Add warning icon for At most when exceeded
 					if (isAtMostExceeded) {
+						const warningIcon = createDiv({ cls: "habit-warning-icon" });
+						warningIcon.appendChild(this.createWarningIcon());
+						visualizationContainer.appendChild(warningIcon);
+					}
+
+					// Add warning icon for Exactly when exceeded
+					if (isExactlyExceeded) {
 						const warningIcon = createDiv({ cls: "habit-warning-icon" });
 						warningIcon.appendChild(this.createWarningIcon());
 						visualizationContainer.appendChild(warningIcon);
@@ -350,6 +377,8 @@ export class HabitCard extends HTMLElementComponent {
 				if (completionOperator === CompletionOperator.AT_LEAST && extra > 0) {
 					progressText.textContent = `${target}/${target} ${unit} (+${extra})`;
 				} else if (completionOperator === CompletionOperator.AT_MOST && extra > 0) {
+					progressText.textContent = `${target}/${target} ${unit} (+${extra})`;
+				} else if (completionOperator === CompletionOperator.EXACTLY && isExactlyExceeded) {
 					progressText.textContent = `${target}/${target} ${unit} (+${extra})`;
 				} else {
 					progressText.textContent = `${value}/${target} ${unit}`;

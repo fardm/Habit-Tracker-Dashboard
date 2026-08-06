@@ -279,6 +279,18 @@
 	transform: translate(-50%, -50%);
 }
 
+.habit-exactly-exceeded-ring {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	border: 2px solid var(--text-error);
+	border-radius: 50%;
+	opacity: 0.8;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
 .habit-check-icon {
 	position: absolute;
 	top: 55%;
