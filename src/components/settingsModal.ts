@@ -69,7 +69,7 @@ export class SettingsModal extends Modal {
 			.addDropdown((dropdown) =>
 				dropdown
 					.addOption(DateExtractionMethod.FILENAME, "From file name")
-					.addOption(DateExtractionMethod.FRONTMATTER, "From frontmatter property")
+					.addOption(DateExtractionMethod.FRONTMATTER, "From property")
 					.setValue(this.formData.dateExtractionMethod)
 					.onChange((value) => {
 						this.formData.dateExtractionMethod = value as DateExtractionMethod;
@@ -86,7 +86,7 @@ export class SettingsModal extends Modal {
 			.addDropdown((dropdown) =>
 				dropdown
 					.addOption(ReportCalendar.GREGORIAN, "Gregorian")
-					.addOption(ReportCalendar.JALALI, "Solar Hijri (Jalali)")
+					.addOption(ReportCalendar.JALALI, "Solar Hijri")
 					.setValue(this.formData.reportCalendar)
 					.onChange((value) => {
 						this.formData.reportCalendar = value as ReportCalendar;
@@ -157,8 +157,8 @@ export class SettingsModal extends Modal {
 
 		if (this.formData.dateExtractionMethod === DateExtractionMethod.FRONTMATTER) {
 			new Setting(this.dateFrontmatterContainer)
-				.setName("Frontmatter property")
-				.setDesc("Enter the frontmatter property key that contains the date")
+				.setName("Property name")
+				.setDesc("Enter the property name that contains the date")
 				.addText((text) =>
 					text
 						.setPlaceholder("date")

@@ -20,7 +20,7 @@ export class StreakSection extends HTMLElementComponent {
 
 	private formatStreakText(value: number): string {
 		if (value === 0) {
-			return "-";
+			return "0 days";
 		}
 		return `${value} day${value === 1 ? '' : 's'}`;
 	}
