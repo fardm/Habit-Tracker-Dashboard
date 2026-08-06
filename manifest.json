@@ -1,7 +1,7 @@
 {
   "id": "habit-tracker-dashboard",
   "name": "Habit Tracker Dashboard",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "minAppVersion": "1.5.7",
   "description": "Visualize habit data from your note properties with dashboards, heatmaps, charts, streaks, and statistics.",
   "author": "Hossein Fard",
