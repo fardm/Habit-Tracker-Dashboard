@@ -98,7 +98,7 @@ In this mode, lower values are better. It works exactly opposite to the At Least
 For example, if the goal is to control daily calorie intake for weight loss, with a maximum target of 2000 calories:
 
 * 0 value: The donut chart is completely filled because no calories have been consumed yet.
-* As the value increases: The donut chart gradually empties and its color shifts toward red.
+* As the value increases: The donut chart gradually empties and its color shifts toward orange.
 * Reaching 2000: The donut chart becomes completely empty.
 * Above 2000: A warning ring appears around the donut and the ⚠️ icon is displayed.
 
