@@ -418,9 +418,10 @@ export class CalendarHeatmap extends HTMLElementComponent {
 
 		this.gridBlock = createDiv({ cls: "heatmap-grid-block" });
 
-		if (this.settings.showMonthLabels && period === ReportPeriod.YEAR) {
+		if (this.settings.showMonthLabels) {
+			const visibleLabels = this.getVisibleMonthLabels(layout, startDate, endDate);
 			this.gridBlock.appendChild(
-				this.createMonthLabelsRow(layout.monthLabels, layout.weeksCount)
+				this.createMonthLabelsRow(visibleLabels, layout.weeksCount)
 			);
 		}
 
@@ -435,6 +436,34 @@ export class CalendarHeatmap extends HTMLElementComponent {
 		if (this.props.onHeatmapSettingsChange) {
 			this.props.onHeatmapSettingsChange(this.settings);
 		}
+	}
+
+	/**
+	 * Returns only the month labels whose week column contains at least one
+	 * cell within [startDate, endDate]. When no range is provided (year view),
+	 * all labels are returned unchanged.
+	 */
+	private getVisibleMonthLabels(
+		layout: YearHeatmapLayout,
+		startDate?: Date,
+		endDate?: Date
+	): { weekIndex: number; label: string }[] {
+		if (!startDate || !endDate) {
+			return layout.monthLabels;
+		}
+
+		return layout.monthLabels.filter(({ weekIndex }) => {
+			const colStart = weekIndex * 7;
+			for (let row = 0; row < 7; row++) {
+				const cell = layout.cells[colStart + row];
+				if (!cell || cell.isEmpty || !cell.isoDate) continue;
+				const cellDate = parseLocalISODate(cell.isoDate);
+				if (cellDate >= startDate && cellDate <= endDate) {
+					return true;
+				}
+			}
+			return false;
+		});
 	}
 
 	private createMonthLabelsRow(
