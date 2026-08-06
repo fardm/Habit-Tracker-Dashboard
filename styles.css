@@ -667,7 +667,7 @@
 	font-size: 16px;
 	line-height: 1;
 	background: var(--background-secondary);
-	padding: 6px 8px;
+	padding: 6px;
 	border-radius: 6px;
 	border: 1px solid var(--background-modifier-border);
 	transition: all 0.15s ease;
@@ -704,16 +704,15 @@
 	background-repeat: no-repeat;
 	background-position: right 8px center;
 	background-size: 12px;
+	box-shadow: none;
 }
 
 .period-selector-select:hover {
 	border-color: var(--interactive-accent);
-	background-color: var(--background-modifier-hover);
 }
 
 .period-selector-select:focus {
 	outline: none;
-	border-color: var(--interactive-accent);
 }
 
 .habit-details-year-display {

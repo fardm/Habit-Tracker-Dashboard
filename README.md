@@ -71,7 +71,15 @@ That's it! The dashboard will automatically read your daily notes.
 
 ## Settings & Behavior
 
-### Visualization Modes
+### Completion Conditions
+
+For **numeric habits**, choose how completion is evaluated:
+
+- **At least** (≥): Reach or exceed the target (e.g. 30+ minutes)
+- **At most** (≤): Stay at or below the target (e.g. ≤2000 calories)
+- **Exactly** (=): Match the target exactly
+
+### Visualization
 
 ![image](img/visualization.webp)
 
@@ -79,28 +87,31 @@ That's it! The dashboard will automatically read your daily notes.
 
 Boolean habits have a simple two-state visualization:
 
-* Completed: A checked icon is displayed.
-* Not completed: A circle icon without a check mark is displayed.
+- **Completed:** A check icon is displayed.
+- **Not completed:** A circle icon is displayed.
 
-#### Numeric Habits - At Least Mode
+#### Numeric Habits
 
-In this mode, higher values are better.
-For example, if the goal is to drink 8 glasses of water per day:
+The visualization depends on the selected completion condition.
 
-* 0 value: The donut chart is empty.
-* 4 value: Half of the donut chart is filled.
-* 8 value: The donut chart is complete and a check mark appears inside the circle.
-* Above 8: An additional ring appears around the donut, and the extra amount is displayed as (+2).
+##### At Least (≥)
 
-#### Numeric Habits - At Most Mode
+Higher values are better.
 
-In this mode, lower values are better. It works exactly opposite to the At Least mode.
-For example, if the goal is to control daily calorie intake for weight loss, with a maximum target of 2000 calories:
+- 0: Empty donut.
+- Half of the target: Half-filled donut.
+- Target reached: Full donut with a check mark.
+- Above the target: An outer ring appears and the extra amount is shown (e.g. +2).
 
-* 0 value: The donut chart is completely filled because no calories have been consumed yet.
-* As the value increases: The donut chart gradually empties and its color shifts toward orange.
-* Reaching 2000: The donut chart becomes completely empty.
-* Above 2000: A warning ring appears around the donut and the ⚠️ icon is displayed.
+##### At Most (≤)
+
+Lower values are better.
+
+- 0: Full donut.
+- As the value increases: The donut gradually empties and shifts toward orange.
+- Target reached: Empty donut.
+- Above the target: A warning ring appears with a ⚠️ icon.
+
 
 
 
@@ -111,13 +122,6 @@ To improve performance and avoid continuously scanning files, the plugin stores 
 If you manually edit your daily notes, click **Refresh (🔄)** to re-scan the files and update the dashboard with the latest changes.
 
 
-### Completion Condition
-
-For **numeric habits**, choose when a habit is considered completed:
-
-- **At least** (≥): Reach or exceed the target (e.g. 30+ minutes)
-- **At most** (≤): Stay at or below the target (e.g. ≤2000 calories)
-- **Exactly** (=): Match the target exactly
 
 ### Grace Days
 
